@@ -1,4 +1,6 @@
 <?
 echo "LISTOO";
 
+phpinfo();
+
 ?>
