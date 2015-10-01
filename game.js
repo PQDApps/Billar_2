@@ -50,10 +50,10 @@ Pool.MainMenu.prototype = {
 
     create: function () {
 
-        this.stage.backgroundColor = 0x001b07;
+        this.stage.backgroundColor = 0xF8FAF8;
 
-       // var logo = this.add.image(this.world.centerX, 140, 'logo');
-        //logo.anchor.x = 0.5;
+        var logo = this.add.image(this.world.centerX, 140, 'logo');
+        logo.anchor.x = 0.5;
 
         var start = this.add.bitmapText(this.world.centerX, 460, 'fat-and-tiny', 'CLICK TO PLAY', 64);
         start.anchor.x = 0.5;
@@ -135,13 +135,13 @@ Pool.Game.prototype = {
 
         this.pockets.body.clearShapes();
 
-        this.pockets.body.addCircle(70, 64, 80);
-        this.pockets.body.addCircle(70, 400, 80);
-        this.pockets.body.addCircle(70, 736, 80);
+        this.pockets.body.addCircle(32, 64, 80);
+        this.pockets.body.addCircle(16, 400, 80);
+        this.pockets.body.addCircle(32, 736, 80);
 
-        this.pockets.body.addCircle(70, 64, 528);
-        this.pockets.body.addCircle(70, 400, 528);
-        this.pockets.body.addCircle(70, 736, 528);
+        this.pockets.body.addCircle(32, 64, 528);
+        this.pockets.body.addCircle(16, 400, 528);
+        this.pockets.body.addCircle(32, 736, 528);
 
         //  Ball shadows
         this.shadows = this.add.group();
