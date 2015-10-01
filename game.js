@@ -1,5 +1,5 @@
 var Pool = {
-    showDebug: true,
+    showDebug: false,
     RED: 0,
     YELLOW: 1,
     WHITE: 2,
