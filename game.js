@@ -1,5 +1,5 @@
 var Pool = {
-    showDebug: false,
+    showDebug: true,
     RED: 0,
     YELLOW: 1,
     WHITE: 2,
@@ -404,7 +404,7 @@ Pool.Game.prototype = {
 
     updateCue: function () {
 
-        this.aimLine.start.set(this.cueball.x, this.cueball.y);
+        this.aimLine.start.set(this.cueball.x-50, this.cueball.y);
         this.aimLine.end.set(this.input.activePointer.x, this.input.activePointer.y);
 
         this.cue.position.copyFrom(this.aimLine.start);
