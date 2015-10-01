@@ -52,8 +52,8 @@ Pool.MainMenu.prototype = {
 
         this.stage.backgroundColor = 0x001b07;
 
-        var logo = this.add.image(this.world.centerX, 140, 'logo');
-        logo.anchor.x = 0.5;
+       // var logo = this.add.image(this.world.centerX, 140, 'logo');
+        //logo.anchor.x = 0.5;
 
         var start = this.add.bitmapText(this.world.centerX, 460, 'fat-and-tiny', 'CLICK TO PLAY', 64);
         start.anchor.x = 0.5;
@@ -87,6 +87,7 @@ Pool.Game = function (game) {
     this.fill = null;
     this.fillRect = null;
     this.aimLine = null;
+    this.shootLine = null;
 
     this.cueball = null;
 
@@ -134,13 +135,13 @@ Pool.Game.prototype = {
 
         this.pockets.body.clearShapes();
 
-        this.pockets.body.addCircle(32, 64, 80);
-        this.pockets.body.addCircle(16, 400, 80);
-        this.pockets.body.addCircle(32, 736, 80);
+        this.pockets.body.addCircle(70, 64, 80);
+        this.pockets.body.addCircle(70, 400, 80);
+        this.pockets.body.addCircle(70, 736, 80);
 
-        this.pockets.body.addCircle(32, 64, 528);
-        this.pockets.body.addCircle(16, 400, 528);
-        this.pockets.body.addCircle(32, 736, 528);
+        this.pockets.body.addCircle(70, 64, 528);
+        this.pockets.body.addCircle(70, 400, 528);
+        this.pockets.body.addCircle(70, 736, 528);
 
         //  Ball shadows
         this.shadows = this.add.group();
@@ -232,6 +233,8 @@ Pool.Game.prototype = {
         this.fill.crop(this.fillRect);
 
         this.aimLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
+
+       // this.shootLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
 
         //  Score
 
