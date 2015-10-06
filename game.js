@@ -233,11 +233,9 @@ Pool.Game.prototype = {
         this.fill.crop(this.fillRect);
 
         this.aimLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
-
-       // this.shootLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
+        this.shootLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
 
         //  Score
-
         this.scoreText = this.add.bitmapText(16, 0, 'fat-and-tiny', 'SCORE: 0', 32);
         this.scoreText.smoothed = false;
 
@@ -409,6 +407,12 @@ Pool.Game.prototype = {
 
         this.aimLine.start.set(this.cueball.x, this.cueball.y);
         this.aimLine.end.set(this.input.activePointer.x, this.input.activePointer.y);
+        console.log(25);
+        this.shootLine.fromAngle(this.cueball.x, this.cueball.y, this.aimLine.angle + 3.14, 1000)
+        //this.shootLine.start.set(this.cueball.x, this.cueball.y);
+        //this.shootLine.length.set()
+        //this.shootLine.end.set(-this.input.activePointer.x, -this.input.activePointer.y);
+        //this.shootLine.angle = this.aimLine.angle;
 
         this.cue.position.copyFrom(this.aimLine.start);
         this.cue.rotation = this.aimLine.angle;
@@ -483,10 +487,13 @@ Pool.Game.prototype = {
             if (this.speed < 6)
             {
                 this.game.debug.geom(this.aimLine);
+                this.game.debug.geom(this.shootLine);
             }
 
             this.game.debug.text("speed: " + this.speed, 540, 24);
             this.game.debug.text("power: " + (this.aimLine.length / 3), 540, 48);
+            this.game.debug.text("aAngle: " + (this.aimLine.angle), 540, 72);
+            this.game.debug.text("sAngle: " + (this.shootLine.angle), 540, 96);
         }
 
     }
