@@ -87,7 +87,8 @@ Pool.Game = function (game) {
     this.fill = null;
     this.fillRect = null;
     this.aimLine = null;
-    this.shootLine = null;
+    this.line = null; // The sprite line that shows where you are aiming
+    this.shootLine = null; // The geometry line that shows aiming, only shows in debug
 
     this.cueball = null;
 
@@ -232,8 +233,13 @@ Pool.Game.prototype = {
         this.fillRect = new Phaser.Rectangle(0, 0, 332, 6);
         this.fill.crop(this.fillRect);
 
+        // Geometry lines, help point cue and shoot line
         this.aimLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
         this.shootLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
+
+        // Shoot line sprite
+        this.line = this.add.sprite(0, 0, 'line');
+        this.line.anchor.y = 0.5;
 
         //  Score
         this.scoreText = this.add.bitmapText(16, 0, 'fat-and-tiny', 'SCORE: 0', 32);
@@ -407,12 +413,12 @@ Pool.Game.prototype = {
 
         this.aimLine.start.set(this.cueball.x, this.cueball.y);
         this.aimLine.end.set(this.input.activePointer.x, this.input.activePointer.y);
-        console.log(25);
-        this.shootLine.fromAngle(this.cueball.x, this.cueball.y, this.aimLine.angle + 3.14, 1000)
-        //this.shootLine.start.set(this.cueball.x, this.cueball.y);
-        //this.shootLine.length.set()
-        //this.shootLine.end.set(-this.input.activePointer.x, -this.input.activePointer.y);
-        //this.shootLine.angle = this.aimLine.angle;
+
+        this.shootLine.fromAngle(this.cueball.x, this.cueball.y, this.aimLine.angle + 3.14, 1000);
+
+        // Places the line on the same angle as the shootLine
+        this.line.position.copyFrom(this.shootLine.start);
+        this.line.rotation = this.shootLine.angle;
 
         this.cue.position.copyFrom(this.aimLine.start);
         this.cue.rotation = this.aimLine.angle;
