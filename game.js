@@ -28,7 +28,7 @@ Pool.Preloader.prototype = {
 
         this.load.bitmapFont('fat-and-tiny');
 
-        this.load.images([ 'logo', 'table', 'cushions', 'cue', 'fill' ]);
+        this.load.images([ 'logo', 'table', 'cushions', 'cue', 'fill', 'line']);
 
         this.load.spritesheet('balls', 'balls.png', 26, 26);
 
@@ -314,9 +314,10 @@ Pool.Game.prototype = {
 
         this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
+        // Hides cue and aim lines when shot happens
+        this.line.visible = false;
         this.cue.visible = false;
         this.fill.visible = false;
-
     },
 
     hitPocket: function (ball, pocket) {
@@ -456,6 +457,8 @@ Pool.Game.prototype = {
         {
             if (!this.cue.visible)
             {
+                // Shows cues and lines once speed is slow enough
+                this.line.visible = true;
                 this.cue.visible = true;
                 this.fill.visible = true;
             }
