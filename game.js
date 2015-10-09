@@ -89,6 +89,7 @@ Pool.Game = function (game) {
     this.aimLine = null;
     this.line = null; // The sprite line that shows where you are aiming
     this.shootLine = null; // The geometry line that shows aiming, only shows in debug
+    this.lineRect = null; // Rectangle to crop line
 
     this.cueball = null;
 
@@ -231,6 +232,7 @@ Pool.Game.prototype = {
         this.fill = this.add.sprite(0, 0, 'fill');
         this.fill.anchor.y = 0.5;
         this.fillRect = new Phaser.Rectangle(0, 0, 332, 6);
+
         this.fill.crop(this.fillRect);
 
         // Geometry lines, help point cue and shoot line
@@ -240,6 +242,8 @@ Pool.Game.prototype = {
         // Shoot line sprite
         this.line = this.add.sprite(0, 0, 'line');
         this.line.anchor.y = 0.5;
+        this.lineRect = new Phaser.Rectangle(0, 0, 200, 6);
+        this.line.crop(this.lineRect);
 
         //  Score
         this.scoreText = this.add.bitmapText(16, 0, 'fat-and-tiny', 'SCORE: 0', 32);
