@@ -283,8 +283,8 @@ Pool.Game.prototype = {
         ball.body.setCircle(13);
         ball.body.fixedRotation = true;
         ball.body.setMaterial(this.ballMaterial);
-        ball.body.damping = 0.40;
-        ball.body.angularDamping = 0.45;
+        ball.body.damping = 0.70;
+        ball.body.angularDamping = 0.75;
         ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
 
         //  Link the two sprites together
