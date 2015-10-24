@@ -6,6 +6,8 @@ var Pool = {
     BLACK: 3,
 };
 
+var socket = io();
+
 Pool.Preloader = function () {};
 
 Pool.Preloader.prototype = {
@@ -100,6 +102,8 @@ Pool.Game = function (game) {
 
     this.pauseKey = null;
     this.debugKey = null;
+
+    //this.startio = null;
 
 };
 
@@ -242,7 +246,21 @@ Pool.Game.prototype = {
         // Shoot line sprite
         this.line = this.add.sprite(0, 0, 'line');
         this.line.anchor.y = 0.5;
-        this.lineRect = new Phaser.Rectangle(0, 0, 200, 6);
+
+        //this.physics.p2.enable(this.line, true);
+        //this.line.body.setCircle(10);
+        //this.line.body.data.shapes[0].sensor = true;
+        //this.line.x = 400;
+        //this.line.y = 300;
+        
+        this.lineRect = new Phaser.Rectangle(0, 0, 300, 6);
+
+        this.physics.p2.enable(this.lineRect, true);
+        this.lineRect.sensor = true;
+        //this.lineRect.body.onBeginContact.add(this.balls, this.lineRect);
+        //this.lineRect.body.data.shapes[0].sensor = true;
+
+        //this.lineRect.sensor = true;
         this.line.crop(this.lineRect);
 
         //  Score
@@ -259,6 +277,12 @@ Pool.Game.prototype = {
 
         this.input.addMoveCallback(this.updateCue, this);
         this.input.onDown.add(this.takeShot, this);
+
+
+
+    },
+
+    startio: function () {
 
     },
 
