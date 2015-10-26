@@ -6,7 +6,10 @@ var Pool = {
     BLACK: 3,
 };
 
-var socket = io();
+//var socket = io();
+//socket.on('newscore', function(data){
+  //             this.scoreText.text = "SCORE: " + data; 
+    //        });
 
 Pool.Preloader = function () {};
 
@@ -103,7 +106,7 @@ Pool.Game = function (game) {
     this.pauseKey = null;
     this.debugKey = null;
 
-    //this.startio = null;
+    this.socket = io();
 
 };
 
@@ -141,13 +144,13 @@ Pool.Game.prototype = {
 
         this.pockets.body.clearShapes();
 
-        this.pockets.body.addCircle(32, 64, 80);
+        this.pockets.body.addCircle(64, 64, 80);
         this.pockets.body.addCircle(16, 400, 80);
-        this.pockets.body.addCircle(32, 736, 80);
+        this.pockets.body.addCircle(64, 736, 80);
 
-        this.pockets.body.addCircle(32, 64, 528);
+        this.pockets.body.addCircle(64, 64, 528);
         this.pockets.body.addCircle(16, 400, 528);
-        this.pockets.body.addCircle(32, 736, 528);
+        this.pockets.body.addCircle(64, 736, 528);
 
         //  Ball shadows
         this.shadows = this.add.group();
@@ -360,9 +363,15 @@ Pool.Game.prototype = {
             ball.sprite.shadow.destroy();
             ball.sprite.destroy();
 
-            this.score += 100;
+            this.score += 50;
             this.scoreText.text = "SCORE: " + this.score;
-
+            this.socket.emit('newscore', this.score);
+            this.socket.on('newscore', function(data){
+                console.log(data);
+                this.score += 50;
+                this.scoreText.text = "SCORE: " + data; 
+            });
+            
             if (this.balls.total === 1)
             {
                 this.time.events.add(3000, this.gameOver, this);
