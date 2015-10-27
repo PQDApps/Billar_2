@@ -8,13 +8,15 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/game.html');
 });
 
-
+// New socket connection
 io.on('connection', function(socket){
   // Socket connection successful
-  console.log('a user connected');
-  // Socket disconnection
+  console.log('a user connected '+ socket.id);
+
+  // Socket disconnection execute following function
   socket.on('disconnect', onSocketDisconnect);
 
+  // Listen for new score
   socket.on('newscore', onNewScore);
 });
 
@@ -41,7 +43,6 @@ function onSocketDisconnect () {
 // New score
 function onNewScore (score) {
   io.emit('newscore', score);
-  //this.scoreText.text = "SCORE: " + this.score;
   console.log(score + ' + points');
 }
 

@@ -6,10 +6,13 @@ var Pool = {
     BLACK: 3,
 };
 
-//var socket = io();
-//socket.on('newscore', function(data){
-  //             this.scoreText.text = "SCORE: " + data; 
-    //        });
+var socket = io();
+//socket.on('newscore', function (score) {
+  //      console.log(Pool.Game.score + 66);
+    //    Pool.Game.score = score;
+      //  Pool.Game.scoreText.text = "SCORE: " + score;
+    //});
+var that;
 
 Pool.Preloader = function () {};
 
@@ -106,7 +109,8 @@ Pool.Game = function (game) {
     this.pauseKey = null;
     this.debugKey = null;
 
-    this.socket = io();
+    // this.socket = io() //io.connect("http://localhost", {port: 5000, transports: ["websocket"]});
+    //this.socket.listen(http);
 
 };
 
@@ -144,13 +148,13 @@ Pool.Game.prototype = {
 
         this.pockets.body.clearShapes();
 
-        this.pockets.body.addCircle(64, 64, 80);
-        this.pockets.body.addCircle(16, 400, 80);
-        this.pockets.body.addCircle(64, 736, 80);
+        this.pockets.body.addCircle(128, 64, 80);
+        this.pockets.body.addCircle(32, 400, 80);
+        this.pockets.body.addCircle(128, 736, 80);
 
-        this.pockets.body.addCircle(64, 64, 528);
-        this.pockets.body.addCircle(16, 400, 528);
-        this.pockets.body.addCircle(64, 736, 528);
+        this.pockets.body.addCircle(128, 64, 528);
+        this.pockets.body.addCircle(32, 400, 528);
+        this.pockets.body.addCircle(128, 736, 528);
 
         //  Ball shadows
         this.shadows = this.add.group();
@@ -268,7 +272,12 @@ Pool.Game.prototype = {
 
         //  Score
         this.scoreText = this.add.bitmapText(16, 0, 'fat-and-tiny', 'SCORE: 0', 32);
+        this.scoreText.text = "SCORE: " + this.score;
         this.scoreText.smoothed = false;
+
+        //this.socket.scoreText = this.add.bitmapText(180, 0, 'fat-and-tiny', 'SCORE: 0', 32);
+       // this.socket.scoreText.text = "SCORE: " + this.score;
+       // this.socket.scoreText.smoothed = false;
 
         //  Press P to pause and resume the game
         this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
@@ -281,12 +290,15 @@ Pool.Game.prototype = {
         this.input.addMoveCallback(this.updateCue, this);
         this.input.onDown.add(this.takeShot, this);
 
+        that = this;
 
-
+        socket.on('newscore', this.startio.bind(this));
     },
 
-    startio: function () {
-
+    startio: function (score) {
+        console.log(score);
+        //this.score = score + 30;
+        this.scoreText.text = "SCORE: " + score;
     },
 
     togglePause: function () {
@@ -363,14 +375,10 @@ Pool.Game.prototype = {
             ball.sprite.shadow.destroy();
             ball.sprite.destroy();
 
-            this.score += 50;
-            this.scoreText.text = "SCORE: " + this.score;
-            this.socket.emit('newscore', this.score);
-            this.socket.on('newscore', function(data){
-                console.log(data);
-                this.score += 50;
-                this.scoreText.text = "SCORE: " + data; 
-            });
+            this.score += 30;
+            //this.scoreText.text = "SCORE: " + this.score;
+            socket.emit('newscore', this.score);
+            
             
             if (this.balls.total === 1)
             {
@@ -466,6 +474,8 @@ Pool.Game.prototype = {
 
         this.fillRect.width = this.aimLine.length;
         this.fill.updateCrop();
+
+        this.scoreText.text = "SCORE: " + this.score;
 
     },
 
