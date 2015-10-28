@@ -7,12 +7,6 @@ var Pool = {
 };
 
 var socket = io();
-//socket.on('newscore', function (score) {
-  //      console.log(Pool.Game.score + 66);
-    //    Pool.Game.score = score;
-      //  Pool.Game.scoreText.text = "SCORE: " + score;
-    //});
-var that;
 
 Pool.Preloader = function () {};
 
@@ -173,43 +167,43 @@ Pool.Game.prototype = {
 
         var y = 241;
 
-        this.makeBall(200, y, Pool.RED);
-        this.makeBall(200, y + 32, Pool.YELLOW);
-        this.makeBall(200, y + 64, Pool.YELLOW);
-        this.makeBall(200, y + 96, Pool.RED);
-        this.makeBall(200, y + 128, Pool.YELLOW);
+        this.makeBall(640, y, Pool.RED);
+        this.makeBall(640, y + 32, Pool.YELLOW);
+        this.makeBall(640, y + 64, Pool.YELLOW);
+        this.makeBall(640, y + 96, Pool.RED);
+        this.makeBall(640, y + 128, Pool.YELLOW);
 
         //  Row 2 (4 balls)
 
         y = 257;
 
-        this.makeBall(232, y, Pool.YELLOW);
-        this.makeBall(232, y + 32, Pool.RED);
-        this.makeBall(232, y + 64, Pool.YELLOW);
-        this.makeBall(232, y + 96, Pool.RED);
+        this.makeBall(608, y, Pool.YELLOW);
+        this.makeBall(608, y + 32, Pool.RED);
+        this.makeBall(608, y + 64, Pool.YELLOW);
+        this.makeBall(608, y + 96, Pool.RED);
 
         //  Row 3 (3 balls including black)
 
         y = 273;
-
-        this.makeBall(264, y, Pool.RED);
-        this.makeBall(264, y + 32, Pool.BLACK);
-        this.makeBall(264, y + 64, Pool.YELLOW);
+        // x = 264
+        this.makeBall(576, y, Pool.RED);
+        this.makeBall(576, y + 32, Pool.BLACK);
+        this.makeBall(576, y + 64, Pool.YELLOW);
 
         //  Row 4 (2 balls)
 
         y = 289;
 
-        this.makeBall(296, y, Pool.YELLOW);
-        this.makeBall(296, y + 32, Pool.RED);
+        this.makeBall(544, y, Pool.YELLOW);
+        this.makeBall(544, y + 32, Pool.RED);
 
         //  Row 5 (single red ball)
 
-        this.makeBall(328, 305, Pool.RED);
+        this.makeBall(512, 305, Pool.RED);
 
         //  The cue ball
-
-        this.cueball = this.makeBall(576, 305, Pool.WHITE);
+        //x = 576, x = 264
+        this.cueball = this.makeBall(232, 305, Pool.WHITE);
 
         //  Our placing cue ball and its shadow
         this.placeball = this.add.sprite(0, 0, 'balls', Pool.WHITE);
@@ -275,10 +269,6 @@ Pool.Game.prototype = {
         this.scoreText.text = "SCORE: " + this.score;
         this.scoreText.smoothed = false;
 
-        //this.socket.scoreText = this.add.bitmapText(180, 0, 'fat-and-tiny', 'SCORE: 0', 32);
-       // this.socket.scoreText.text = "SCORE: " + this.score;
-       // this.socket.scoreText.smoothed = false;
-
         //  Press P to pause and resume the game
         this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
         this.pauseKey.onDown.add(this.togglePause, this);
@@ -289,8 +279,6 @@ Pool.Game.prototype = {
 
         this.input.addMoveCallback(this.updateCue, this);
         this.input.onDown.add(this.takeShot, this);
-
-        that = this;
 
         socket.on('newscore', this.startio.bind(this));
     },
