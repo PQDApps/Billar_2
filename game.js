@@ -103,6 +103,7 @@ Pool.Game = function (game) {
     this.pauseKey = null;
     this.debugKey = null;
 
+    this.pressedDown = false;
     // this.socket = io() //io.connect("http://localhost", {port: 5000, transports: ["websocket"]});
     //this.socket.listen(http);
 
@@ -277,10 +278,15 @@ Pool.Game.prototype = {
         this.debugKey = this.input.keyboard.addKey(Phaser.Keyboard.D);
         this.debugKey.onDown.add(this.toggleDebug, this);
 
-        this.input.addMoveCallback(this.updateCue, this);
-        this.input.onDown.add(this.takeShot, this);
+        this.input.addMoveCallback(this.updateCue, this); // Updates every frame position of cue
+        this.input.onUp.add(this.takeShot, this); // Doesn't shoot until user lets go of mouse button
+        this.input.onDown.add(this.pressed, this); // Changes flag if mouse is pressed
 
         socket.on('newscore', this.startio.bind(this));
+    },
+
+    pressed : function () {
+        this.pressedDown = true;
     },
 
     startio: function (score) {
@@ -338,7 +344,8 @@ Pool.Game.prototype = {
             speed = 112;
         }
 
-        this.updateCue();
+        //this.updateCue();
+        this.pressedDown = false; // Mouse no longer pressed
 
         var px = (Math.cos(this.aimLine.angle) * speed);
         var py = (Math.sin(this.aimLine.angle) * speed);
@@ -399,7 +406,7 @@ Pool.Game.prototype = {
         this.placeballShadow.y = this.placeball.y + 10;
         this.placeballShadow.visible = true;
 
-        this.input.onDown.remove(this.takeShot, this);
+        this.input.onUp.remove(this.takeShot, this);
         this.input.onDown.add(this.placeCueBall, this);
 
     },
@@ -439,7 +446,7 @@ Pool.Game.prototype = {
         this.resetting = false;
 
         this.input.onDown.remove(this.placeCueBall, this);
-        this.input.onDown.add(this.takeShot, this);
+        this.input.onUp.add(this.takeShot, this);
 
     },
 
@@ -454,7 +461,15 @@ Pool.Game.prototype = {
         this.line.position.copyFrom(this.shootLine.start);
         this.line.rotation = this.shootLine.angle;
 
-        this.cue.position.copyFrom(this.aimLine.start);
+        // If mouse isn't pressed, keep cue next to white ball, else follow mouse pointer position
+        if (this.pressedDown == false) {
+            this.cue.position.copyFrom(this.aimLine.start);
+        } else {
+            this.cue.x = this.input.activePointer.x;
+            this.cue.y = this.input.activePointer.y;
+        }
+        //this.cue.x = this.input.activePointer.x;
+        //this.cue.y = this.input.activePointer.y;
         this.cue.rotation = this.aimLine.angle;
 
         this.fill.position.copyFrom(this.aimLine.start);
