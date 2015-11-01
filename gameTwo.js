@@ -143,13 +143,13 @@ Pool.Game.prototype = {
 
         this.pockets.body.clearShapes();
 
-        this.pockets.body.addCircle(128, 64, 80);
-        this.pockets.body.addCircle(32, 400, 80);
-        this.pockets.body.addCircle(128, 736, 80);
+        this.pockets.body.addCircle(14, 118, 164); // Top left pocket
+        this.pockets.body.addCircle(10, 400, 152); // Top center pocket
+        this.pockets.body.addCircle(14, 682, 164); // Top right pocket
 
-        this.pockets.body.addCircle(128, 64, 528);
-        this.pockets.body.addCircle(32, 400, 528);
-        this.pockets.body.addCircle(128, 736, 528);
+        this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
+        this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
+        this.pockets.body.addCircle(14, 682, 436); // Bottom right pocket
 
         //  Ball shadows
         this.shadows = this.add.group();
