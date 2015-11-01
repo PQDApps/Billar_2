@@ -30,7 +30,7 @@ Pool.Preloader.prototype = {
 
         this.load.bitmapFont('fat-and-tiny');
 
-        this.load.images([ 'logo', 'table', 'cushions', 'cue', 'fill', 'line']);
+        this.load.images([ 'logo', 'tableTwo.fw', 'cue', 'fill', 'line']);
 
         this.load.spritesheet('balls', 'balls.png', 26, 26);
 
@@ -124,13 +124,13 @@ Pool.Game.prototype = {
         this.stage.backgroundColor = 0x001b07;
 
         //  The table
-        this.table = this.add.sprite(400, 300, 'table');
+        this.table = this.add.sprite(400, 300, 'tableTwo.fw');
 
         this.physics.p2.enable(this.table, Pool.showDebug);
 
         this.table.body.static = true;
         this.table.body.clearShapes();
-        this.table.body.loadPolygon('table', 'pool-table-physics-shape');
+        this.table.body.loadPolygon('table', 'tableJson');
 
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
 
@@ -155,7 +155,7 @@ Pool.Game.prototype = {
         this.shadows = this.add.group();
 
         //  The cushions sit above the shadow layer
-        this.add.sprite(0, 0, 'cushions');
+        //this.add.sprite(0, 0, 'cushions');
 
         //  The balls
 
