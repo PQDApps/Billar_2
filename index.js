@@ -13,12 +13,21 @@ io.on('connection', function(socket){
   // Socket connection successful
   console.log('a user connected '+ socket.id);
 
+  // Socket chat message
+  socket.on('chat message', onChatMessage);
+
   // Socket disconnection execute following function
   socket.on('disconnect', onSocketDisconnect);
 
   // Listen for new score
   socket.on('newscore', onNewScore);
 });
+
+
+// On chat message 
+function onChatMessage (msg) {
+  io.emit('chat message', msg);
+}
 
 // Socket disconnected
 function onSocketDisconnect () {
