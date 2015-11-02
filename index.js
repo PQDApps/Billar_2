@@ -23,10 +23,7 @@ io.on('connection', function(socket){
   socket.on('newscore', onNewScore);
 
   // Listen for player shooting
-  socket.on('tookShot', function onShot (px, py) {
-  socket.broadcast.emit('tookShot', px, py);
-  //console.log( px + ' + ' + py);
-  });
+  socket.on('tookShot', onShot);
 });
 
 
@@ -48,7 +45,7 @@ function onNewScore (score) {
 
 //Took shot
 function onShot (px, py) {
-  socket.broadcast.emit('tookShot', px, py);
+  io.emit('tookShot', px, py);
   //console.log( px + ' + ' + py);
 }
 

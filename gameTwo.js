@@ -377,7 +377,7 @@ Pool.Game.prototype = {
 
         socket.emit('tookShot', px, py);
 
-        this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
+        //this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
         // Hides cue and aim lines when shot happens
         this.line.visible = false;
