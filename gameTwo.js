@@ -120,6 +120,7 @@ Pool.Game = function (game) {
     this.debugKey = null;
 
     this.pressedDown = false;
+    this.id = socket.id;
     // this.socket = io() //io.connect("http://localhost", {port: 5000, transports: ["websocket"]});
     //this.socket.listen(http);
 
@@ -298,17 +299,25 @@ Pool.Game.prototype = {
         this.input.onUp.add(this.takeShot, this); // Doesn't shoot until user lets go of mouse button
         this.input.onDown.add(this.pressed, this); // Changes flag if mouse is pressed
 
-        socket.on('newscore', this.startio.bind(this));
+        socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
+        socket.on('tookShot', this.shotTaken.bind(this));
     },
 
     pressed : function () {
         this.pressedDown = true;
     },
 
-    startio: function (score) {
+    updateScore: function (score) {
         console.log(score);
         this.score = score;
         this.scoreText.text = "SCORE: " + this.score;
+    },
+
+    shotTaken: function (px, py) {
+        console.log("WOO HOO");
+
+        this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
+
     },
 
     togglePause: function () {
@@ -365,6 +374,8 @@ Pool.Game.prototype = {
 
         var px = (Math.cos(this.aimLine.angle) * speed);
         var py = (Math.sin(this.aimLine.angle) * speed);
+
+        socket.emit('tookShot', px, py);
 
         this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
