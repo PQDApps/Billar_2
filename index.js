@@ -21,6 +21,12 @@ io.on('connection', function(socket){
 
   // Listen for new score
   socket.on('newscore', onNewScore);
+
+  // Listen for player shooting
+  socket.on('tookShot', function onShot (px, py) {
+  socket.broadcast.emit('tookShot', px, py);
+  //console.log( px + ' + ' + py);
+  });
 });
 
 
@@ -38,6 +44,12 @@ function onSocketDisconnect () {
 function onNewScore (score) {
   io.emit('newscore', score);
   console.log(score + ' + points');
+}
+
+//Took shot
+function onShot (px, py) {
+  socket.broadcast.emit('tookShot', px, py);
+  //console.log( px + ' + ' + py);
 }
 
 
