@@ -143,8 +143,8 @@ Pool.Game.prototype = {
 
         this.pockets.body.clearShapes();
 
-        this.pockets.body.addCircle(14, 118, 164); // Top left pocket
-        this.pockets.body.addCircle(10, 400, 152); // Top center pocket
+        this.pockets.body.addCircle(14, 118, 164); // Top left pocket 14
+        this.pockets.body.addCircle(10, 400, 152); // Top center pocket 10
         this.pockets.body.addCircle(14, 682, 164); // Top right pocket
 
         this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
@@ -291,8 +291,8 @@ Pool.Game.prototype = {
 
     startio: function (score) {
         console.log(score);
-        //this.score = score + 30;
-        this.scoreText.text = "SCORE: " + score;
+        this.score = score;
+        this.scoreText.text = "SCORE: " + this.score;
     },
 
     togglePause: function () {
