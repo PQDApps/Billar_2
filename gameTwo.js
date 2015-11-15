@@ -1,25 +1,21 @@
 var Pool = {
     showDebug: true,
-    RED: 0,
-    YELLOW: 1,
-    WHITE: 2,
-    BLACK: 3,
-   /* white: 0,
-    one: 1,
-    two: 2,
-    three: 3,
-    four: 4,
-    five: 5,
-    six: 6,
-    seven: 7,
-    eigth: 8,
-    nine: 9,
-    ten: 10,
-    eleven: 11,
-    twelve: 12,
-    thirteen: 13,
-    fourteen: 14,
-    fifteen: 15,*/
+    white: 0,
+    yellow: 1,
+    blue: 2,
+    red: 3,
+    pink: 4,
+    orange: 5,
+    green: 6,
+    violet: 7,
+    black: 8,
+    strYhellow: 9,
+    strBlue: 10,
+    strRed: 11,
+    strPink: 12,
+    strOrange: 13,
+    strGreen: 14,
+    strViolet: 15,
 };
 
 var socket = io();
@@ -48,7 +44,7 @@ Pool.Preloader.prototype = {
 
         this.load.images([ 'logo', 'tableTwo.fw', 'cue', 'fill', 'line']);
 
-        this.load.spritesheet('balls', 'balls3.png', 26, 26);
+        this.load.spritesheet('balls', 'ballsnew.png', 20, 20);
 
         this.load.physics('table');
 
@@ -99,7 +95,7 @@ Pool.Game = function (game) {
     this.allowShotSpeed = 20.0;
 
     this.balls = null;
-    this.shadows = null;
+   // this.shadows = null;
 
     this.cue = null;
     this.fill = null;
@@ -113,7 +109,7 @@ Pool.Game = function (game) {
 
     this.resetting = false;
     this.placeball = null;
-    this.placeballShadow = null;
+   // this.placeballShadow = null;
     this.placeRect = null;
 
     this.pauseKey = null;
@@ -169,7 +165,7 @@ Pool.Game.prototype = {
         this.pockets.body.addCircle(14, 682, 436); // Bottom right pocket
 
         //  Ball shadows
-        this.shadows = this.add.group();
+        //this.shadows = this.add.group();
 
         //  The cushions sit above the shadow layer
         //this.add.sprite(0, 0, 'cushions');
@@ -186,51 +182,51 @@ Pool.Game.prototype = {
         var y = 241;
 
         this.makeBall(640, y, Pool.RED);
-        this.makeBall(640, y + 32, Pool.YELLOW);
-        this.makeBall(640, y + 64, Pool.YELLOW);
-        this.makeBall(640, y + 96, Pool.RED);
-        this.makeBall(640, y + 128, Pool.YELLOW);
+        this.makeBall(640, y + 32, Pool.red);
+        this.makeBall(640, y + 64, Pool.red);
+        this.makeBall(640, y + 96, Pool.red);
+        this.makeBall(640, y + 128, Pool.blue);
 
         //  Row 2 (4 balls)
 
         y = 257;
 
-        this.makeBall(608, y, Pool.YELLOW);
-        this.makeBall(608, y + 32, Pool.RED);
-        this.makeBall(608, y + 64, Pool.YELLOW);
-        this.makeBall(608, y + 96, Pool.RED);
+        this.makeBall(608, y, Pool.yellow);
+        this.makeBall(608, y + 32, Pool.white);
+        this.makeBall(608, y + 64, Pool.white);
+        this.makeBall(608, y + 96, Pool.red);
 
         //  Row 3 (3 balls including black)
 
         y = 273;
         // x = 264
-        this.makeBall(576, y, Pool.RED);
-        this.makeBall(576, y + 32, Pool.BLACK);
-        this.makeBall(576, y + 64, Pool.YELLOW);
+        this.makeBall(576, y, Pool.yellow);
+        this.makeBall(576, y + 32, Pool.white);
+        this.makeBall(576, y + 64, Pool.red);
 
         //  Row 4 (2 balls)
 
         y = 289;
 
-        this.makeBall(544, y, Pool.YELLOW);
-        this.makeBall(544, y + 32, Pool.RED);
+        this.makeBall(544, y, Pool.yellow);
+        this.makeBall(544, y + 32, Pool.blue);
 
         //  Row 5 (single red ball)
 
-        this.makeBall(512, 305, Pool.RED);
+        this.makeBall(512, 305, Pool.red);
 
         //  The cue ball
         //x = 576, x = 264
-        this.cueball = this.makeBall(232, 305, Pool.WHITE);
+        this.cueball = this.makeBall(232, 305, Pool.white);
 
         //  Our placing cue ball and its shadow
-        this.placeball = this.add.sprite(0, 0, 'balls', Pool.WHITE);
+      /*  this.placeball = this.add.sprite(0, 0, 'balls', Pool.WHITE);
         this.placeball.anchor.set(0.5);
         this.placeball.visible = false;
 
         this.placeballShadow = this.shadows.create(0, 0, 'balls', 4);
         this.placeballShadow.anchor.set(0.5);
-        this.placeballShadow.visible = false;
+        this.placeballShadow.visible = false;*/
 
         this.placeRect = new Phaser.Rectangle(112, 128, 576, 352);
 
@@ -346,10 +342,10 @@ Pool.Game.prototype = {
         ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
 
         //  Link the two sprites together
-        var shadow = this.shadows.create(x + 4, y + 4, 'balls', 4);
+      /* var shadow = this.shadows.create(x + 4, y + 4, 'balls', 2);
         shadow.anchor.set(0.5);
 
-        ball.shadow = shadow;
+        ball.shadow = shadow;*/
 
         return ball;
 
@@ -394,7 +390,7 @@ Pool.Game.prototype = {
         }
         else
         {
-            ball.sprite.shadow.destroy();
+            /*ball.sprite.shadow.destroy();*/
             ball.sprite.destroy();
 
             this.score += 30;
@@ -423,15 +419,15 @@ Pool.Game.prototype = {
 
         //  We disable the physics body and stick the ball to the pointer
         this.cueball.visible = false;
-        this.cueball.shadow.visible = false;
+       /* this.cueball.shadow.visible = false;*/
 
         this.placeball.x = this.input.activePointer.x;
         this.placeball.y = this.input.activePointer.y;
         this.placeball.visible = true;
 
-        this.placeballShadow.x = this.placeball.x + 10;
+        /*this.placeballShadow.x = this.placeball.x + 10;
         this.placeballShadow.y = this.placeball.y + 10;
-        this.placeballShadow.visible = true;
+        this.placeballShadow.visible = true;*/
 
         this.input.onUp.remove(this.takeShot, this);
         this.input.onDown.add(this.placeCueBall, this);
@@ -465,10 +461,10 @@ Pool.Game.prototype = {
         this.cueball.reset(this.placeball.x, this.placeball.y);
         this.cueball.body.reset(this.placeball.x, this.placeball.y);
         this.cueball.visible = true;
-        this.cueball.shadow.visible = true;
+       /* this.cueball.shadow.visible = true;*/
 
         this.placeball.visible = false;
-        this.placeballShadow.visible = false;
+        /*this.placeballShadow.visible = false;*/
 
         this.resetting = false;
 
@@ -515,8 +511,8 @@ Pool.Game.prototype = {
         {
             this.placeball.x = this.math.clamp(this.input.x, this.placeRect.left, this.placeRect.right);
             this.placeball.y = this.math.clamp(this.input.y, this.placeRect.top, this.placeRect.bottom);
-            this.placeballShadow.x = this.placeball.x + 10;
-            this.placeballShadow.y = this.placeball.y + 10;
+           /* this.placeballShadow.x = this.placeball.x + 10;
+            this.placeballShadow.y = this.placeball.y + 10;*/
         }
         else
         {
@@ -549,14 +545,14 @@ Pool.Game.prototype = {
 
     preRender: function () {
 
-        this.balls.forEach(this.positionShadow, this);
+       /* this.balls.forEach(this.positionShadow, this);*/
 
     },
 
     positionShadow: function (ball) {
 
-        ball.shadow.x = ball.x + 4;
-        ball.shadow.y = ball.y + 4;
+       /* ball.shadow.x = ball.x + 4;
+        ball.shadow.y = ball.y + 4;*/
 
     },
 
