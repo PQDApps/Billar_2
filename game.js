@@ -418,7 +418,7 @@ Pool.Game.prototype = {
         this.resetting = false;
 
         //  We disable the physics body and stick the ball to the pointer
-        this.cueball.visible = true;
+        this.cueball.visible = false;
        /* this.cueball.shadow.visible = false;*/
 
         this.placeball.x = this.input.activePointer.x;
@@ -460,7 +460,7 @@ Pool.Game.prototype = {
 
         this.cueball.reset(this.placeball.x, this.placeball.y);
         this.cueball.body.reset(this.placeball.x, this.placeball.y);
-        this.cueball.visible = true;
+        this.cueball.visible = false;
        /* this.cueball.shadow.visible = true;*/
 
         this.placeball.visible = false;
@@ -531,9 +531,9 @@ Pool.Game.prototype = {
             if (!this.cue.visible)
             {
                 // Shows cues and lines once speed is slow enough
-                this.line.visible = true;
+                this.line.visible = false;
                 this.cue.visible = true;
-                this.fill.visible = true;
+                this.fill.visible = false;
             }
         }
         else if (this.speed < 3.0)
