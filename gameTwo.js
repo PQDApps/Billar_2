@@ -1,5 +1,5 @@
 var Pool = {
-    showDebug: true,
+    //showDebug: true,
     white: 0,
     yellow: 1,
     blue: 2,
@@ -44,7 +44,7 @@ Pool.Preloader.prototype = {
 
         this.load.images([ 'logo', 'tableTwo.fw', 'cue', 'fill', 'line']);
 
-        this.load.spritesheet('balls', 'ballsnew.png', 20, 20);
+        this.load.spritesheet('balls', 'spriteBalls.png', 24, 24);
 
         this.load.physics('table');
 
@@ -179,45 +179,45 @@ Pool.Game.prototype = {
 
         //  Row 1 (5 balls)
 
-        var y = 241;
+        var y = 250;
 
-        this.makeBall(640, y, Pool.RED);
-        this.makeBall(640, y + 32, Pool.red);
-        this.makeBall(640, y + 64, Pool.red);
-        this.makeBall(640, y + 96, Pool.red);
-        this.makeBall(640, y + 128, Pool.blue);
+        this.makeBall(622, y, Pool.violet);
+        this.makeBall(622, y + 26, Pool.red);
+        this.makeBall(622, y + 52, Pool.strGreen);
+        this.makeBall(622, y + 78, Pool.strViolet);
+        this.makeBall(622, y + 104, Pool.strPink);
 
         //  Row 2 (4 balls)
 
-        y = 257;
+        y = 263;
 
-        this.makeBall(608, y, Pool.yellow);
-        this.makeBall(608, y + 32, Pool.white);
-        this.makeBall(608, y + 64, Pool.white);
-        this.makeBall(608, y + 96, Pool.red);
+        this.makeBall(600, y, Pool.strYhellow);
+        this.makeBall(600, y + 26, Pool.orange);
+        this.makeBall(600, y + 52, Pool.pink);
+        this.makeBall(600, y + 78, Pool.strBlue);
 
         //  Row 3 (3 balls including black)
 
-        y = 273;
+        y = 276;
         // x = 264
-        this.makeBall(576, y, Pool.yellow);
-        this.makeBall(576, y + 32, Pool.white);
-        this.makeBall(576, y + 64, Pool.red);
+        this.makeBall(578, y, Pool.strRed);
+        this.makeBall(578, y + 26, Pool.black);
+        this.makeBall(578, y + 52, Pool.green);
 
         //  Row 4 (2 balls)
 
         y = 289;
 
-        this.makeBall(544, y, Pool.yellow);
-        this.makeBall(544, y + 32, Pool.blue);
+        this.makeBall(556, y, Pool.blue);
+        this.makeBall(556, y + 26, Pool.strOrange);
 
         //  Row 5 (single red ball)
 
-        this.makeBall(512, 305, Pool.red);
+        this.makeBall(534, 302, Pool.yellow);
 
         //  The cue ball
         //x = 576, x = 264
-        this.cueball = this.makeBall(232, 305, Pool.white);
+        this.cueball = this.makeBall(250, 302, Pool.white);
 
         //  Our placing cue ball and its shadow
       /*  this.placeball = this.add.sprite(0, 0, 'balls', Pool.WHITE);
@@ -334,7 +334,7 @@ Pool.Game.prototype = {
 
         var ball = this.balls.create(x, y, 'balls', color);
 
-        ball.body.setCircle(13);
+        ball.body.setCircle(12);
         ball.body.fixedRotation = true;
         ball.body.setMaterial(this.ballMaterial);
         ball.body.damping = 0.70;
