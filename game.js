@@ -311,10 +311,7 @@ Pool.Game.prototype = {
     },
 
     shotTaken: function (px, py) {
-        console.log("WOO HOO");
-
         this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
-
     },
 
     togglePause: function () {
@@ -324,11 +321,8 @@ Pool.Game.prototype = {
     },
 
     toggleDebug: function () {
-
         Pool.showDebug = (Pool.showDebug) ? false : true;
-
         this.state.restart();
-
     },
 
     makeBall: function (x, y, color) {
@@ -461,7 +455,7 @@ Pool.Game.prototype = {
 
         this.cueball.reset(this.placeball.x, this.placeball.y);
         this.cueball.body.reset(this.placeball.x, this.placeball.y);
-        this.cueball.visible = false;
+        this.cueball.visible = true;
         //this.cueball.shadow.visible = true;
 
         this.placeball.visible = false;
@@ -534,7 +528,7 @@ Pool.Game.prototype = {
                 // Shows cues and lines once speed is slow enough
                 this.line.visible = false;
                 this.cue.visible = true;
-                this.fill.visible = false;
+                this.fill.visible = true;
             }
         }
         else if (this.speed < 3.0)
