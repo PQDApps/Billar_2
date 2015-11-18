@@ -217,16 +217,16 @@ Pool.Game.prototype = {
 
         //  The cue ball
         //x = 576, x = 264
-        this.cueball = this.makeBall(250, 302, Pool.white);
+        this.cueball = this.makeBall(250, 302, Pool.WHITE);
 
         //  Our placing cue ball and its shadow
-      /*  this.placeball = this.add.sprite(0, 0, 'balls', Pool.WHITE);
+        this.placeball = this.add.sprite(0, 0, 'balls', Pool.WHITE);
         this.placeball.anchor.set(0.5);
         this.placeball.visible = false;
 
-        this.placeballShadow = this.shadows.create(0, 0, 'balls', 4);
-        this.placeballShadow.anchor.set(0.5);
-        this.placeballShadow.visible = false;*/
+        //this.placeballShadow = this.shadows.create(0, 0, 'balls', 4);
+        //this.placeballShadow.anchor.set(0.5);
+        //this.placeballShadow.visible = false;
 
         this.placeRect = new Phaser.Rectangle(112, 128, 576, 352);
 
@@ -261,6 +261,7 @@ Pool.Game.prototype = {
         // Shoot line sprite
         this.line = this.add.sprite(0, 0, 'line');
         this.line.anchor.y = 0.5;
+        this.line.visible = false;
 
         //this.physics.p2.enable(this.line, true);
         //this.line.body.setCircle(10);
@@ -371,14 +372,14 @@ Pool.Game.prototype = {
         var px = (Math.cos(this.aimLine.angle) * speed);
         var py = (Math.sin(this.aimLine.angle) * speed);
 
-        socket.emit('tookShot', px, py);
-
         //this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
         // Hides cue and aim lines when shot happens
         this.line.visible = false;
         this.cue.visible = false;
         this.fill.visible = false;
+
+        socket.emit('tookShot', px, py);
     },
 
     hitPocket: function (ball, pocket) {
@@ -415,7 +416,7 @@ Pool.Game.prototype = {
         this.cueball.body.x = 16;
         this.cueball.body.y = 16;
 
-        this.resetting = false;
+        this.resetting = true;
 
         //  We disable the physics body and stick the ball to the pointer
         this.cueball.visible = false;
@@ -423,7 +424,7 @@ Pool.Game.prototype = {
 
         this.placeball.x = this.input.activePointer.x;
         this.placeball.y = this.input.activePointer.y;
-        this.placeball.visible = false;
+        this.placeball.visible = true;
 
         /*this.placeballShadow.x = this.placeball.x + 10;
         this.placeballShadow.y = this.placeball.y + 10;
@@ -461,10 +462,10 @@ Pool.Game.prototype = {
         this.cueball.reset(this.placeball.x, this.placeball.y);
         this.cueball.body.reset(this.placeball.x, this.placeball.y);
         this.cueball.visible = false;
-       /* this.cueball.shadow.visible = true;*/
+        //this.cueball.shadow.visible = true;
 
         this.placeball.visible = false;
-        /*this.placeballShadow.visible = false;*/
+        //this.placeballShadow.visible = false;
 
         this.resetting = false;
 
@@ -478,11 +479,11 @@ Pool.Game.prototype = {
         this.aimLine.start.set(this.cueball.x, this.cueball.y);
         this.aimLine.end.set(this.input.activePointer.x, this.input.activePointer.y);
 
-       /*this.shootLine.fromAngle(this.cueball.x, this.cueball.y, this.aimLine.angle + 3.14, 1000);
+        this.shootLine.fromAngle(this.cueball.x, this.cueball.y, this.aimLine.angle + 3.14, 1000);
 
         // Places the line on the same angle as the shootLine
         this.line.position.copyFrom(this.shootLine.start);
-        this.line.rotation = this.shootLine.angle;*/
+        this.line.rotation = this.shootLine.angle;
 
         // If mouse isn't pressed, keep cue next to white ball, else follow mouse pointer position
         if (this.pressedDown == false) {
