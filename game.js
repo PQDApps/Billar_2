@@ -366,7 +366,7 @@ Pool.Game.prototype = {
         var px = (Math.cos(this.aimLine.angle) * speed);
         var py = (Math.sin(this.aimLine.angle) * speed);
 
-        //this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
+        this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
         this.speed = 50;
 

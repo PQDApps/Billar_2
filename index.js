@@ -14,40 +14,27 @@ io.on('connection', function(socket){
   console.log('a user connected '+ socket.id);
 
   // Socket chat message
-  socket.on('chat message', onChatMessage);
+  socket.on('chat message', function(msg) {
+    socket.broadcast.emit('chat message', msg);
+  });
 
   // Socket disconnection execute following function
-  socket.on('disconnect', onSocketDisconnect);
+  socket.on('disconnect', function() {
+    console.log("Disconnected from socekt server");
+  });
 
   // Listen for new score
-  socket.on('newscore', onNewScore);
+  socket.on('newscore', function(score) {
+    io.emit('newscore', score);
+    console.log(score + ' + points');
+  });
 
   // Listen for player shooting
-  socket.on('tookShot', onShot);
+  socket.on('tookShot', function(px, py){
+    socket.broadcast.emit('tookShot', px, py);
+    //console.log( px + ' + ' + py);
+  });
 });
-
-
-// On chat message 
-function onChatMessage (msg) {
-  io.emit('chat message', msg);
-}
-
-// Socket disconnected
-function onSocketDisconnect () {
-  console.log('Disconnected from socket server')
-}
-
-// New score
-function onNewScore (score) {
-  io.emit('newscore', score);
-  console.log(score + ' + points');
-}
-
-//Took shot
-function onShot (px, py) {
-  io.emit('tookShot', px, py);
-  //console.log( px + ' + ' + py);
-}
 
 
 http.listen(process.env.PORT || 5000, function(){
