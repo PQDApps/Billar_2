@@ -42,7 +42,7 @@ Pool.Preloader.prototype = {
 
         this.load.bitmapFont('fat-and-tiny');
 
-        this.load.images([ 'logo', 'tableTwo.fw', 'cue', 'fill', 'line']);
+        this.load.images([ 'logo', 'tableTwo.fw', 'ballContainer', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line']);
 
         this.load.spritesheet('balls', 'spriteBalls.png', 24, 24);
 
@@ -146,6 +146,13 @@ Pool.Game.prototype = {
         this.table.body.loadPolygon('table', 'tableJson');
 
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
+        
+        this.ballContainer = this.add.sprite(80, 476, 'ballContainer'); // The container the balls go into once you score
+        this.rightRect = this.add.sprite(722, 0, 'rightRectangle'); // The right light green rectangle
+        this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
+        
+
+
 
         //  The pockets
         this.pockets = this.add.sprite();
@@ -280,7 +287,7 @@ Pool.Game.prototype = {
         this.line.crop(this.lineRect);
 
         //  Score
-        this.scoreText = this.add.bitmapText(16, 0, 'fat-and-tiny', 'SCORE: 0', 32);
+        this.scoreText = this.add.bitmapText(100, 0, 'fat-and-tiny', 'SCORE: 0', 32);
         this.scoreText.text = "SCORE: " + this.score;
         this.scoreText.smoothed = false;
 
