@@ -148,7 +148,7 @@ Pool.Game.prototype = {
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
         
         this.ballContainer = this.add.sprite(80, 476, 'ballContainer'); // The container the balls go into once you score
-        this.rightRect = this.add.sprite(722, 0, 'rightRectangle'); // The right light green rectangle
+        this.rightRect = this.add.sprite(720, 0, 'rightRectangle'); // The right light green rectangle
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
         
 
