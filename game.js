@@ -42,7 +42,7 @@ Pool.Preloader.prototype = {
 
         this.load.bitmapFont('fat-and-tiny');
 
-        this.load.images([ 'logo', 'tableTwo.fw', 'ballContainer', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line']);
+        this.load.images([ 'logo', 'tableTwo.fw', 'ballContainer', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line', 'effectBall', 'effectPointer', 'effectPlus', 'powerMeter', 'powerLevel' ]);
 
         this.load.spritesheet('balls', 'spriteBalls.png', 24, 24);
 
@@ -90,6 +90,8 @@ Pool.Game = function (game) {
 
     this.score = 0;
     this.scoreText = null;
+    
+    this.powerText = null;
 
     this.speed = 0;
     this.allowShotSpeed = 20.0;
@@ -147,8 +149,16 @@ Pool.Game.prototype = {
 
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
         
+        // Rectangles, buttons and graphics around the pool table
         this.ballContainer = this.add.sprite(80, 476, 'ballContainer'); // The container the balls go into once you score
+
         this.rightRect = this.add.sprite(720, 0, 'rightRectangle'); // The right light green rectangle
+        this.effectBall = this.add.sprite(725, 100, 'effectBall'); // The white ball on the right side
+        this.effectPointer = this.add.sprite(740, 116, 'effectPointer'); // The effect pointer circle
+        this.effectPlus = this.add.sprite(750, 124, 'effectPlus'); // The plus sign inside the pointer circle
+        this.powerMeter = this.add.sprite(730, 200, 'powerMeter');
+        this.powerLevel = this.add.sprite(733, 202, 'powerLevel');
+
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
         
 
@@ -290,6 +300,9 @@ Pool.Game.prototype = {
         this.scoreText = this.add.bitmapText(100, 0, 'fat-and-tiny', 'SCORE: 0', 32);
         this.scoreText.text = "SCORE: " + this.score;
         this.scoreText.smoothed = false;
+        
+        this.powerText = this.add.bitmapText(500, 0, 'fat-and-tiny', 'POWER', 32);
+        
 
         //  Press P to pause and resume the game
         this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
