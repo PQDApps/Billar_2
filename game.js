@@ -156,7 +156,13 @@ Pool.Game.prototype = {
         this.rightRect = this.add.sprite(720, 0, 'rightRectangle'); // The right light green rectangle
         this.effectBall = this.add.sprite(725, 100, 'effectBall'); // The white ball on the right side
         this.effectPointer = this.add.sprite(740, 116, 'effectPointer'); // The effect pointer circle
+        //this.effectPointer.inputEnabled = true;
+        //this.effectPointer.events.onInputDown.add(this.movePlus, this);
+
         this.effectPlus = this.add.sprite(750, 124, 'effectPlus'); // The plus sign inside the pointer circle
+        this.effectPlus.inputEnabled = true;
+        this.effectPlus.input.enableDrag();
+
         this.powerMeter = this.add.sprite(730, 200, 'powerMeter');
         this.powerLevel = this.add.sprite(733, 442, 'powerLevel');
         this.powerRect = new Phaser.Rectangle(0, 0, 26, 0);
@@ -325,12 +331,17 @@ Pool.Game.prototype = {
         socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
         socket.on('tookShot', this.shotTaken.bind(this));
     },
+    
+    movePlus : function (sprite, pointer) {
+        this.effectPlus.x = pointer.x;
+        this.effectPlus.y = pointer.y;
+    },
 
     pressed : function () {
-        var x1 = 80;
-        var x2 = 720;
-        var y1 = 125;
-        var y2 = 475;
+        var x1 = 80; // left x point of table
+        var x2 = 720; // right x point of table
+        var y1 = 125; // Top y point of table
+        var y2 = 475; // Bottom y point of table 
         
         var x = this.input.activePointer.x;
         var y = this.input.activePointer.y;
@@ -389,10 +400,10 @@ Pool.Game.prototype = {
             return;
         }
         
-        var x1 = 80 - 40;
-        var x2 = 720 + 40;
-        var y1 = 125 - 40;
-        var y2 = 475 + 40;
+        var x1 = 80 - 60;
+        var x2 = 720 + 60;
+        var y1 = 125 - 60;
+        var y2 = 475 + 60;
         
         var x = this.input.activePointer.x;
         var y = this.input.activePointer.y;
@@ -568,6 +579,23 @@ Pool.Game.prototype = {
             this.updateCue();
         }
 
+        if (this.checkOverlap(this.effectPointer, this.effectPlus)) {
+            console.log("true");
+        }
+        else {
+            this.effectPlus.input.draggable = false;
+            //this.effectPlus.input.enableDrag();
+            this.effectPlus.x = 750;
+            this.effectPlus.y = 124;
+            this.effectPlus.input.draggable = true;
+        }
+    },
+    
+    checkOverlap: function (spriteA, spriteB) {
+        var boundsA = spriteA.getBounds();
+        var boundsB = spriteB.getBounds();
+
+        return Phaser.Rectangle.intersects(boundsA, boundsB);
     },
 
     updateSpeed: function () {
