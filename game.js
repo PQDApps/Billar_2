@@ -102,6 +102,7 @@ Pool.Game = function (game) {
     this.cue = null;
     this.fill = null;
     this.fillRect = null;
+    this.powerRect = null;
     this.aimLine = null;
     this.line = null; // The sprite line that shows where you are aiming
     this.shootLine = null; // The geometry line that shows aiming, only shows in debug
@@ -157,7 +158,12 @@ Pool.Game.prototype = {
         this.effectPointer = this.add.sprite(740, 116, 'effectPointer'); // The effect pointer circle
         this.effectPlus = this.add.sprite(750, 124, 'effectPlus'); // The plus sign inside the pointer circle
         this.powerMeter = this.add.sprite(730, 200, 'powerMeter');
-        this.powerLevel = this.add.sprite(733, 202, 'powerLevel');
+        this.powerLevel = this.add.sprite(733, 442, 'powerLevel');
+        this.powerRect = new Phaser.Rectangle(0, 0, 26, 0);
+        //this.powerLevel.anchor.setTo(.5, 1);
+        //this.powerLevel.anchor.x = 1;
+        this.powerLevel.anchor.y = 1;
+        this.powerLevel.crop(this.powerRect);
 
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
         
@@ -267,7 +273,7 @@ Pool.Game.prototype = {
 
         this.fill = this.add.sprite(0, 0, 'fill');
         this.fill.anchor.y = 0.5;
-        this.fillRect = new Phaser.Rectangle(0, 0, 332, 6);
+        this.fillRect = new Phaser.Rectangle(0, 0, 6, 332);
 
         this.fill.crop(this.fillRect);
 
@@ -278,7 +284,7 @@ Pool.Game.prototype = {
         // Shoot line sprite
         this.line = this.add.sprite(0, 0, 'line');
         this.line.anchor.y = 0.5;
-        this.line.visible = false;
+        this.line.visible = true;
 
         //this.physics.p2.enable(this.line, true);
         //this.line.body.setCircle(10);
@@ -294,7 +300,7 @@ Pool.Game.prototype = {
         //this.lineRect.body.data.shapes[0].sensor = true;
 
         //this.lineRect.sensor = true;
-        this.line.crop(this.lineRect);
+        //this.line.crop(this.lineRect);
 
         //  Score
         this.scoreText = this.add.bitmapText(100, 0, 'fat-and-tiny', 'SCORE: 0', 32);
@@ -394,6 +400,8 @@ Pool.Game.prototype = {
         this.line.visible = false;
         this.cue.visible = false;
         this.fill.visible = false;
+        this.powerRect.height = 0;
+        this.powerLevel.updateCrop();
 
         socket.emit('tookShot', px, py);
     },
@@ -507,6 +515,8 @@ Pool.Game.prototype = {
         } else {
             this.cue.x = this.input.activePointer.x;
             this.cue.y = this.input.activePointer.y;
+            this.powerRect.height = this.aimLine.length;
+            this.powerLevel.updateCrop();
         }
         //this.cue.x = this.input.activePointer.x;
         //this.cue.y = this.input.activePointer.y;
@@ -515,9 +525,9 @@ Pool.Game.prototype = {
         this.fill.position.copyFrom(this.aimLine.start);
         this.fill.rotation = this.aimLine.angle;
 
-        this.fillRect.width = this.aimLine.length;
-        this.fill.updateCrop();
-
+        //this.fillRect.width = this.aimLine.length;
+        //this.fill.updateCrop();
+        
         this.scoreText.text = "SCORE: " + this.score;
 
     },
@@ -548,7 +558,7 @@ Pool.Game.prototype = {
             if (!this.cue.visible)
             {
                 // Shows cues and lines once speed is slow enough
-                this.line.visible = false;
+                this.line.visible = true;
                 this.cue.visible = true;
                 this.fill.visible = true;
             }
