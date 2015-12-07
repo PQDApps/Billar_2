@@ -327,7 +327,17 @@ Pool.Game.prototype = {
     },
 
     pressed : function () {
-        this.pressedDown = true;
+        var x1 = 80;
+        var x2 = 720;
+        var y1 = 125;
+        var y2 = 475;
+        
+        var x = this.input.activePointer.x;
+        var y = this.input.activePointer.y;
+        
+        if (x > x1 && x < x2 && y > y1 && y < y2) {
+            this.pressedDown = true;
+        }
     },
 
     updateScore: function (score) {
@@ -378,32 +388,43 @@ Pool.Game.prototype = {
         {
             return;
         }
+        
+        var x1 = 80 - 40;
+        var x2 = 720 + 40;
+        var y1 = 125 - 40;
+        var y2 = 475 + 40;
+        
+        var x = this.input.activePointer.x;
+        var y = this.input.activePointer.y;
 
-        var speed = (this.aimLine.length / 3);
+        if (x > x1 && x < x2 && y > y1 && y < y2 && this.pressedDown == true){
+            var speed = (this.aimLine.length / 3);
 
-        if (speed > 112)
-        {
-            speed = 112;
+            if (speed > 112)
+            {
+                speed = 112;
+            }
+
+            //this.updateCue();
+            //this.pressedDown = false; // Mouse no longer pressed
+
+            var px = (Math.cos(this.aimLine.angle) * speed);
+            var py = (Math.sin(this.aimLine.angle) * speed);
+
+            this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
+
+            this.speed = 50;
+
+            // Hides cue and aim lines when shot happens
+            this.line.visible = false;
+            this.cue.visible = false;
+            this.fill.visible = false;
+            this.powerRect.height = 0;
+            this.powerLevel.updateCrop();
+
+            socket.emit('tookShot', px, py);
         }
-
-        //this.updateCue();
         this.pressedDown = false; // Mouse no longer pressed
-
-        var px = (Math.cos(this.aimLine.angle) * speed);
-        var py = (Math.sin(this.aimLine.angle) * speed);
-
-        this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
-
-        this.speed = 50;
-
-        // Hides cue and aim lines when shot happens
-        this.line.visible = false;
-        this.cue.visible = false;
-        this.fill.visible = false;
-        this.powerRect.height = 0;
-        this.powerLevel.updateCrop();
-
-        socket.emit('tookShot', px, py);
     },
 
     hitPocket: function (ball, pocket) {
