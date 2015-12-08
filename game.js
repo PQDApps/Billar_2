@@ -19,6 +19,11 @@ var Pool = {
 };
 
 var socket = io();
+socket.emit('assignNumber');
+socket.on('assignNumber', function(i){
+    console.log(i);
+})
+
 
 Pool.Preloader = function () {};
 
@@ -432,7 +437,6 @@ Pool.Game.prototype = {
             this.fill.visible = false;
             this.powerRect.height = 0;
             this.powerLevel.updateCrop();
-
             socket.emit('tookShot', px, py);
         }
         this.pressedDown = false; // Mouse no longer pressed
@@ -448,7 +452,11 @@ Pool.Game.prototype = {
         else
         {
             /*ball.sprite.shadow.destroy();*/
+            console.log(ball.sprite);
             ball.sprite.destroy();
+
+            //ball.sprite.x = this.ballContainer.x;
+            //ball.sprite.y = this.ballContainer.y;
 
             this.score += 30;
             //this.scoreText.text = "SCORE: " + this.score;

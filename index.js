@@ -8,10 +8,18 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/game.html');
 });
 
+var numberOfClients = 0; // Keep track of clients connected to socket
+
 // New socket connection
 io.on('connection', function(socket){
   // Socket connection successful
   console.log('a user connected '+ socket.id);
+  numberOfClients++; //Increment when user connects
+
+  socket.on('assignNumber', function(){
+    var i = numberOfClients;
+    io.emit('assignNumber', i);
+  });
 
   // Socket chat message
   socket.on('chat message', function(msg) {
@@ -20,6 +28,7 @@ io.on('connection', function(socket){
 
   // Socket disconnection execute following function
   socket.on('disconnect', function() {
+    numberOfClients--; // Decrement when user disconnects
     console.log("Disconnected from socekt server");
   });
 
