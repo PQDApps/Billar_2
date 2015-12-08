@@ -18,7 +18,7 @@ io.on('connection', function(socket){
 
   socket.on('assignNumber', function(){
     var i = numberOfClients;
-    io.emit('assignNumber', i);
+    socket.emit('assignNumber', i);
   });
 
   // Socket chat message

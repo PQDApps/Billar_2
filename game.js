@@ -19,11 +19,24 @@ var Pool = {
 };
 
 var socket = io();
+var playerNumber = 0;
 socket.emit('assignNumber');
 socket.on('assignNumber', function(i){
-    console.log(i);
+    var iDivided = i/2;
+    var isWhole = isInt(iDivided);
+    if (isWhole == true){
+        playerNumber = 2;
+    }
+    else{
+        playerNumber = 1;
+    }
+    //playerNumber = i;
+    console.log(playerNumber);
 })
 
+function isInt(i) {
+   return i % 1 === 0;
+}
 
 Pool.Preloader = function () {};
 
@@ -318,8 +331,10 @@ Pool.Game.prototype = {
         this.scoreText.text = "SCORE: " + this.score;
         this.scoreText.smoothed = false;
         
-        this.powerText = this.add.bitmapText(500, 0, 'fat-and-tiny', 'POWER', 32);
+        this.powerText = this.add.bitmapText(728, 450, 'fat-and-tiny', 'POWER', 28);
         
+        this.playerNumber = this.add.bitmapText(728, 450, 'fat-and-tiny', 'POWER', 28);
+
 
         //  Press P to pause and resume the game
         this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
@@ -588,7 +603,7 @@ Pool.Game.prototype = {
         }
 
         if (this.checkOverlap(this.effectPointer, this.effectPlus)) {
-            console.log("true");
+            //console.log("true");
         }
         else {
             this.effectPlus.input.draggable = false;
