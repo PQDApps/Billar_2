@@ -333,7 +333,7 @@ Pool.Game.prototype = {
         
         this.powerText = this.add.bitmapText(728, 450, 'fat-and-tiny', 'POWER', 28);
         
-        this.playerNumber = this.add.bitmapText(728, 450, 'fat-and-tiny', 'POWER', 28);
+        this.playerNumberText = this.add.bitmapText(590, 0, 'fat-and-tiny', 'PLAYER '+playerNumber, 32);
 
 
         //  Press P to pause and resume the game
