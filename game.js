@@ -137,6 +137,7 @@ Pool.Game = function (game) {
     this.debugKey = null;
 
     this.pressedDown = false;
+    this.solidOrStripe = '';
     this.id = socket.id;
     // this.socket = io() //io.connect("http://localhost", {port: 5000, transports: ["websocket"]});
     //this.socket.listen(http);
@@ -335,6 +336,8 @@ Pool.Game.prototype = {
         
         this.playerNumberText = this.add.bitmapText(590, 0, 'fat-and-tiny', 'PLAYER '+playerNumber, 32);
 
+        this.firstBall = true;
+        this.ssText = this.add.bitmapText(590, 30, 'fat-and-tiny', this.solidOrStripe, 28);
 
         //  Press P to pause and resume the game
         this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
@@ -395,7 +398,16 @@ Pool.Game.prototype = {
     makeBall: function (x, y, color) {
 
         var ball = this.balls.create(x, y, 'balls', color);
-
+        //var colorInt = color/2;
+        //var isWhole = isInt(colorInt);
+        if (color > 8){
+            ball.isStripe = 1; // 1 means Ball is stripe
+        } else if (color < 8){
+            ball.isStripe = 0; // 0 means Ball is not stripe
+        } else{
+            ball.isStripe = 8; // 8 for the 8 ball
+        }
+        console.log(ball.isStripe);
         ball.body.setCircle(12);
         ball.body.fixedRotation = true;
         ball.body.setMaterial(this.ballMaterial);
@@ -466,8 +478,16 @@ Pool.Game.prototype = {
         }
         else
         {
+            if (this.score == 0){
+                if(ball.sprite.isStripe == 0){
+                    this.ssText.text = 'SOLID';
+                } else if (ball.sprite.isStripe == 1){
+                    this.ssText.text = 'STRIPE';
+                }
+                this.firstBall = true;
+            }
             /*ball.sprite.shadow.destroy();*/
-            console.log(ball.sprite);
+            console.log(ball.isStripe);
             ball.sprite.destroy();
 
             //ball.sprite.x = this.ballContainer.x;
