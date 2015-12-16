@@ -227,6 +227,9 @@ Pool.Game.prototype = {
 
         this.ballMaterial = this.physics.p2.createMaterial('ballMaterial');
 
+        this.ballCollisionGroup = this.physics.p2.createCollisionGroup();
+        this.cueballCollisionGroup = this.physics.p2.createCollisionGroup();
+
         //  Row 1 (5 balls)
 
         var y = 250;
@@ -267,7 +270,11 @@ Pool.Game.prototype = {
 
         //  The cue ball
         //x = 576, x = 264
-        this.cueball = this.makeBall(250, 302, Pool.WHITE);
+        this.cueball = this.makeCueBall(250, 302, Pool.WHITE);
+        this.cueball.body.onBeginContact.add(this.hitBall, this);
+        //this.cueball.body.createBodyCallback(this.balls, this.hitBall, this);
+        //this.cueball.body.collides([this.ballCollisionGroup, this.cueballCollisionGroup]);
+        //this.cueball.body.collides(this.ballCollisionGroup, this.hitBall, this);
 
         //  Our placing cue ball and its shadow
         this.placeball = this.add.sprite(0, 0, 'balls', Pool.WHITE);
@@ -404,11 +411,15 @@ Pool.Game.prototype = {
         //var isWhole = isInt(colorInt);
         if (color > 8){
             ball.isStripe = 1; // 1 means Ball is stripe
+            ball.body.setCollisionGroup(this.ballCollisionGroup);
         } else if (color < 8){
             ball.isStripe = 0; // 0 means Ball is not stripe
+            ball.body.setCollisionGroup(this.ballCollisionGroup);
         } else{
             ball.isStripe = 8; // 8 for the 8 ball
+            ball.body.setCollisionGroup(this.cueballCollisionGroup);
         }
+        ball.body.collides([this.cueballCollisionGroup, this.ballCollisionGroup]);
         //console.log(ball.isStripe);
         ball.body.setCircle(12);
         ball.body.fixedRotation = true;
@@ -416,7 +427,6 @@ Pool.Game.prototype = {
         ball.body.damping = 0.70;
         ball.body.angularDamping = 0.75;
         ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
-
         //  Link the two sprites together
       /* var shadow = this.shadows.create(x + 4, y + 4, 'balls', 2);
         shadow.anchor.set(0.5);
@@ -427,6 +437,18 @@ Pool.Game.prototype = {
 
     },
 
+    makeCueBall: function (x, y, color) {
+        var ball = this.add.sprite(x, y, 'balls', color);
+        this.physics.p2.enable(ball,false);
+        ball.body.setCircle(12);
+        ball.body.fixedRotation = true;
+        ball.body.setMaterial(this.ballMaterial);
+        ball.body.damping = 0.70;
+        ball.body.angularDamping = 0.75;
+        ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
+        return ball;
+    },
+
     takeShot: function () {
 
         if (this.speed > this.allowShotSpeed)
@@ -434,12 +456,13 @@ Pool.Game.prototype = {
             return;
         }
 
-        var upDown = this.effectPlus.y - this.effectBall.y - 24;
-        var leftRight = this.effectPlus.x - this.effectBall.x - 25;
+        var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
+        var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
         
         console.log(upDown);
         console.log(leftRight);
 
+        // Set the effect of the shot depending on the plus sign location
         if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
             this.effect = "stop";
         } else if(upDown > 18 && leftRight < 5 && leftRight > -5){
@@ -488,6 +511,31 @@ Pool.Game.prototype = {
             socket.emit('tookShot', px, py);
         }
         this.pressedDown = false; // Mouse no longer pressed
+    },
+
+    // Function executed when cueball collides with anything
+    hitBall: function(body, bodyB, shapeA, shapeB, equation){
+        console.log("HIT BALL FUNCTION");
+        if(body){
+            this.time.events.add(50, this.doEffect, this);
+            var result = "You last hit: " + body.sprite.key;
+            console.log(result);
+        }
+    },
+
+    // This executes the effect
+    doEffect: function(){
+        var e = this.effect;
+        if(e == "stop"){
+            this.cueball.body.setZeroVelocity();
+        } else if (e == "back"){
+
+        } else if (e == "left"){
+
+        } else if (e == "right"){
+
+        }
+        console.log("YOYOYOYO");
     },
 
     hitPocket: function (ball, pocket) {
