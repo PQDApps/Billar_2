@@ -182,6 +182,8 @@ Pool.Game.prototype = {
         this.effectPlus.inputEnabled = true;
         this.effectPlus.input.enableDrag();
 
+        this.effect = "none"; //Effect parameter: none, stop, back, left, right
+
         this.powerMeter = this.add.sprite(730, 200, 'powerMeter');
         this.powerLevel = this.add.sprite(733, 442, 'powerLevel');
         this.powerRect = new Phaser.Rectangle(0, 0, 26, 0);
@@ -407,7 +409,7 @@ Pool.Game.prototype = {
         } else{
             ball.isStripe = 8; // 8 for the 8 ball
         }
-        console.log(ball.isStripe);
+        //console.log(ball.isStripe);
         ball.body.setCircle(12);
         ball.body.fixedRotation = true;
         ball.body.setMaterial(this.ballMaterial);
@@ -431,6 +433,25 @@ Pool.Game.prototype = {
         {
             return;
         }
+
+        var upDown = this.effectPlus.y - this.effectBall.y - 24;
+        var leftRight = this.effectPlus.x - this.effectBall.x - 25;
+        
+        console.log(upDown);
+        console.log(leftRight);
+
+        if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
+            this.effect = "stop";
+        } else if(upDown > 18 && leftRight < 5 && leftRight > -5){
+            this.effect = "back";
+        } else if(leftRight > 12 && upDown < 5 && upDown > -5 ){
+            this.effect = "right";
+        } else if(leftRight < -12 && upDown < 5 && upDown > -5  ){
+            this.effect = "left";
+        } else {
+            this.effect = "none";
+        }
+        console.log(this.effect);
         
         var x1 = 80 - 60;
         var x2 = 720 + 60;
