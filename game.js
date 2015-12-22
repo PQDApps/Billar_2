@@ -183,6 +183,10 @@ Pool.Game.prototype = {
         this.effectPlus.input.enableDrag();
 
         this.effect = "none"; //Effect parameter: none, stop, back, left, right
+        this.angle = 0; // Holds the original angle of the shot to calculate the effect
+        this.firstCollision = 0; // Holds to say if it's the first collision of the cueball
+        this.effectSpeed = 0;
+
 
         this.powerMeter = this.add.sprite(730, 200, 'powerMeter');
         this.powerLevel = this.add.sprite(733, 442, 'powerLevel');
@@ -347,7 +351,7 @@ Pool.Game.prototype = {
 
         this.firstBall = true;
         this.ssText = this.add.bitmapText(590, 30, 'fat-and-tiny', this.solidOrStripe, 28);
-
+        
         //  Press P to pause and resume the game
         this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
         this.pauseKey.onDown.add(this.togglePause, this);
@@ -497,6 +501,9 @@ Pool.Game.prototype = {
 
             var px = (Math.cos(this.aimLine.angle) * speed);
             var py = (Math.sin(this.aimLine.angle) * speed);
+            
+            this.angle = this.aimLine.angle;
+            this.effectSpeed = speed;
 
             this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
@@ -524,18 +531,26 @@ Pool.Game.prototype = {
     },
 
     // This executes the effect
-    doEffect: function(){
-        var e = this.effect;
-        if(e == "stop"){
-            this.cueball.body.setZeroVelocity();
-        } else if (e == "back"){
+    doEffect: function (){
+        if (this.firstCollision == 0) {
+            this.firstCollision = 1;
+            var e = this.effect;
+            if (e == "stop") {
+                this.cueball.body.setZeroVelocity();
+            } else if (e == "back") {
 
-        } else if (e == "left"){
-
-        } else if (e == "right"){
-
+            } else if (e == "left") {
+                var newAngle = this.angle + 1.5708;
+                var px = (Math.cos(newAngle) * this.effectSpeed - 40);
+                var py = (Math.sin(newAngle) * this.effectSpeed - 40);
+                this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
+            } else if (e == "right") {
+                var newAngle = this.angle - 1.5708;
+                var px = (Math.cos(newAngle) * this.effectSpeed - 40);
+                var py = (Math.sin(newAngle) * this.effectSpeed - 40);
+                this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
+            }
         }
-        console.log("YOYOYOYO");
     },
 
     hitPocket: function (ball, pocket) {
@@ -727,6 +742,7 @@ Pool.Game.prototype = {
         else if (this.speed < 3.0)
         {
             this.cueball.body.setZeroVelocity();
+            this.firstCollision = 0;
         }
 
     },
