@@ -60,7 +60,7 @@ Pool.Preloader.prototype = {
 
         this.load.bitmapFont('fat-and-tiny');
 
-        this.load.images([ 'logo', 'tableTwo.fw', 'ballContainer', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line', 'effectBall', 'effectPointer', 'effectPlus', 'powerMeter', 'powerLevel' ]);
+        this.load.images([ 'logo', 'tableTwo.fw', 'ballContainerTwo', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line', 'effectBall', 'effectPointer', 'effectPlus', 'powerMeter', 'powerLevel' ]);
 
         this.load.spritesheet('balls', 'spriteBalls.png', 24, 24);
 
@@ -170,7 +170,7 @@ Pool.Game.prototype = {
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
         
         // Rectangles, buttons and graphics around the pool table
-        this.ballContainer = this.add.sprite(80, 476, 'ballContainer'); // The container the balls go into once you score
+        this.ballContainer = this.add.sprite(80, 476, 'ballContainerTwo'); // The container the balls go into once you score
 
         this.rightRect = this.add.sprite(720, 0, 'rightRectangle'); // The right light green rectangle
         this.effectBall = this.add.sprite(725, 100, 'effectBall'); // The white ball on the right side
@@ -580,6 +580,7 @@ Pool.Game.prototype = {
             }
             /*ball.sprite.shadow.destroy();*/
             console.log(ball.isStripe);
+            this.makeBall(150, 484, Pool.violet);
             ball.sprite.destroy();
 
             //ball.sprite.x = this.ballContainer.x;
