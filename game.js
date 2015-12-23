@@ -165,7 +165,7 @@ Pool.Game.prototype = {
 
         this.table.body.static = true;
         this.table.body.clearShapes();
-        this.table.body.loadPolygon('table', 'tableJson');
+        this.table.body.loadPolygon('table', 'table');
 
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
         
@@ -504,9 +504,9 @@ Pool.Game.prototype = {
             
             this.angle = this.aimLine.angle;
             if(speed > 10){
-                this.effectSpeed = speed/3;
+                this.effectSpeed = speed/4;
             } else {
-                this.effectSpeed = speed/3;
+                this.effectSpeed = speed/4;
             }
 
             this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
@@ -543,7 +543,10 @@ Pool.Game.prototype = {
             if (e == "stop") {
                 this.cueball.body.setZeroVelocity();
             } else if (e == "back") {
-
+                var newAngle = this.angle + 3.14;
+                var px = (Math.cos(newAngle) * this.effectSpeed);
+                var py = (Math.sin(newAngle) * this.effectSpeed);
+                this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "left") {
                 var newAngle = this.angle - 1.5708;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
