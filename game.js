@@ -18,6 +18,12 @@ var Pool = {
     strViolet: 15,
 };
 
+var Player = {
+    name: null,
+    number: null,
+    
+}
+
 var socket = io();
 var playerNumber = 0;
 socket.emit('assignNumber');
@@ -115,6 +121,7 @@ Pool.Game = function (game) {
     this.allowShotSpeed = 5.0;
 
     this.balls = null;
+    this.pocketBalls = null;
    // this.shadows = null;
 
     this.cue = null;
@@ -169,6 +176,9 @@ Pool.Game.prototype = {
 
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
         
+        this.pocketBalls = this.add.physicsGroup(Phaser.Physics.P2JS);
+        this.pocketBalls.enableBodyDebug = Pool.showDebug;
+
         // Rectangles, buttons and graphics around the pool table
         this.ballContainer = this.add.sprite(80, 476, 'ballContainerTwo'); // The container the balls go into once you score
 
@@ -429,12 +439,25 @@ Pool.Game.prototype = {
         ball.body.damping = 0.70;
         ball.body.angularDamping = 0.75;
         ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
-        //  Link the two sprites together
-      /* var shadow = this.shadows.create(x + 4, y + 4, 'balls', 2);
-        shadow.anchor.set(0.5);
 
-        ball.shadow = shadow;*/
+        return ball;
 
+    },
+
+    makePocketBall: function (x, y, color) {
+
+        var ball = this.pocketBalls.create(x, y, 'balls', color);
+        ball.color = color;
+
+        //ball.body.collides([this.cueballCollisionGroup, this.ballCollisionGroup]);
+        /*
+        ball.body.setCircle(12);
+        ball.body.fixedRotation = true;
+        ball.body.setMaterial(this.ballMaterial);
+        ball.body.damping = 0.70;
+        ball.body.angularDamping = 0.75;
+        ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
+        */
         return ball;
 
     },
@@ -578,7 +601,7 @@ Pool.Game.prototype = {
             }
             /*ball.sprite.shadow.destroy();*/
             console.log(ball.isStripe);
-            this.makeBall(150, 484, ball.sprite.color);
+            this.makePocketBall(150, 496, ball.sprite.color);
             ball.sprite.destroy();
 
             //ball.sprite.x = this.ballContainer.x;
