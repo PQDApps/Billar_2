@@ -212,11 +212,11 @@ Pool.Game.prototype = {
 
         this.pockets.body.addCircle(14, 118, 164); // Top left pocket 14
         this.pockets.body.addCircle(10, 400, 152); // Top center pocket 10
-        this.pockets.body.addCircle(14, 682, 164); // Top right pocket
+        this.pockets.body.addCircle(42, 682, 164); // Top right pocket
 
         this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
         this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
-        this.pockets.body.addCircle(14, 682, 436); // Bottom right pocket
+        this.pockets.body.addCircle(42, 682, 436); // Bottom right pocket
 
         //  Ball shadows
         //this.shadows = this.add.group();
@@ -411,8 +411,7 @@ Pool.Game.prototype = {
     makeBall: function (x, y, color) {
 
         var ball = this.balls.create(x, y, 'balls', color);
-        //var colorInt = color/2;
-        //var isWhole = isInt(colorInt);
+        ball.color = color;
         if (color > 8){
             ball.isStripe = 1; // 1 means Ball is stripe
             ball.body.setCollisionGroup(this.ballCollisionGroup);
@@ -424,7 +423,6 @@ Pool.Game.prototype = {
             ball.body.setCollisionGroup(this.cueballCollisionGroup);
         }
         ball.body.collides([this.cueballCollisionGroup, this.ballCollisionGroup]);
-        //console.log(ball.isStripe);
         ball.body.setCircle(12);
         ball.body.fixedRotation = true;
         ball.body.setMaterial(this.ballMaterial);
@@ -580,7 +578,7 @@ Pool.Game.prototype = {
             }
             /*ball.sprite.shadow.destroy();*/
             console.log(ball.isStripe);
-            this.makeBall(150, 484, Pool.violet);
+            this.makeBall(150, 484, ball.sprite.color);
             ball.sprite.destroy();
 
             //ball.sprite.x = this.ballContainer.x;
