@@ -165,6 +165,9 @@ Pool.Game.prototype = {
 
         this.stage.backgroundColor = 0x001b07;
 
+        this.pocketBalls = this.add.physicsGroup(Phaser.Physics.P2JS);
+        this.pocketBalls.enableBodyDebug = Pool.showDebug;
+
         //  The table
         this.table = this.add.sprite(400, 300, 'tableTwo.fw');
 
@@ -175,12 +178,9 @@ Pool.Game.prototype = {
         this.table.body.loadPolygon('table', 'table');
 
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
-        
-        this.pocketBalls = this.add.physicsGroup(Phaser.Physics.P2JS);
-        this.pocketBalls.enableBodyDebug = Pool.showDebug;
 
         // Rectangles, buttons and graphics around the pool table
-        this.ballContainer = this.add.sprite(80, 476, 'ballContainerTwo'); // The container the balls go into once you score
+        this.ballContainer = this.add.sprite(80, 474, 'ballContainerTwo'); // The container the balls go into once you score
 
         this.rightRect = this.add.sprite(720, 0, 'rightRectangle'); // The right light green rectangle
         this.effectBall = this.add.sprite(725, 100, 'effectBall'); // The white ball on the right side
@@ -222,7 +222,7 @@ Pool.Game.prototype = {
 
         this.pockets.body.addCircle(14, 118, 164); // Top left pocket 14
         this.pockets.body.addCircle(10, 400, 152); // Top center pocket 10
-        this.pockets.body.addCircle(42, 682, 164); // Top right pocket
+        this.pockets.body.addCircle(14, 682, 164); // Top right pocket
 
         this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
         this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
@@ -448,7 +448,15 @@ Pool.Game.prototype = {
 
         var ball = this.pocketBalls.create(x, y, 'balls', color);
         ball.color = color;
-
+        ball.body.setCircle(10);
+        ball.body.setMaterial(this.ballMaterial);
+        ball.body.fixedRotation = true;
+        //ball.body.bounce = 0;
+        ball.body.applyImpulse([ -40, 0 ], ball.x, ball.y);
+        //ball.body.velocity.x = -55;
+        ball.body.damping = 0.70;
+        ball.body.angularDamping = 0.75;
+        ball.body.onBeginContact.add(this.stopPocketBall, this);
         //ball.body.collides([this.cueballCollisionGroup, this.ballCollisionGroup]);
         /*
         ball.body.setCircle(12);
@@ -460,6 +468,13 @@ Pool.Game.prototype = {
         */
         return ball;
 
+    },
+
+    stopPocketBall: function(body, bodyB, shapeA, shapeB, equation) {
+        console.log("Stuff");
+        if(body){
+            //body.setZeroVelocity();
+        }
     },
 
     makeCueBall: function (x, y, color) {
@@ -601,7 +616,7 @@ Pool.Game.prototype = {
             }
             /*ball.sprite.shadow.destroy();*/
             console.log(ball.isStripe);
-            this.makePocketBall(150, 496, ball.sprite.color);
+            this.makePocketBall(150, 495, ball.sprite.color);
             ball.sprite.destroy();
 
             //ball.sprite.x = this.ballContainer.x;
