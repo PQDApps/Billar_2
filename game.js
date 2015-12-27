@@ -21,7 +21,8 @@ var Pool = {
 var Player = {
     name: null,
     number: null,
-    
+    isStripe: false,
+    isSolid: false,
 }
 
 var socket = io();
@@ -115,6 +116,10 @@ Pool.Game = function (game) {
     this.score = 0;
     this.scoreText = null;
     
+    this.mode = {
+        
+    };
+
     this.powerText = null;
 
     this.speed = 0;
@@ -376,6 +381,9 @@ Pool.Game.prototype = {
 
         socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
         socket.on('tookShot', this.shotTaken.bind(this));
+
+
+        this.resetCueBall();
     },
     
     movePlus : function (sprite, pointer) {
@@ -659,7 +667,7 @@ Pool.Game.prototype = {
         this.placeballShadow.visible = true;*/
 
         this.input.onUp.remove(this.takeShot, this);
-        this.input.onDown.add(this.placeCueBall, this);
+        this.input .onDown.add(this.placeCueBall, this);
 
     },
 
