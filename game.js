@@ -70,6 +70,7 @@ Pool.Preloader.prototype = {
         this.load.images([ 'logo', 'tableTwo.fw', 'ballContainerTwo', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line', 'effectBall', 'effectPointer', 'effectPlus', 'powerMeter', 'powerLevel' ]);
 
         this.load.spritesheet('balls', 'spriteBalls.png', 24, 24);
+        this.load.spritesheet('startBtn','startBtnSheet.png', 67, 28);
 
         this.load.physics('table');
 
@@ -211,8 +212,8 @@ Pool.Game.prototype = {
         this.powerLevel.crop(this.powerRect);
 
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
-        
-
+        this.startButton = this.add.button(8, 40, 'startBtn', this.hitPocket, this, 2, 0, 1);
+        //this.startButton.onInputOver(over, this.startButton);
 
 
         //  The pockets
