@@ -117,7 +117,9 @@ Pool.Game = function (game) {
     this.scoreText = null;
     
     this.mode = {
-        
+        practice: false,
+        multiplayer: false,
+        singleplayer: false,
     };
 
     this.powerText = null;
@@ -151,9 +153,6 @@ Pool.Game = function (game) {
     this.pressedDown = false;
     this.solidOrStripe = '';
     this.id = socket.id;
-    // this.socket = io() //io.connect("http://localhost", {port: 5000, transports: ["websocket"]});
-    //this.socket.listen(http);
-
 };
 
 Pool.Game.prototype = {
@@ -382,7 +381,7 @@ Pool.Game.prototype = {
         socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
         socket.on('tookShot', this.shotTaken.bind(this));
 
-
+        this.cue.visible = false;
         this.resetCueBall();
     },
     
