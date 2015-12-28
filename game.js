@@ -71,6 +71,9 @@ Pool.Preloader.prototype = {
 
         this.load.spritesheet('balls', 'spriteBalls.png', 24, 24);
         this.load.spritesheet('startBtn','startBtnSheet.png', 67, 28);
+        this.load.spritesheet('practiceBtn','practiceBtnSheet.png', 67, 28);
+        this.load.spritesheet('standupBtn','standupBtnSheet.png', 67, 28);
+
 
         this.load.physics('table');
 
@@ -212,7 +215,9 @@ Pool.Game.prototype = {
         this.powerLevel.crop(this.powerRect);
 
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
-        this.startButton = this.add.button(8, 40, 'startBtn', this.hitPocket, this, 2, 0, 1);
+        this.startButton = this.add.button(8, 60, 'startBtn', this.hitPocket, this, 2, 0, 1);
+        this.practiceButton = this.add.button(8, 100, 'practiceBtn', this.hitPocket, this, 2, 0, 1);
+        this.standupButton = this.add.button(8, 160, 'standupBtn', this.hitPocket, this, 2, 0, 1);
         //this.startButton.onInputOver(over, this.startButton);
 
 
@@ -304,7 +309,7 @@ Pool.Game.prototype = {
         //this.placeballShadow.anchor.set(0.5);
         //this.placeballShadow.visible = false;
 
-        this.placeRect = new Phaser.Rectangle(112, 128, 576, 352);
+        this.placeRect = new Phaser.Rectangle(138, 182, 526, 236);
 
         //  P2 Impact Events
 
