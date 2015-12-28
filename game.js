@@ -146,10 +146,12 @@ Pool.Game = function (game) {
 
     this.cueball = null;
 
-    this.resetting = false;
+    this.resetting = false; // Wether it's resetting because cue ball fell in pocket
+    this.firstPlacement = false; // Holds the value if it's the first time you place the cue ball
     this.placeball = null;
    // this.placeballShadow = null;
     this.placeRect = null;
+    this.cueballPlaceRect = null;
 
     this.pauseKey = null;
     this.debugKey = null;
@@ -166,6 +168,7 @@ Pool.Game.prototype = {
         this.score = 0;
         this.speed = 0;
         this.resetting = false;
+        this.firstPlacement = false;
 
     },
 
@@ -310,6 +313,7 @@ Pool.Game.prototype = {
         //this.placeballShadow.visible = false;
 
         this.placeRect = new Phaser.Rectangle(138, 182, 526, 236);
+        this.cueballPlaceRect = new Phaser.Rectangle(138, 182, 124, 236);
 
         //  P2 Impact Events
 
@@ -388,7 +392,7 @@ Pool.Game.prototype = {
         socket.on('tookShot', this.shotTaken.bind(this));
 
         this.cue.visible = false;
-        this.resetCueBall();
+        this.resetCueBall(true);
     },
     
     movePlus : function (sprite, pointer) {
@@ -649,7 +653,7 @@ Pool.Game.prototype = {
 
     },
 
-    resetCueBall: function () {
+    resetCueBall: function (first) {
 
         this.cueball.body.setZeroVelocity();
 
@@ -657,7 +661,11 @@ Pool.Game.prototype = {
         this.cueball.body.x = 16;
         this.cueball.body.y = 16;
 
-        this.resetting = true;
+        if (first == true) {
+            this.firstPlacement = true;
+        } else {
+            this.resetting = true;    
+        }
 
         //  We disable the physics body and stick the ball to the pointer
         this.cueball.visible = false;
@@ -679,7 +687,6 @@ Pool.Game.prototype = {
     placeCueBall: function () {
 
         //  Check it's not colliding with other balls
-
         var a = new Phaser.Circle(this.placeball.x, this.placeball.y, 26);
         var b = new Phaser.Circle(0, 0, 26);
 
@@ -709,6 +716,7 @@ Pool.Game.prototype = {
         //this.placeballShadow.visible = false;
 
         this.resetting = false;
+        this.firstPlacement = false;
 
         this.input.onDown.remove(this.placeCueBall, this);
         this.input.onUp.add(this.takeShot, this);
@@ -757,6 +765,10 @@ Pool.Game.prototype = {
             this.placeball.y = this.math.clamp(this.input.y, this.placeRect.top, this.placeRect.bottom);
            /* this.placeballShadow.x = this.placeball.x + 10;
             this.placeballShadow.y = this.placeball.y + 10;*/
+        }
+        else if (this.firstPlacement){
+            this.placeball.x = this.math.clamp(this.input.x, this.cueballPlaceRect.left, this.cueballPlaceRect.right);
+            this.placeball.y = this.math.clamp(this.input.y, this.cueballPlaceRect.top, this.cueballPlaceRect.bottom);
         }
         else
         {
