@@ -219,7 +219,7 @@ Pool.Game.prototype = {
 
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
         this.startButton = this.add.button(8, 60, 'startBtn', this.hitPocket, this, 2, 0, 1);
-        this.practiceButton = this.add.button(8, 100, 'practiceBtn', this.hitPocket, this, 2, 0, 1);
+        this.practiceButton = this.add.button(8, 100, 'practiceBtn', this.practiceActivate, this, 2, 0, 1);
         this.standupButton = this.add.button(8, 160, 'standupBtn', this.hitPocket, this, 2, 0, 1);
         //this.startButton.onInputOver(over, this.startButton);
 
@@ -299,6 +299,10 @@ Pool.Game.prototype = {
         //x = 576, x = 264
         this.cueball = this.makeCueBall(250, 302, Pool.WHITE);
         this.cueball.body.onBeginContact.add(this.hitBall, this);
+        this.cueball.inputEnabled = true;
+        this.cueball.events.onInputDown.add(this.moveCueBall, this);
+        //this.cueball.input.enableDrag();
+
         //this.cueball.body.createBodyCallback(this.balls, this.hitBall, this);
         //this.cueball.body.collides([this.ballCollisionGroup, this.cueballCollisionGroup]);
         //this.cueball.body.collides(this.ballCollisionGroup, this.hitBall, this);
@@ -412,6 +416,18 @@ Pool.Game.prototype = {
         if (x > x1 && x < x2 && y > y1 && y < y2) {
             this.pressedDown = true;
         }
+    },
+
+    practiceActivate : function () {
+        this.mode.practice = true;
+    },
+
+    moveCueBall : function () {
+        if (this.mode.practice){
+            this.cue.visible = false;
+            this.resetCueBall();
+        }
+
     },
 
     updateScore: function (score) {
