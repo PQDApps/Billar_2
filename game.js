@@ -540,7 +540,10 @@ Pool.Game.prototype = {
             this.effect = "stop";
         } else if(upDown > 18 && leftRight < 5 && leftRight > -5){
             this.effect = "back";
-        } else if(leftRight > 12 && upDown < 5 && upDown > -5 ){
+        } else if (upDown < -16 && leftRight < 5 && leftRight > -5){
+            this.effect = "front";
+        }
+        else if(leftRight > 12 && upDown < 5 && upDown > -5 ){
             this.effect = "right";
         } else if(leftRight < -12 && upDown < 5 && upDown > -5  ){
             this.effect = "left";
@@ -598,7 +601,11 @@ Pool.Game.prototype = {
     hitBall: function(body, bodyB, shapeA, shapeB, equation){
         console.log("HIT BALL FUNCTION");
         if(body){
-            this.time.events.add(50, this.doEffect, this);
+            if(body.sprite.key == "balls"){
+                this.time.events.add(50, this.doEffect, this);
+            } else if(body.sprite.key == "tableTwo.fw"){
+                this.time.events.add(50, this.doEffect, this);
+            }
             var result = "You last hit: " + body.sprite.key;
             console.log(result);
         }
@@ -615,6 +622,11 @@ Pool.Game.prototype = {
                 var newAngle = this.angle + 3.14;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
                 var py = (Math.sin(newAngle) * this.effectSpeed);
+                this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
+            } else if (e == "front") {
+                var newAngle = this.angle + 3.14;
+                var px = (Math.cos(newAngle) * -this.effectSpeed);
+                var py = (Math.sin(newAngle) * -this.effectSpeed);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "left") {
                 var newAngle = this.angle - 1.5708;
