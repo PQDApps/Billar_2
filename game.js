@@ -604,10 +604,29 @@ Pool.Game.prototype = {
             if(body.sprite.key == "balls"){
                 this.time.events.add(50, this.doEffect, this);
             } else if(body.sprite.key == "tableTwo.fw"){
-                this.time.events.add(50, this.doEffect, this);
+                this.time.events.add(50, this.doEffectTable, this);
             }
             var result = "You last hit: " + body.sprite.key;
             console.log(result);
+        }
+    },
+
+    // This executes the effect
+    doEffectTable: function (){
+        if (this.firstCollision == 0) {
+            this.firstCollision = 1;
+            var e = this.effect;
+            if (e == "left") {
+                var newAngle = this.angle - 2.356;
+                var px = (Math.cos(newAngle) * this.effectSpeed);
+                var py = (Math.sin(newAngle) * this.effectSpeed);
+                this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
+            } else if (e == "right") {
+                var newAngle = this.angle + 1.08;
+                var px = (Math.cos(newAngle) * this.effectSpeed);
+                var py = (Math.sin(newAngle) * this.effectSpeed);
+                this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
+            }
         }
     },
 
