@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+    <title>8 Ball Pool</title>
+    <meta charset="utf-8">
+    <link href="/lib/style.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/lib/system.js"></script>
+</head>
+<body>
+	<script src="/lib/cdnSocketIO.js"></script>
+  <script src="/lib/cdnJQuery.js"></script>
+    <script src="/lib/phaser.js" type="text/javascript"></script>
+  <script src="/lib/box2d-plugin-full.js" type="text/javascript"></script>
+
+
+<div id="trajectory"></div>
+
+<script type="text/javascript" src="trajectory.js"></script>
+<script type="text/javascript">
+    System.import('/lib/phaser.js').then(function(){
+        System.import('trajectory.js');
+    });
+
+</script>
+
+</body>
+</head>
