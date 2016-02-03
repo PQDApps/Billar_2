@@ -159,6 +159,7 @@ Pool.Game = function (game) {
     this.pressedDown = false;
     this.solidOrStripe = '';
     this.id = socket.id;
+    this.bitmap = null;
 };
 
 Pool.Game.prototype = {
@@ -350,7 +351,7 @@ Pool.Game.prototype = {
         // Shoot line sprite
         this.line = this.add.sprite(0, 0, 'line');
         this.line.anchor.y = 0.5;
-        this.line.visible = true;
+        this.line.visible = false;
 
         //this.physics.p2.enable(this.line, true);
         //this.line.body.setCircle(10);
@@ -397,6 +398,11 @@ Pool.Game.prototype = {
 
         this.cue.visible = false;
         this.resetCueBall(true);
+
+        this.bitmap = this.game.add.bitmapData(800, 600);
+        this.bitmap.context.fillStyle = 'rgb(255, 255, 255)';
+        this.bitmap.context.strokeStyle = 'rgb(255, 255, 255)';
+        this.game.add.image(0, 0, this.bitmap);
     },
     
     movePlus : function (sprite, pointer) {
@@ -781,6 +787,20 @@ Pool.Game.prototype = {
         this.line.position.copyFrom(this.shootLine.start);
         this.line.rotation = this.shootLine.angle;
 
+        // Clear the bitmap where we are drawing our lines
+    this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+        
+        // Calculate x
+        var ray = new Phaser.Line(this.cueball.x, this.cueball.y, this.balls.children[0].x, this.balls.children[0].y);
+        this.game.debug.geom(ray);
+        //ray.angle = this.shootLine.angle;
+
+        // Draw a line from the ball to the person
+        this.bitmap.context.beginPath();
+        this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
+        this.bitmap.context.lineTo(this.balls.children[0].x, this.balls.children[0].y);
+        this.bitmap.context.stroke();
+
         // If mouse isn't pressed, keep cue next to white ball, else follow mouse pointer position
         if (this.pressedDown == false) {
             this.cue.position.copyFrom(this.aimLine.start);
@@ -805,6 +825,8 @@ Pool.Game.prototype = {
     },
 
     update: function () {
+        console.log("Line:" + this.line.x + " " + this.line.y);
+        console.log("Cueball:" + this.cueball.x + " " + this.cueball.y);
 
         if (this.resetting)
         {
@@ -821,6 +843,7 @@ Pool.Game.prototype = {
         {
             this.updateSpeed();
             this.updateCue();
+            
         }
 
         if (this.checkOverlap(this.effectPointer, this.effectPlus)) {
@@ -842,6 +865,20 @@ Pool.Game.prototype = {
         return Phaser.Rectangle.intersects(boundsA, boundsB);
     },
 
+    checkOverlapBalls: function (spriteA, spriteB) {
+        var boundsA = spriteA.getBounds();
+        var boundsB = spriteB.getBounds();
+
+        return Phaser.Rectangle.intersects(boundsA, boundsB);
+    },
+
+    checkOverlapTable: function (spriteA, spriteB) {
+        var boundsA = spriteA.getBounds();
+        var boundsB = spriteB.getBounds();
+
+        return Phaser.Rectangle.intersects(boundsA, boundsB);
+    },
+
     updateSpeed: function () {
 
         this.speed = Math.sqrt(this.cueball.body.velocity.x * this.cueball.body.velocity.x + this.cueball.body.velocity.y * this.cueball.body.velocity.y);
@@ -851,7 +888,7 @@ Pool.Game.prototype = {
             if (!this.cue.visible)
             {
                 // Shows cues and lines once speed is slow enough
-                this.line.visible = true;
+                this.line.visible = false;
                 this.cue.visible = true;
                 this.fill.visible = true;
                 //this.firstCollision = 0;
@@ -889,8 +926,8 @@ Pool.Game.prototype = {
         {
             if (this.speed < 6)
             {
-                this.game.debug.geom(this.aimLine);
-                this.game.debug.geom(this.shootLine);
+                //this.game.debug.geom(this.aimLine);
+                //this.game.debug.geom(this.shootLine);
             }
 
             this.game.debug.text("speed: " + this.speed, 540, 24);
