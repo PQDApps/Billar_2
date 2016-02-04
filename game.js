@@ -140,6 +140,7 @@ Pool.Game = function (game) {
     this.fillRect = null;
     this.powerRect = null;
     this.aimLine = null;
+
     this.line = null; // The sprite line that shows where you are aiming
     this.shootLine = null; // The geometry line that shows aiming, only shows in debug
     this.lineRect = null; // Rectangle to crop line
@@ -788,17 +789,20 @@ Pool.Game.prototype = {
         this.line.rotation = this.shootLine.angle;
 
         // Clear the bitmap where we are drawing our lines
-    this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
-        
-        // Calculate x
-        var ray = new Phaser.Line(this.cueball.x, this.cueball.y, this.balls.children[0].x, this.balls.children[0].y);
+        this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+
+        // Calculate 
+        var rayX = this.cueball.x + 1000 * Math.cos(this.shootLine.angle); 
+        var rayY = this.cueball.y + 1000 * Math.sin(this.shootLine.angle);
+
+        var ray = new Phaser.Line(this.cueball.x, this.cueball.y, rayX, rayY);
         this.game.debug.geom(ray);
         //ray.angle = this.shootLine.angle;
 
         // Draw a line from the ball to the person
         this.bitmap.context.beginPath();
         this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
-        this.bitmap.context.lineTo(this.balls.children[0].x, this.balls.children[0].y);
+        this.bitmap.context.lineTo(rayX, rayY);
         this.bitmap.context.stroke();
 
         // If mouse isn't pressed, keep cue next to white ball, else follow mouse pointer position
@@ -927,7 +931,7 @@ Pool.Game.prototype = {
             if (this.speed < 6)
             {
                 //this.game.debug.geom(this.aimLine);
-                //this.game.debug.geom(this.shootLine);
+                this.game.debug.geom(this.shootLine);
             }
 
             this.game.debug.text("speed: " + this.speed, 540, 24);
