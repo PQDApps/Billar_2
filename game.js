@@ -792,18 +792,28 @@ Pool.Game.prototype = {
         this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
 
         // Calculate 
-        var rayX = this.cueball.x + 1000 * Math.cos(this.shootLine.angle); 
-        var rayY = this.cueball.y + 1000 * Math.sin(this.shootLine.angle);
+        var rayX = this.cueball.x + 500 * Math.cos(this.shootLine.angle); 
+        var rayY = this.cueball.y + 500 * Math.sin(this.shootLine.angle);
 
         var ray = new Phaser.Line(this.cueball.x, this.cueball.y, rayX, rayY);
-        this.game.debug.geom(ray);
+        
         //ray.angle = this.shootLine.angle;
+        //var intersect = Phaser.Line.intersects(ray, this.balls.children[0].geo);
+        var intersect = this.getIntersect(ray);
+
 
         // Draw a line from the ball to the person
-        this.bitmap.context.beginPath();
-        this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
-        this.bitmap.context.lineTo(rayX, rayY);
-        this.bitmap.context.stroke();
+        if (intersect){
+            this.bitmap.context.beginPath();
+            this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
+            this.bitmap.context.lineTo(intersect.x, intersect.y);
+            this.bitmap.context.stroke();
+        } else {
+            this.bitmap.context.beginPath();
+            this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
+            this.bitmap.context.lineTo(rayX, rayY);
+            this.bitmap.context.stroke();
+        }
 
         // If mouse isn't pressed, keep cue next to white ball, else follow mouse pointer position
         if (this.pressedDown == false) {
@@ -828,9 +838,42 @@ Pool.Game.prototype = {
 
     },
 
+    getIntersect: function (ray) {
+        var distanceToWall = Number.POSITIVE_INFINITY;
+        var closestIntersection = null;
+
+        // For each of the walls...
+        this.balls.forEach(function(ball) {
+        // Create an array of lines that represent the four edges of each wall
+        var lines = [
+            new Phaser.Line(ball.x - 12, ball.y - 12, ball.x - 12 + ball.width, ball.y - 12), // Top wall
+            new Phaser.Line(ball.x - 12, ball.y - 12, ball.x - 12, ball.y + ball.height -12 ), // Left wall
+            new Phaser.Line(ball.x - 12 + ball.width, ball.y - 12, ball.x - 12 + ball.width, ball.y + ball.height - 12), // Right wall
+            new Phaser.Line(ball.x - 12, ball.y - 12 + ball.height, ball.x - 12 + ball.width, ball.y + ball.height - 12) // Bottom wall
+        ];
+        this.game.debug.geom(lines);
+        // Test each of the edges in this wall against the ray.
+        // If the ray intersects any of the edges then the wall must be in the way.
+        for(var i = 0; i < lines.length; i++) {
+            var intersect = Phaser.Line.intersects(ray, lines[i]);
+            if (intersect) {
+                // Find the closest intersection
+                distance =
+                    this.game.math.distance(ray.start.x, ray.start.y, intersect.x, intersect.y);
+                if (distance < distanceToWall) {
+                    distanceToWall = distance;
+                    closestIntersection = intersect;
+                }
+            }
+        }
+    }, this);
+
+    return closestIntersection;
+    },
+
     update: function () {
-        console.log("Line:" + this.line.x + " " + this.line.y);
-        console.log("Cueball:" + this.cueball.x + " " + this.cueball.y);
+        //console.log("Line:" + this.line.x + " " + this.line.y);
+        //console.log("Cueball:" + this.cueball.x + " " + this.cueball.y);
 
         if (this.resetting)
         {
