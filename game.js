@@ -144,6 +144,7 @@ Pool.Game = function (game) {
     this.line = null; // The sprite line that shows where you are aiming
     this.shootLine = null; // The geometry line that shows aiming, only shows in debug
     this.lineRect = null; // Rectangle to crop line
+    this.ray = null;
 
     this.cueball = null;
 
@@ -404,6 +405,9 @@ Pool.Game.prototype = {
         this.bitmap.context.fillStyle = 'rgb(255, 255, 255)';
         this.bitmap.context.strokeStyle = 'rgb(255, 255, 255)';
         this.game.add.image(0, 0, this.bitmap);
+
+        this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
+        this.ray.visible = false;
     },
     
     movePlus : function (sprite, pointer) {
@@ -593,6 +597,8 @@ Pool.Game.prototype = {
             this.speed = 50;
 
             // Hides cue and aim lines when shot happens
+            this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+
             this.line.visible = false;
             this.cue.visible = false;
             this.fill.visible = false;
@@ -791,28 +797,35 @@ Pool.Game.prototype = {
         // Clear the bitmap where we are drawing our lines
         this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
 
-        // Calculate 
-        var rayX = this.cueball.x + 500 * Math.cos(this.shootLine.angle); 
-        var rayY = this.cueball.y + 500 * Math.sin(this.shootLine.angle);
+        if (this.speed < this.allowShotSpeed)
+        {
+                
+            // Calculate 
+            var rayX = this.cueball.x + 500 * Math.cos(this.shootLine.angle); 
+            var rayY = this.cueball.y + 500 * Math.sin(this.shootLine.angle);
 
-        var ray = new Phaser.Line(this.cueball.x, this.cueball.y, rayX, rayY);
-        
-        //ray.angle = this.shootLine.angle;
-        //var intersect = Phaser.Line.intersects(ray, this.balls.children[0].geo);
-        var intersect = this.getIntersect(ray);
+            this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, rayX, rayY);
+            
+            //ray.angle = this.shootLine.angle;
+            //var intersect = Phaser.Line.intersects(ray, this.balls.children[0].geo);
+            var intersect = this.getIntersect(this.ray);
 
 
-        // Draw a line from the ball to the person
-        if (intersect){
-            this.bitmap.context.beginPath();
-            this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
-            this.bitmap.context.lineTo(intersect.x, intersect.y);
-            this.bitmap.context.stroke();
-        } else {
-            this.bitmap.context.beginPath();
-            this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
-            this.bitmap.context.lineTo(rayX, rayY);
-            this.bitmap.context.stroke();
+            // Draw a line from the ball to the person
+            if (intersect){
+                this.bitmap.context.beginPath();
+                this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
+                this.bitmap.context.lineTo(intersect.x, intersect.y);
+                this.bitmap.context.stroke();
+            } else {
+                this.bitmap.context.beginPath();
+                this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
+                this.bitmap.context.lineTo(rayX, rayY);
+                this.bitmap.context.stroke();
+            }
+
+
+
         }
 
         // If mouse isn't pressed, keep cue next to white ball, else follow mouse pointer position
@@ -866,9 +879,9 @@ Pool.Game.prototype = {
                 }
             }
         }
-    }, this);
+        }, this);
 
-    return closestIntersection;
+        return closestIntersection;
     },
 
     update: function () {
@@ -935,6 +948,7 @@ Pool.Game.prototype = {
             if (!this.cue.visible)
             {
                 // Shows cues and lines once speed is slow enough
+                
                 this.line.visible = false;
                 this.cue.visible = true;
                 this.fill.visible = true;
