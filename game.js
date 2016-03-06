@@ -145,6 +145,7 @@ Pool.Game = function (game) {
     this.shootLine = null; // The geometry line that shows aiming, only shows in debug
     this.lineRect = null; // Rectangle to crop line
     this.ray = null;
+    this.reflection = null;
 
     this.cueball = null;
 
@@ -362,6 +363,7 @@ Pool.Game.prototype = {
         //this.line.y = 300;
         
         this.lineRect = new Phaser.Rectangle(0, 0, 300, 6);
+        this.reflection = new Phaser.Line(0, 0, 0, 0);
 
         this.physics.p2.enable(this.lineRect, false);
         this.lineRect.sensor = false;
@@ -809,13 +811,19 @@ Pool.Game.prototype = {
             //ray.angle = this.shootLine.angle;
             //var intersect = Phaser.Line.intersects(ray, this.balls.children[0].geo);
             var intersect = this.getIntersect(this.ray);
-
-
+            
             // Draw a line from the ball to the person
             if (intersect){
+                var bounceLine = new Phaser.Line(intersect.x, intersect.y-5, intersect.x, intersect.y +5);
+                var outgoing = this.ray.reflect(bounceLine);
+                this.reflection.fromAngle(intersect.x, intersect.y, outgoing, 50);
+                this.game.debug.geom(this.reflection);
+                
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(intersect.x, intersect.y);
+                this.bitmap.context.moveTo(intersect.x, intersect.y);
+                this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
                 this.bitmap.context.stroke();
             } else {
                 this.bitmap.context.beginPath();
@@ -823,9 +831,6 @@ Pool.Game.prototype = {
                 this.bitmap.context.lineTo(rayX, rayY);
                 this.bitmap.context.stroke();
             }
-
-
-
         }
 
         // If mouse isn't pressed, keep cue next to white ball, else follow mouse pointer position
