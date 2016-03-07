@@ -163,6 +163,7 @@ Pool.Game = function (game) {
     this.solidOrStripe = '';
     this.id = socket.id;
     this.bitmap = null;
+    this.bitmap2 = null;
 };
 
 Pool.Game.prototype = {
@@ -408,6 +409,11 @@ Pool.Game.prototype = {
         this.bitmap.context.strokeStyle = 'rgb(255, 255, 255)';
         this.game.add.image(0, 0, this.bitmap);
 
+        this.bitmap2 = this.game.add.bitmapData(800, 600);
+        this.bitmap2.context.fillStyle = 'rgb(255, 255, 255)';
+        this.bitmap2.context.strokeStyle = 'rgb(255, 255, 255)';
+        this.game.add.image(0, 0, this.bitmap2);
+
         this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
         this.ray.visible = false;
     },
@@ -600,6 +606,7 @@ Pool.Game.prototype = {
 
             // Hides cue and aim lines when shot happens
             this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+            this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
 
             this.line.visible = false;
             this.cue.visible = false;
@@ -798,6 +805,7 @@ Pool.Game.prototype = {
 
         // Clear the bitmap where we are drawing our lines
         this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+        this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
 
         if (this.speed < this.allowShotSpeed)
         {
@@ -814,9 +822,14 @@ Pool.Game.prototype = {
             
             // Draw a line from the ball to the person
             if (intersect){
+                var closestball = this.getNearestBall(intersect);
+
                 var bounceLine = new Phaser.Line(intersect.x, intersect.y-5, intersect.x, intersect.y +5);
-                var outgoing = this.ray.reflect(bounceLine);
-                this.reflection.fromAngle(intersect.x, intersect.y, outgoing, 50);
+                var bounceCircle = new Phaser.Circle(closestball.x, closestball.y, 10);
+                
+
+                var outgoing = this.ray.reflect(bounceCircle);
+                this.reflection.fromAngle(closestball.x, closestball.y, outgoing, 50);
                 
                 // Draw the line, circle, and line showing predicted trajectory
                 this.bitmap.context.beginPath();
@@ -825,9 +838,12 @@ Pool.Game.prototype = {
                 this.bitmap.context.moveTo(intersect.x, intersect.y);
                 this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
                 
-                // TODO: DO math here to know what the x and y of the circle should be
-                this.bitmap.context.arc(intersect.x, intersect.y, 10, 0, Math.PI*2, true);
+                // TODO: DO math here to know what the x and y of the circle should be                        
                 this.bitmap.context.stroke();
+
+                this.bitmap2.context.beginPath();
+                this.bitmap2.context.arc(closestball.x, closestball.y, 10, 0, Math.PI*2, true);
+                this.bitmap2.context.stroke();
             } else {
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
@@ -865,31 +881,49 @@ Pool.Game.prototype = {
 
         // For each of the walls...
         this.balls.forEach(function(ball) {
-        // Create an array of lines that represent the four edges of each wall
-        var lines = [
-            new Phaser.Line(ball.x - 12, ball.y - 12, ball.x - 12 + ball.width, ball.y - 12), // Top wall
-            new Phaser.Line(ball.x - 12, ball.y - 12, ball.x - 12, ball.y + ball.height -12 ), // Left wall
-            new Phaser.Line(ball.x - 12 + ball.width, ball.y - 12, ball.x - 12 + ball.width, ball.y + ball.height - 12), // Right wall
-            new Phaser.Line(ball.x - 12, ball.y - 12 + ball.height, ball.x - 12 + ball.width, ball.y + ball.height - 12) // Bottom wall
-        ];
-        this.game.debug.geom(lines);
-        // Test each of the edges in this wall against the ray.
-        // If the ray intersects any of the edges then the wall must be in the way.
-        for(var i = 0; i < lines.length; i++) {
-            var intersect = Phaser.Line.intersects(ray, lines[i]);
-            if (intersect) {
-                // Find the closest intersection
-                distance =
-                    this.game.math.distance(ray.start.x, ray.start.y, intersect.x, intersect.y);
-                if (distance < distanceToWall) {
-                    distanceToWall = distance;
-                    closestIntersection = intersect;
+            // Create an array of lines that represent the four edges of each wall
+            var lines = [
+                new Phaser.Line(ball.x - 12, ball.y - 12, ball.x - 12 + ball.width, ball.y - 12), // Top wall
+                new Phaser.Line(ball.x - 12, ball.y - 12, ball.x - 12, ball.y + ball.height -12 ), // Left wall
+                new Phaser.Line(ball.x - 12 + ball.width, ball.y - 12, ball.x - 12 + ball.width, ball.y + ball.height - 12), // Right wall
+                new Phaser.Line(ball.x - 12, ball.y - 12 + ball.height, ball.x - 12 + ball.width, ball.y + ball.height - 12) // Bottom wall
+            ];
+            this.game.debug.geom(lines);
+            // Test each of the edges in this wall against the ray.
+            // If the ray intersects any of the edges then the wall must be in the way.
+            for(var i = 0; i < lines.length; i++) {
+                var intersect = Phaser.Line.intersects(ray, lines[i]);
+                if (intersect) {
+                    // Find the closest intersection
+                    distance =
+                        this.game.math.distance(ray.start.x, ray.start.y, intersect.x, intersect.y);
+                    if (distance < distanceToWall) {
+                        distanceToWall = distance;
+                        closestIntersection = intersect;
+                    }
                 }
             }
-        }
         }, this);
 
         return closestIntersection;
+    },
+
+    getNearestBall: function (intersect) {
+        // The color of the
+        var closestBall = {color: 0, x:0, y:0}
+        var length = 5000;
+        var tempLength = 0; 
+        this.balls.forEach(function(ball) {
+            tempLength = Math.pow((intersect.x - ball.x), 2) + Math.pow((intersect.y - ball.y), 2);
+            tempLength = Math.sqrt(tempLength);
+            if (tempLength < length){
+                length = tempLength;
+                closestBall.color = ball.body.color;
+                closestBall.x = ball.x;
+                closestBall.y = ball.y;
+            }
+        }, this);
+        return closestBall;
     },
 
     update: function () {
