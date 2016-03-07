@@ -817,13 +817,16 @@ Pool.Game.prototype = {
                 var bounceLine = new Phaser.Line(intersect.x, intersect.y-5, intersect.x, intersect.y +5);
                 var outgoing = this.ray.reflect(bounceLine);
                 this.reflection.fromAngle(intersect.x, intersect.y, outgoing, 50);
-                this.game.debug.geom(this.reflection);
                 
+                // Draw the line, circle, and line showing predicted trajectory
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(intersect.x, intersect.y);
                 this.bitmap.context.moveTo(intersect.x, intersect.y);
                 this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
+                
+                // TODO: DO math here to know what the x and y of the circle should be
+                this.bitmap.context.arc(intersect.x, intersect.y, 10, 0, Math.PI*2, true);
                 this.bitmap.context.stroke();
             } else {
                 this.bitmap.context.beginPath();
@@ -994,6 +997,7 @@ Pool.Game.prototype = {
             {
                 //this.game.debug.geom(this.aimLine);
                 this.game.debug.geom(this.shootLine);
+                this.game.debug.geom(this.reflection);
             }
 
             this.game.debug.text("speed: " + this.speed, 540, 24);
