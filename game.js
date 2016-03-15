@@ -38,7 +38,6 @@ socket.on('assignNumber', function(i){
         playerNumber = 1;
     }
     //playerNumber = i;
-    console.log(playerNumber);
 })
 
 function isInt(i) {
@@ -146,6 +145,8 @@ Pool.Game = function (game) {
     this.lineRect = null; // Rectangle to crop line
     this.ray = null;
     this.reflection = null;
+    this.hypotenuse = null; // Hypotenuse from cueball to ball the user is pointing at
+    this.opposite = null; // Opposite of the hypotenuse, the line used to aim is the adjacent
 
     this.cueball = null;
 
@@ -365,6 +366,8 @@ Pool.Game.prototype = {
         
         this.lineRect = new Phaser.Rectangle(0, 0, 300, 6);
         this.reflection = new Phaser.Line(0, 0, 0, 0);
+        this.hypotenuse = new Phaser.Line(0, 0, 0, 0);
+        this.opposite = new Phaser.Line(0, 0, 0, 0);
 
         this.physics.p2.enable(this.lineRect, false);
         this.lineRect.sensor = false;
@@ -523,7 +526,6 @@ Pool.Game.prototype = {
     },
 
     stopPocketBall: function(body, bodyB, shapeA, shapeB, equation) {
-        console.log("Stuff");
         if(body){
             //body.setZeroVelocity();
         }
@@ -825,24 +827,47 @@ Pool.Game.prototype = {
                 var closestball = this.getNearestBall(intersect);
 
                 var bounceLine = new Phaser.Line(intersect.x, intersect.y-5, intersect.x, intersect.y +5);
-                var bounceCircle = new Phaser.Circle(closestball.x, closestball.y, 10);
+                //var bounceCircle = new Phaser.Circle(closestball.x, closestball.y, 10);
                 
-
-                var outgoing = this.ray.reflect(bounceCircle);
-                this.reflection.fromAngle(closestball.x, closestball.y, outgoing, 50);
+                // The line from the cueball to the ball being aimed at
+                this.hypotenuse = new Phaser.Line(this.cueball.x, this.cueball.y, closestball.x, closestball.y);
+                console.log("Hypotenuse: " + this.hypotenuse.length);
+                
+                var acuteAngle = this.hypotenuse.angle - this.shootLine.angle;
+                var oppositeAngle = this.hypotenuse.angle - this.opposite.angle;
+                var oppositeLength = this.hypotenuse.length * Math.sin(acuteAngle);
+                var adjacentLength = Math.pow(24,2) - Math.pow(oppositeLength, 2);
+                adjacentLength = Math.sqrt(adjacentLength);
+                var hypo = 24;
+                var bAngle = Math.asin(oppositeLength/24) - this.shootLine.angle;
+                bAngle = bAngle + 3.14159;// - acuteAngle;              
+                var pointContact = new Phaser.Point(closestball.x + Math.cos(bAngle) * hypo, closestball.y - Math.sin(bAngle) * hypo); 
+                //var bounceCircle = new Phaser.Circle(closestball.x, closestball.y, 10);                               
+                
+                console.log("Bangle: " + bAngle + " " + "opposite Length: " + oppositeLength + " Adjacent: " + adjacentLength + " Hypotenuse: " + hypo);
+                var ninetyDegrees = 1.5708;
+                if (this.shootLine.angle < this.hypotenuse.angle){
+                    ninetyDegrees = ninetyDegrees * -1;
+                }
+                // The line that creates a 90 degree angle with the shootLine and intersects the hypotenuse
+                this.opposite.fromAngle(closestball.x, closestball.y, this.shootLine.angle + ninetyDegrees, 100);
+                
+                var outgoing = this.ray.reflect(bounceLine);
+                //this.reflection.fromAngle(closestball.x, closestball.y, outgoing, 50);
                 
                 // Draw the line, circle, and line showing predicted trajectory
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(intersect.x, intersect.y);
-                this.bitmap.context.moveTo(intersect.x, intersect.y);
-                this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
+                //this.bitmap.context.moveTo(intersect.x, intersect.y);
+                //this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
                 
                 // TODO: DO math here to know what the x and y of the circle should be                        
                 this.bitmap.context.stroke();
-
+                
+                
                 this.bitmap2.context.beginPath();
-                this.bitmap2.context.arc(closestball.x, closestball.y, 10, 0, Math.PI*2, true);
+                this.bitmap2.context.arc(pointContact.x, pointContact.y, 10, 0, Math.PI*2, true);
                 this.bitmap2.context.stroke();
             } else {
                 this.bitmap.context.beginPath();
@@ -1032,6 +1057,8 @@ Pool.Game.prototype = {
                 //this.game.debug.geom(this.aimLine);
                 this.game.debug.geom(this.shootLine);
                 this.game.debug.geom(this.reflection);
+                this.game.debug.geom(this.hypotenuse);
+                this.game.debug.geom(this.opposite);
             }
 
             this.game.debug.text("speed: " + this.speed, 540, 24);
