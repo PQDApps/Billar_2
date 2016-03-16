@@ -833,18 +833,20 @@ Pool.Game.prototype = {
                 this.hypotenuse = new Phaser.Line(this.cueball.x, this.cueball.y, closestball.x, closestball.y);
                 console.log("Hypotenuse: " + this.hypotenuse.length);
                 
-                var acuteAngle = this.hypotenuse.angle - this.shootLine.angle;
+                var acuteAngle = this.shootLine.angle - this.hypotenuse.angle;// - this.shootLine.angle;
                 var oppositeAngle = this.hypotenuse.angle - this.opposite.angle;
                 var oppositeLength = this.hypotenuse.length * Math.sin(acuteAngle);
                 var adjacentLength = Math.pow(24,2) - Math.pow(oppositeLength, 2);
                 adjacentLength = Math.sqrt(adjacentLength);
                 var hypo = 24;
                 var bAngle = Math.asin(oppositeLength/24) - this.shootLine.angle;
-                bAngle = bAngle + 3.14159;// - acuteAngle;              
-                var pointContact = new Phaser.Point(closestball.x + Math.cos(bAngle) * hypo, closestball.y - Math.sin(bAngle) * hypo); 
-                //var bounceCircle = new Phaser.Circle(closestball.x, closestball.y, 10);                               
+                bAngle = bAngle - 3.14;// + 6.28319;// - acuteAngle;                              
+                var pointContact = new Phaser.Point(closestball.x + Math.cos(bAngle) * hypo, closestball.y - Math.sin(bAngle) * hypo);      
+                                          
                 
-                console.log("Bangle: " + bAngle + " " + "opposite Length: " + oppositeLength + " Adjacent: " + adjacentLength + " Hypotenuse: " + hypo);
+                console.log("ClosestBall.x : " + closestball.x + " ClosestBall.y : " + closestball.y);
+                console.log();
+                
                 var ninetyDegrees = 1.5708;
                 if (this.shootLine.angle < this.hypotenuse.angle){
                     ninetyDegrees = ninetyDegrees * -1;
@@ -858,7 +860,7 @@ Pool.Game.prototype = {
                 // Draw the line, circle, and line showing predicted trajectory
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
-                this.bitmap.context.lineTo(intersect.x, intersect.y);
+                this.bitmap.context.lineTo(pointContact.x, pointContact.y);
                 //this.bitmap.context.moveTo(intersect.x, intersect.y);
                 //this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
                 
