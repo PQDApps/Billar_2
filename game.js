@@ -582,13 +582,28 @@ Pool.Game.prototype = {
         var y = this.input.activePointer.y;
 
         if (this.pressedDown == true){
-            var speed = (this.aimLine.length / 2);
-            console.log("SPEED: " + speed);
+            var relativeSpeed = 0;
+            if (this.aimLine.length > 50 && this.aimLine.length < 125) 
+            {
+                relativeSpeed = 10;
+            } 
+            else if (this.aimLine.length > 124 && this.aimLine.length < 130)
+            {
+                relativeSpeed = 35;
+            } 
+            else if (this.aimLine.length > 129)
+            {
+                relativeSpeed = 55;    
+            }
+            
+            var speed = ((this.aimLine.length + relativeSpeed) / 2);
             if (speed > 112)
             {
                 speed = 112;
             }
-
+            console.log("RELATIVE SPEED: " + relativeSpeed);
+            console.log("LENGTH: " + this.aimLine.length);
+            console.log("SPEED: " + speed);
             //this.updateCue();
             //this.pressedDown = false; // Mouse no longer pressed
 
