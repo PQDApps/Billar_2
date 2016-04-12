@@ -617,6 +617,8 @@ Pool.Game.prototype = {
             this.powerLevel.updateCrop();
             socket.emit('tookShot', px, py);
             this.firstCollision = 0;
+            this.effectPlus.x = this.effectBall.x - 25;
+            this.effectPlus.y = this.effectBall.y- 24 ;
         }
         this.pressedDown = false; // Mouse no longer pressed
     },
