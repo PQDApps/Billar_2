@@ -582,8 +582,8 @@ Pool.Game.prototype = {
         var y = this.input.activePointer.y;
 
         if (this.pressedDown == true){
-            var speed = (this.aimLine.length / 3);
-
+            var speed = (this.aimLine.length / 2);
+            console.log("SPEED: " + speed);
             if (speed > 112)
             {
                 speed = 112;
@@ -833,7 +833,7 @@ Pool.Game.prototype = {
                 
                 // The line from the cueball to the ball being aimed at
                 this.hypotenuse = new Phaser.Line(this.cueball.x, this.cueball.y, closestball.x, closestball.y);
-                console.log("Hypotenuse: " + this.hypotenuse.length);
+                //console.log("Hypotenuse: " + this.hypotenuse.length);
                 
                 var acuteAngle = this.shootLine.angle - this.hypotenuse.angle;// - this.shootLine.angle;
                 var oppositeAngle = this.hypotenuse.angle - this.opposite.angle;
@@ -846,7 +846,7 @@ Pool.Game.prototype = {
                 var pointContact = new Phaser.Point(closestball.x + Math.cos(bAngle) * hypo, closestball.y - Math.sin(bAngle) * hypo);      
                                           
                 
-                console.log("ClosestBall.x : " + closestball.x + " ClosestBall.y : " + closestball.y);
+                //console.log("ClosestBall.x : " + closestball.x + " ClosestBall.y : " + closestball.y);
                 console.log();
                 
                 var ninetyDegrees = 1.5708;
@@ -887,7 +887,7 @@ Pool.Game.prototype = {
         } else {
             this.cue.x = this.input.activePointer.x;
             this.cue.y = this.input.activePointer.y;
-            this.powerRect.height = this.aimLine.length;
+            this.powerRect.height = this.aimLine.length + 25;
             this.powerLevel.updateCrop();
         }
         //this.cue.x = this.input.activePointer.x;
