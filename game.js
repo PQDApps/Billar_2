@@ -902,7 +902,20 @@ Pool.Game.prototype = {
         } else {
             this.cue.x = this.input.activePointer.x;
             this.cue.y = this.input.activePointer.y;
-            this.powerRect.height = this.aimLine.length + 25;
+            var relativeSpeed = 0;
+            if (this.aimLine.length > 50 && this.aimLine.length < 125) 
+            {
+                relativeSpeed = 10;
+            } 
+            else if (this.aimLine.length > 124 && this.aimLine.length < 130)
+            {
+                relativeSpeed = 35;
+            } 
+            else if (this.aimLine.length > 129)
+            {
+                relativeSpeed = 65;    
+            }
+            this.powerRect.height = this.aimLine.length + relativeSpeed;
             this.powerLevel.updateCrop();
         }
         //this.cue.x = this.input.activePointer.x;
