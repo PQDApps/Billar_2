@@ -1,8 +1,13 @@
 var express = require('express');
 var app = require('express')();
+var router = express.Router();
 var http = require('http').Server(app);
+var bodyParser = require('body-parser');
 var io = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use(express.static(__dirname));
 app.get('/', function(req, res){
@@ -54,6 +59,19 @@ MongoClient.connect("mongodb://localhost:27017/local", function(err, db) {
         console.log("Connected to Mongo Local");
     }
 });
+
+// API Example: localhost:5000/api
+router.get('/', function(req, res) {
+    res.json({ message: 'hooray! welcome to our api!' });   
+});
+
+router.post('/signupnow', function(req,res){
+  console.log(req);
+  res.json({message: req.body});
+})
+
+// Register our api urls with /api
+app.use('/api', router);
 
 http.listen(process.env.PORT || 5000, function(){
   console.log('listening on *:5000');
