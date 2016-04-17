@@ -2,6 +2,7 @@ var express = require('express');
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var MongoClient = require('mongodb').MongoClient;
 
 app.use(express.static(__dirname));
 app.get('/', function(req, res){
@@ -45,6 +46,14 @@ io.on('connection', function(socket){
   });
 });
 
+///////////////////////////
+// Mongo Database Testing
+///////////////////////////
+MongoClient.connect("mongodb://localhost:27017/local", function(err, db) {
+    if(!err) {
+        console.log("Connected to Mongo Local");
+    }
+});
 
 http.listen(process.env.PORT || 5000, function(){
   console.log('listening on *:5000');
