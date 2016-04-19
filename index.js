@@ -54,7 +54,7 @@ io.on('connection', function(socket){
 ///////////////////////////
 // Mongo Database Testing
 ///////////////////////////
-var mongoURL = "mongodb://192.168.1.64:27017/local";
+var mongoURL = "mongodb://localhost:27017/local";
 MongoClient.connect(mongoURL, function(err, db) {
     if(!err) {
         console.log("Connected to Mongo Local");
@@ -66,8 +66,11 @@ function saveNewUser(user, pass) {
   if (!err) {
     var users = db.collection("users")
     users.insert({email: user, password: pass}, function(err, result){
-        if (err) throw err;
-        console.log(result);          
+        if (err) {
+          return err; 
+        }        
+        console.log(result);
+        return this.result;          
       });
     } 
   })   
@@ -81,10 +84,25 @@ router.get('/', function(req, res) {
 //Sign up API, userName and password
 router.post('/signupnow', function(req,res){
   console.log(req);
-  res.json({message: req.body});
-  var user = req.userName;
-  var pass = req.password;
-  saveNewUser(user, pass);
+  //res.json({message: req.body});
+  var user = req.body.userName;
+  var pass = req.body.password;
+  //var resultOfInsert = saveNewUser(user, pass);
+  MongoClient.connect(mongoURL, function(err, db) {
+  if (!err) {
+    var users = db.collection("users")
+    users.insert({email: user, password: pass}, function(err, result){
+        if (err) {
+          res.json({Success: false, error: err})           
+        }        
+        console.log(result);
+        //res.json({Status: 'Success'});
+        //res.sendStatus(200);                  
+      });
+    } 
+  })
+  res.json({Status: true});
+  //res.sendStatus(200); 
 })
 
 // Register our api urls with /api
