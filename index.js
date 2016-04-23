@@ -5,6 +5,7 @@ var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var io = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -87,21 +88,29 @@ router.post('/signupnow', function(req,res){
   //res.json({message: req.body});
   var user = req.body.userName;
   var pass = req.body.password;
+  var userExists = false;
   //var resultOfInsert = saveNewUser(user, pass);
   MongoClient.connect(mongoURL, function(err, db) {
   if (!err) {
-    var users = db.collection("users")
-    users.insert({email: user, password: pass}, function(err, result){
+    var users = db.collection("users");
+    var cursor = db.collection('users').findOne({ "email" : user});
+    cursor.each(function(err, doc){
+      assert.equal(err, null);
+      if (doc != null) {
+        userExists = true;               
+      }  
+    });
+    users.insert({email: user, password: pass}, function createUser (err, result){
         if (err) {
           res.json({Success: false, error: err})           
         }        
         console.log(result);
-        //res.json({Status: 'Success'});
+        res.json({Status: 'Success'});
         //res.sendStatus(200);                  
       });
-    } 
+    }
   })
-  res.json({Status: true});
+  //res.json({Status: true});
   //res.sendStatus(200); 
 })
 
