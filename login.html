@@ -16,12 +16,13 @@
     <!-- Custom CSS -->
     <link href="css/stylish-portfolio.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
+    <!-- Custom Fonts 
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+    -->
     <script src="/lib/cdnJQuery.js"></script>
-
+    
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -35,19 +36,19 @@
 <body>
     <script type="text/javascript">
         $(document).ready(function(){
-            $('#signup').submit(function(event){
+            $('#login').submit(function(event){
                 event.preventDefault();
-                var data = $('#signup').serialize();
+                var data = $('#login').serialize();
                 
-                $.post('/api/signupnow', data, function(resp){
+                $.get('/api/login', data, function(resp){
                     console.log(resp);
                 });                
             });
         });
     </script>
     <div style="width:330px;margin:0 auto">
-      <form id="signup" class="form-signin">
-        <h2 class="form-signin-heading">Register</h2>
+      <form id="login" class="form-signin">
+        <h2 class="form-signin-heading">Please log in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input name="userName" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
@@ -56,9 +57,9 @@
           <label class="form-remember">
             <input type="checkbox" value="remember-me"> Remember me
           </label>
-          <a href="/login.html" style="float:right">Login</a>
+          <a style="float:right" href="/signuplogin.html">Register</a>
         </div>
-        <button class="btn-wisteria" type="submit">Sign Up</button>
+        <button class="btn-wisteria" type="submit">Log In</button>
       </form>
     </div> 
 </body>

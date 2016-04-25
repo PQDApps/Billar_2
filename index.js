@@ -55,7 +55,7 @@ io.on('connection', function(socket){
 ///////////////////////////
 // Mongo Database Testing
 ///////////////////////////
-var mongoURL = "mongodb://localhost:27017/local";
+var mongoURL = "mongodb://192.168.1.64:27017/local";
 MongoClient.connect(mongoURL, function(err, db) {
     if(!err) {
         console.log("Connected to Mongo Local");
@@ -81,6 +81,11 @@ function saveNewUser(user, pass) {
 router.get('/', function(req, res) {
     res.json({ message: 'hooray! welcome to our api!' });   
 });
+
+// Stuff
+router.get('/login', function(req, res){
+  res.status(200).send({message : "HELLO"})
+})
 
 //Sign up API, userName and password
 router.post('/signupnow', function(req,res){
