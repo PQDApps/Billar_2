@@ -24,6 +24,7 @@ var Player = {
     isStripe: false,
     isSolid: false,
 }
+var activePlayer = 1;
 
 var socket = io();
 var playerNumber = 0;
@@ -33,9 +34,11 @@ socket.on('assignNumber', function(i){
     var isWhole = isInt(iDivided);
     if (isWhole == true){
         playerNumber = 2;
+        Player.number = 2;
     }
     else{
         playerNumber = 1;
+        Player.number = 1;
     }
     //playerNumber = i;
 })
@@ -128,7 +131,7 @@ Pool.Game = function (game) {
     this.powerText = null;
 
     this.speed = 0;
-    this.allowShotSpeed = 5.0;
+    this.allowShotSpeed = 0.1;
 
     this.balls = null;
     this.pocketBalls = null;
@@ -402,8 +405,9 @@ Pool.Game.prototype = {
         this.input.onDown.add(this.pressed, this); // Changes flag if mouse is pressed
 
         socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
-        socket.on('tookShot', this.shotTaken.bind(this));
-
+        socket.on('tookShot', this.shotTaken.bind(this));        
+        socket.on('placeball', this.placeBallForOtherPlayer.bind(this));
+        
         this.cue.visible = false;
         this.resetCueBall(true);
 
@@ -754,28 +758,36 @@ Pool.Game.prototype = {
         } else {
             this.resetting = true;    
         }
-
-        //  We disable the physics body and stick the ball to the pointer
-        this.cueball.visible = false;
-       /* this.cueball.shadow.visible = false;*/
-
-        this.placeball.x = this.input.activePointer.x;
-        this.placeball.y = this.input.activePointer.y;
-        this.placeball.visible = true;
-
-        /*this.placeballShadow.x = this.placeball.x + 10;
-        this.placeballShadow.y = this.placeball.y + 10;
-        this.placeballShadow.visible = true;*/
-
-        this.input.onUp.remove(this.takeShot, this);
-        this.input .onDown.add(this.placeCueBall, this);
-
+        
+        if (activePlayer == Player.number){                              
+            this.cueball.visible = false;            
+            this.placeball.x = this.input.activePointer.x;
+            this.placeball.y = this.input.activePointer.y;
+            this.placeball.visible = true;
+            
+            this.input.onUp.remove(this.takeShot, this);
+            this.input.onDown.add(this.placeCueBall, this);
+        } else if (activePlayer != Player.number){
+            
+        }
     },
-
-    placeCueBall: function () {
-
+    
+    placeBallForOtherPlayer: function (x, y) {
+        if (activePlayer != Player.number){
+            this.placeCueBall(x,y);
+        }
+    },
+    
+    placeCueBall: function (x, y) {
         //  Check it's not colliding with other balls
-        var a = new Phaser.Circle(this.placeball.x, this.placeball.y, 26);
+        x = x || this.placeball.x;
+        y = y || this.placeball.y;
+        var cuex = this.placeball.x;
+        var cuey = this.placeball.y;
+        if (activePlayer == Player.number){
+            socket.emit('placeball', cuex, cuey);
+        }                     
+        var a = new Phaser.Circle(x, y, 26);
         var b = new Phaser.Circle(0, 0, 26);
 
         for (var i = 0; i < this.balls.length; i++)
@@ -794,9 +806,14 @@ Pool.Game.prototype = {
                 }
             }
         }
-
-        this.cueball.reset(this.placeball.x, this.placeball.y);
-        this.cueball.body.reset(this.placeball.x, this.placeball.y);
+        
+        if (activePlayer != Player.number){
+            this.cueball.reset(x, y);
+            this.cueball.body.reset(x, y);
+        } else {
+            this.cueball.reset(this.placeball.x, this.placeball.y);
+            this.cueball.body.reset(this.placeball.x, this.placeball.y);  
+        }
         this.cueball.visible = true;
         //this.cueball.shadow.visible = true;
 

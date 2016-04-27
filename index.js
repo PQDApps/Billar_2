@@ -21,9 +21,10 @@ var numberOfClients = 0; // Keep track of clients connected to socket
 io.on('connection', function(socket){
   // Socket connection successful
   console.log('a user connected '+ socket.id);
-  numberOfClients++; //Increment when user connects
+  //numberOfClients++; //Increment when user connects
 
   socket.on('assignNumber', function(){
+    numberOfClients++;
     var i = numberOfClients;
     socket.emit('assignNumber', i);
   });
@@ -44,6 +45,12 @@ io.on('connection', function(socket){
     io.emit('newscore', score);
     console.log(score + ' + points');
   });
+  
+  // Listen for player placing the ball
+  socket.on('placeball', function(x, y) {
+    io.emit('placeball', x, y);
+    console.log("X: " + x + " Y: " + y);
+  });
 
   // Listen for player shooting
   socket.on('tookShot', function(px, py){
@@ -55,7 +62,7 @@ io.on('connection', function(socket){
 ///////////////////////////
 // Mongo Database Testing
 ///////////////////////////
-var mongoURL = "mongodb://192.168.1.64:27017/local";
+var mongoURL = "mongodb://localhost:27017/local";
 MongoClient.connect(mongoURL, function(err, db) {
     if(!err) {
         console.log("Connected to Mongo Local");
