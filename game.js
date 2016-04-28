@@ -26,6 +26,7 @@ var Player = {
     emitting: false,
 }
 var activePlayer = 1;
+var madeShot = false;
 
 var socket = io();
 var playerNumber = 0;
@@ -250,7 +251,7 @@ Pool.Game.prototype = {
 
         this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
         this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
-        this.pockets.body.addCircle(32, 682, 436); // Bottom right pocket
+        this.pockets.body.addCircle(46, 682, 436); // Bottom right pocket
 
         //  Ball shadows
         //this.shadows = this.add.group();
@@ -410,6 +411,7 @@ Pool.Game.prototype = {
         socket.on('tookShot', this.shotTaken.bind(this));        
         socket.on('placeball', this.placeBallForOtherPlayer.bind(this));
         socket.on('solidstripe', this.setSolidStripe.bind(this));
+        socket.on('changeplayer', this.changePlayer.bind(this));
         
         this.cue.visible = false;
         this.resetCueBall(true);
@@ -426,6 +428,19 @@ Pool.Game.prototype = {
 
         this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
         this.ray.visible = false;
+        
+        
+    },
+    
+    changePlayer: function() {
+        if (Player.emitting != true)
+        {
+            activePlayer = Player.number;
+        }
+        else
+        {
+            Player.emitting = false;
+        }        
     },
     
     setSolidStripe: function (type) {
@@ -504,10 +519,10 @@ Pool.Game.prototype = {
         var ball = this.balls.create(x, y, 'balls', color);
         ball.color = color;
         if (color > 8){
-            ball.isStripe = 1; // 1 means Ball is stripe
+            ball.isStripe = true; // 1 means Ball is stripe
             ball.body.setCollisionGroup(this.ballCollisionGroup);
         } else if (color < 8){
-            ball.isStripe = 0; // 0 means Ball is not stripe
+            ball.isStripe = false; // 0 means Ball is not stripe
             ball.body.setCollisionGroup(this.ballCollisionGroup);
         } else{
             ball.isStripe = 8; // 8 for the 8 ball
@@ -575,93 +590,96 @@ Pool.Game.prototype = {
         {
             return;
         }
-
-        var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
-        var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
         
-        console.log(upDown);
-        console.log(leftRight);
-
-        // Set the effect of the shot depending on the plus sign location
-        if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
-            this.effect = "stop";
-        } else if(upDown > 18 && leftRight < 5 && leftRight > -5){
-            this.effect = "back";
-        } else if (upDown < -16 && leftRight < 5 && leftRight > -5){
-            this.effect = "front";
-        }
-        else if(leftRight > 12 && upDown < 5 && upDown > -5 ){
-            this.effect = "right";
-        } else if(leftRight < -12 && upDown < 5 && upDown > -5  ){
-            this.effect = "left";
-        } else {
-            this.effect = "none";
-        }
-        console.log(this.effect);
-        
-        var x1 = 80 - 60;
-        var x2 = 720 + 60;
-        var y1 = 125 - 60;
-        var y2 = 475 + 60;
-        
-        var x = this.input.activePointer.x;
-        var y = this.input.activePointer.y;
-
-        if (this.pressedDown == true){
-            var relativeSpeed = 0;
-            if (this.aimLine.length > 50 && this.aimLine.length < 125) 
-            {
-                relativeSpeed = 10;
-            } 
-            else if (this.aimLine.length > 124 && this.aimLine.length < 130)
-            {
-                relativeSpeed = 35;
-            } 
-            else if (this.aimLine.length > 129)
-            {
-                relativeSpeed = 55;    
-            }
+        if (activePlayer == Player.number)
+        {                    
+            var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
+            var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
             
-            var speed = ((this.aimLine.length + relativeSpeed) / 2);
-            if (speed > 112)
-            {
-                speed = 112;
-            }
-            console.log("RELATIVE SPEED: " + relativeSpeed);
-            console.log("LENGTH: " + this.aimLine.length);
-            console.log("SPEED: " + speed);
-            //this.updateCue();
-            //this.pressedDown = false; // Mouse no longer pressed
+            console.log(upDown);
+            console.log(leftRight);
 
-            var px = (Math.cos(this.aimLine.angle) * speed);
-            var py = (Math.sin(this.aimLine.angle) * speed);
-            
-            this.angle = this.aimLine.angle;
-            if(speed > 10){
-                this.effectSpeed = speed/4;
+            // Set the effect of the shot depending on the plus sign location
+            if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
+                this.effect = "stop";
+            } else if(upDown > 18 && leftRight < 5 && leftRight > -5){
+                this.effect = "back";
+            } else if (upDown < -16 && leftRight < 5 && leftRight > -5){
+                this.effect = "front";
+            }
+            else if(leftRight > 12 && upDown < 5 && upDown > -5 ){
+                this.effect = "right";
+            } else if(leftRight < -12 && upDown < 5 && upDown > -5  ){
+                this.effect = "left";
             } else {
-                this.effectSpeed = speed/4;
+                this.effect = "none";
             }
+            console.log(this.effect);
+            
+            var x1 = 80 - 60;
+            var x2 = 720 + 60;
+            var y1 = 125 - 60;
+            var y2 = 475 + 60;
+            
+            var x = this.input.activePointer.x;
+            var y = this.input.activePointer.y;
 
-            this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
+            if (this.pressedDown == true){
+                var relativeSpeed = 0;
+                if (this.aimLine.length > 50 && this.aimLine.length < 125) 
+                {
+                    relativeSpeed = 10;
+                } 
+                else if (this.aimLine.length > 124 && this.aimLine.length < 130)
+                {
+                    relativeSpeed = 35;
+                } 
+                else if (this.aimLine.length > 129)
+                {
+                    relativeSpeed = 55;    
+                }
+                
+                var speed = ((this.aimLine.length + relativeSpeed) / 2);
+                if (speed > 112)
+                {
+                    speed = 112;
+                }
+                console.log("RELATIVE SPEED: " + relativeSpeed);
+                console.log("LENGTH: " + this.aimLine.length);
+                console.log("SPEED: " + speed);
+                //this.updateCue();
+                //this.pressedDown = false; // Mouse no longer pressed
 
-            this.speed = 50;
+                var px = (Math.cos(this.aimLine.angle) * speed);
+                var py = (Math.sin(this.aimLine.angle) * speed);
+                
+                this.angle = this.aimLine.angle;
+                if(speed > 10){
+                    this.effectSpeed = speed/4;
+                } else {
+                    this.effectSpeed = speed/4;
+                }
 
-            // Hides cue and aim lines when shot happens
-            this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
-            this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
+                this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
-            this.line.visible = false;
-            this.cue.visible = false;
-            this.fill.visible = false;
-            this.powerRect.height = 0;
-            this.powerLevel.updateCrop();
-            socket.emit('tookShot', px, py);
-            this.firstCollision = 0;
-            this.effectPlus.x = this.effectBall.x - 25;
-            this.effectPlus.y = this.effectBall.y- 24 ;
+                this.speed = 50;
+
+                // Hides cue and aim lines when shot happens
+                this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+                this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
+
+                this.line.visible = false;
+                this.cue.visible = false;
+                this.fill.visible = false;
+                this.powerRect.height = 0;
+                this.powerLevel.updateCrop();
+                socket.emit('tookShot', px, py);
+                this.firstCollision = 0;
+                this.effectPlus.x = this.effectBall.x - 25;
+                this.effectPlus.y = this.effectBall.y- 24 ;
+            }
+            this.pressedDown = false; // Mouse no longer pressed
         }
-        this.pressedDown = false; // Mouse no longer pressed
     },
 
     // Function executed when cueball collides with anything
@@ -738,12 +756,12 @@ Pool.Game.prototype = {
         else
         {
             if (this.score == 0){
-                if(ball.sprite.isStripe == 0){
+                if(ball.sprite.isStripe == false){
                     Player.isSolid = true;
                     Player.emitting = true;
                     socket.emit('solidstripe', 'solid');
                     this.ssText.text = 'SOLID';
-                } else if (ball.sprite.isStripe == 1){
+                } else if (ball.sprite.isStripe == true){
                     Player.isStripe = true;
                     Player.emitting = true;
                     socket.emit('solidstripe', 'stripe');
@@ -751,26 +769,29 @@ Pool.Game.prototype = {
                 }
                 this.firstBall = true;
             }
-            /*ball.sprite.shadow.destroy();*/
-            console.log(ball.isStripe);
+            // Change activePlayer when ball isn't the players
+            if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
+            {
+                Player.emitting = true;
+                socket.emit('changeplayer');
+                //if (activePlayer = 1) {activePlayer = 2 } else {activePlayer = 1};
+            }
+            else
+            {
+                
+            }
+                        
             this.makePocketBall(150, 495, ball.sprite.color);
             ball.sprite.destroy();
 
-            //ball.sprite.x = this.ballContainer.x;
-            //ball.sprite.y = this.ballContainer.y;
-
             this.score += 30;
-            //this.scoreText.text = "SCORE: " + this.score;
             socket.emit('newscore', this.score);
-            
             
             if (this.balls.total === 1)
             {
                 this.time.events.add(3000, this.gameOver, this);
             }
-
         }
-
     },
 
     resetCueBall: function (first) {

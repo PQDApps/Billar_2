@@ -55,14 +55,17 @@ io.on('connection', function(socket){
   // Listen for player shooting
   socket.on('tookShot', function(px, py){
     socket.broadcast.emit('tookShot', px, py);
-    //console.log( px + ' + ' + py);
   });
   
   // Set solid or stripe
   socket.on('solidstripe', function(type){
     io.emit('solidstripe', type);
-    console.log(type);
   })
+  
+  // Change the activeplayer
+  socket.on('changeplayer', function(){
+    io.emit('changeplayer');
+  });
 });
 
 ///////////////////////////
