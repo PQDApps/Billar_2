@@ -23,6 +23,7 @@ var Player = {
     number: null,
     isStripe: false,
     isSolid: false,
+    emitting: false,
 }
 var activePlayer = 1;
 
@@ -42,6 +43,7 @@ socket.on('assignNumber', function(i){
     }
     //playerNumber = i;
 })
+
 
 function isInt(i) {
    return i % 1 === 0;
@@ -248,7 +250,7 @@ Pool.Game.prototype = {
 
         this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
         this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
-        this.pockets.body.addCircle(42, 682, 436); // Bottom right pocket
+        this.pockets.body.addCircle(32, 682, 436); // Bottom right pocket
 
         //  Ball shadows
         //this.shadows = this.add.group();
@@ -407,6 +409,7 @@ Pool.Game.prototype = {
         socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
         socket.on('tookShot', this.shotTaken.bind(this));        
         socket.on('placeball', this.placeBallForOtherPlayer.bind(this));
+        socket.on('solidstripe', this.setSolidStripe.bind(this));
         
         this.cue.visible = false;
         this.resetCueBall(true);
@@ -423,6 +426,25 @@ Pool.Game.prototype = {
 
         this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
         this.ray.visible = false;
+    },
+    
+    setSolidStripe: function (type) {
+        if (Player.emitting != true) {
+            if (type != 'stripe')
+            {
+                Player.isStripe = true;
+                this.ssText.text = 'STRIPE';
+            }
+            else if (type != 'solid')
+            {
+                Player.isSolid = true;
+                this.ssText.text = 'SOLID';
+            }
+        } 
+        else
+        {
+            Player.emitting = false;
+        }
     },
     
     movePlus : function (sprite, pointer) {
@@ -717,8 +739,14 @@ Pool.Game.prototype = {
         {
             if (this.score == 0){
                 if(ball.sprite.isStripe == 0){
+                    Player.isSolid = true;
+                    Player.emitting = true;
+                    socket.emit('solidstripe', 'solid');
                     this.ssText.text = 'SOLID';
                 } else if (ball.sprite.isStripe == 1){
+                    Player.isStripe = true;
+                    Player.emitting = true;
+                    socket.emit('solidstripe', 'stripe');
                     this.ssText.text = 'STRIPE';
                 }
                 this.firstBall = true;
