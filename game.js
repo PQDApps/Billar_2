@@ -23,6 +23,7 @@ var Player = {
     number: null,
     isStripe: false,
     isSolid: false,
+    isActive: false,
     emitting: false,
 }
 var activePlayer = 1;
@@ -41,6 +42,7 @@ socket.on('assignNumber', function(i){
     else{
         playerNumber = 1;
         Player.number = 1;
+        Player.isActive = true;
     }
     //playerNumber = i;
 })
@@ -395,6 +397,9 @@ Pool.Game.prototype = {
         this.firstBall = true;
         this.ssText = this.add.bitmapText(590, 30, 'fat-and-tiny', this.solidOrStripe, 28);
         
+        this.turnText = this.add.bitmapText(100, 70, 'fat-and-tiny', 'YOUR TURN', 34);
+        this.turnText.visible = false;
+        
         //  Press P to pause and resume the game
         this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
         this.pauseKey.onDown.add(this.togglePause, this);
@@ -433,14 +438,16 @@ Pool.Game.prototype = {
     },
     
     changePlayer: function() {
-        if (Player.emitting != true)
-        {
-            activePlayer = Player.number;
+        if (Player.isActive)
+        { 
+            this.turnText.visible = false;
+            Player.isActive = false;            
         }
         else
         {
-            Player.emitting = false;
-        }        
+            this.turnText.visible = true;
+            Player.isActive = true; 
+        }              
     },
     
     setSolidStripe: function (type) {
@@ -591,8 +598,9 @@ Pool.Game.prototype = {
             return;
         }
         
-        if (activePlayer == Player.number)
-        {                    
+        if (Player.isActive)
+        {
+            Player.isActive = false; // Make the player inactive until we know he made a shot                    
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
             var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
             
@@ -676,9 +684,10 @@ Pool.Game.prototype = {
                 socket.emit('tookShot', px, py);
                 this.firstCollision = 0;
                 this.effectPlus.x = this.effectBall.x - 25;
-                this.effectPlus.y = this.effectBall.y- 24 ;
+                this.effectPlus.y = this.effectBall.y- 24 ;                
             }
             this.pressedDown = false; // Mouse no longer pressed
+            socket.emit('changeplayer');
         }
     },
 
@@ -769,16 +778,20 @@ Pool.Game.prototype = {
                 }
                 this.firstBall = true;
             }
-            // Change activePlayer when ball isn't the players
-            if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
+            
+            if (!this.firstBall)
             {
-                Player.emitting = true;
-                socket.emit('changeplayer');
-                //if (activePlayer = 1) {activePlayer = 2 } else {activePlayer = 1};
-            }
-            else
-            {
-                
+                // Change activePlayer when ball isn't the players
+                if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
+                {
+                    socket.emit('changeplayer'); // Player made ball but made the wrong kind
+                    this.turnText.visible = true; 
+                    if (activePlayer = 1) {activePlayer = 2 } else {activePlayer = 1};
+                }
+                else
+                {
+                    madeShot = true;
+                }  
             }
                         
             this.makePocketBall(150, 495, ball.sprite.color);
@@ -1110,6 +1123,16 @@ Pool.Game.prototype = {
 
         if (this.speed < this.allowShotSpeed)
         {
+            if (!madeShot) // If the user didn't make the shot change player
+            {
+                //socket.emit('changeplayer');                               
+            }
+            else // If user made the shot, reset made shot and make player active again
+            {            
+                madeShot = false;
+                Player.isActive = true;
+            }
+            
             if (!this.cue.visible)
             {
                 // Shows cues and lines once speed is slow enough
