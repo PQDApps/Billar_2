@@ -6,6 +6,9 @@ var bodyParser = require('body-parser');
 var io = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+var users;
+var activeplayer = 1;
+var playerObj;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -66,6 +69,15 @@ io.on('connection', function(socket){
   socket.on('changeplayer', function(){
     io.emit('changeplayer');
   });
+  
+  // Hold who the activeplayer is here
+  socket.on('apControl', function(player, shot){
+    //1. Client will make Player.isActive = false when shot is taken
+    //2. Client will send Player object here and sever will hold the activeplayer number
+    //3. We will wait to see if that player made a shot with the correct type of ball, if so the client sends the Player object again with description
+    // of the shot. 
+    //4. We see that a shot was made, we emit back to the player and set Player.isActive back to true.
+  }) 
 });
 
 ///////////////////////////
