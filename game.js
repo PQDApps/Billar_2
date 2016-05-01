@@ -438,6 +438,7 @@ Pool.Game.prototype = {
     },
     
     changePlayer: function() {
+        /*
         if (Player.isActive)
         { 
             this.turnText.visible = false;
@@ -447,7 +448,8 @@ Pool.Game.prototype = {
         {
             this.turnText.visible = true;
             Player.isActive = true; 
-        }              
+        } 
+        */             
     },
     
     setSolidStripe: function (type) {
@@ -600,7 +602,8 @@ Pool.Game.prototype = {
         
         if (Player.isActive)
         {
-            Player.isActive = false; // Make the player inactive until we know he made a shot                    
+            Player.isActive = false; // Make the player inactive until we know he made a shot
+            socket.emit('apContorl', Player, "shot");                    
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
             var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
             
@@ -687,7 +690,7 @@ Pool.Game.prototype = {
                 this.effectPlus.y = this.effectBall.y- 24 ;                
             }
             this.pressedDown = false; // Mouse no longer pressed
-            socket.emit('changeplayer');
+            //socket.emit('changeplayer');
         }
     },
 
@@ -784,7 +787,7 @@ Pool.Game.prototype = {
                 // Change activePlayer when ball isn't the players
                 if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
                 {
-                    socket.emit('changeplayer'); // Player made ball but made the wrong kind
+                    //socket.emit('changeplayer'); // Player made ball but made the wrong kind
                     this.turnText.visible = true; 
                     if (activePlayer = 1) {activePlayer = 2 } else {activePlayer = 1};
                 }
