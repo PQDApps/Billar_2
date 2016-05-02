@@ -28,7 +28,7 @@ io.on('connection', function(socket){
   
   socket.on('assignNumber', function(){
     numberOfClients = users.length;
-    var player = new Player('Player ' + (numberOfClients + 1), (numberOfClients + 1), null, null, socket.id);
+    var player = new Player('Player ' + (numberOfClients + 1), (numberOfClients + 1), false, false, socket.id);
     if (player.number == 1){
       player.isActive = true;
     } else {
@@ -45,8 +45,7 @@ io.on('connection', function(socket){
   });
 
   // Socket disconnection execute following function
-  socket.on('disconnect', function() {
-    numberOfClients--; // Decrement when user disconnects
+  socket.on('disconnect', function() {    
     console.log("Disconnected from socekt server:" + socket.id);
     var minusPlayer;
     for(var i = 0; i < users.length; i++){
@@ -54,7 +53,8 @@ io.on('connection', function(socket){
         minusPlayer = i;
       }
     }
-    users.splice(minusPlayer, 1);    
+    users.splice(minusPlayer, 1);
+    numberOfClients = users.length; // Decrement when user disconnects    
   });
 
   // Listen for new score

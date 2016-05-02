@@ -22,9 +22,8 @@ var Player = {
     name: null,
     number: null,
     isStripe: false,
-    isSolid: false,
-    isActive: false,
-    emitting: false,
+    isActive: true,
+    socketId: null,
 }
 var activePlayer = 1;
 var madeShot = false;
@@ -813,7 +812,7 @@ Pool.Game.prototype = {
             this.resetting = true;    
         }
         
-        if (activePlayer == Player.number){                              
+        if (Player.isActive){                              
             this.cueball.visible = false;            
             this.placeball.x = this.input.activePointer.x;
             this.placeball.y = this.input.activePointer.y;
@@ -821,13 +820,13 @@ Pool.Game.prototype = {
             
             this.input.onUp.remove(this.takeShot, this);
             this.input.onDown.add(this.placeCueBall, this);
-        } else if (activePlayer != Player.number){
+        } else if (!Player.isActive){
             
         }
     },
     
     placeBallForOtherPlayer: function (x, y) {
-        if (activePlayer != Player.number){
+        if (!Player.isActive){
             this.placeCueBall(x,y);
         }
     },
@@ -838,7 +837,7 @@ Pool.Game.prototype = {
         y = y || this.placeball.y;
         var cuex = this.placeball.x;
         var cuey = this.placeball.y;
-        if (activePlayer == Player.number){
+        if (Player.isActive){
             socket.emit('placeball', cuex, cuey);
         }                     
         var a = new Phaser.Circle(x, y, 26);
@@ -861,7 +860,7 @@ Pool.Game.prototype = {
             }
         }
         
-        if (activePlayer != Player.number){
+        if (!Player.isActive){
             this.cueball.reset(x, y);
             this.cueball.body.reset(x, y);
         } else {
