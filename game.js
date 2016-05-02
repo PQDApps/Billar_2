@@ -31,20 +31,9 @@ var madeShot = false;
 
 var socket = io();
 var playerNumber = 0;
-socket.emit('assignNumber');
+//socket.emit('assignNumber');
 socket.on('assignNumber', function(i){
-    var iDivided = i/2;
-    var isWhole = isInt(iDivided);
-    if (isWhole == true){
-        playerNumber = 2;
-        Player.number = 2;
-    }
-    else{
-        playerNumber = 1;
-        Player.number = 1;
-        Player.isActive = true;
-    }
-    //playerNumber = i;
+    Player = i;
 })
 
 
@@ -115,7 +104,7 @@ Pool.MainMenu.prototype = {
     },
 
     start: function () {
-
+        socket.emit('assignNumber');
         this.state.start('Pool.Game');
 
     }

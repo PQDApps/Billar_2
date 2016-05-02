@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var io = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
-var users;
+var users = [];
 var activeplayer = 1;
 var playerObj;
 
@@ -25,11 +25,18 @@ io.on('connection', function(socket){
   // Socket connection successful
   console.log('a user connected '+ socket.id);
   //numberOfClients++; //Increment when user connects
-
+  
   socket.on('assignNumber', function(){
-    numberOfClients++;
+    numberOfClients = users.length;
+    var player = new Player('Player ' + (numberOfClients + 1), (numberOfClients + 1), null, null, socket.id);
+    if (player.number == 1){
+      player.isActive = true;
+    } else {
+      player.isActive = false;
+    }
+    users.push(player);
     var i = numberOfClients;
-    socket.emit('assignNumber', i);
+    socket.emit('assignNumber', player);
   });
 
   // Socket chat message
@@ -40,7 +47,14 @@ io.on('connection', function(socket){
   // Socket disconnection execute following function
   socket.on('disconnect', function() {
     numberOfClients--; // Decrement when user disconnects
-    console.log("Disconnected from socekt server");
+    console.log("Disconnected from socekt server:" + socket.id);
+    var minusPlayer;
+    for(var i = 0; i < users.length; i++){
+      if(users[i].socketId == socket.id){
+        minusPlayer = i;
+      }
+    }
+    users.splice(minusPlayer, 1);    
   });
 
   // Listen for new score
@@ -80,9 +94,9 @@ io.on('connection', function(socket){
   }) 
 });
 
-///////////////////////////
-// Mongo Database Testing
-///////////////////////////
+////////////////////////////
+// Mongo Database Testing //
+////////////////////////////
 var mongoURL = "mongodb://localhost:27017/local";
 MongoClient.connect(mongoURL, function(err, db) {
     if(!err) {
@@ -153,3 +167,13 @@ app.use('/api', router);
 http.listen(process.env.PORT || 5000, function(){
   console.log('listening on *:5000');
 });
+
+
+// Player object
+function Player(name, number, isStripe, isActive, socketId) {
+    this.name = name;
+    this.number = number;
+    this.isStripe = isStripe;
+    this.isActive = isActive;
+    this.socketId = socketId;
+}
