@@ -22,6 +22,7 @@ var Player = {
     name: null,
     number: null,
     isStripe: false,
+    isSolid: false,
     isActive: true,
     socketId: null,
 }
@@ -32,7 +33,12 @@ var socket = io();
 var playerNumber = 0;
 //socket.emit('assignNumber');
 socket.on('assignNumber', function(i){
-    Player = i;
+    Player.name = i.name;
+    Player.number = i.number;
+    Player.isStripe = i.isStripe;
+    Player.isActive = i.isActive;
+    Player.socketId = i.socketId;
+    this.playerNumberText.text = i.name;    
 })
 
 
@@ -591,7 +597,7 @@ Pool.Game.prototype = {
         if (Player.isActive)
         {
             Player.isActive = false; // Make the player inactive until we know he made a shot
-            socket.emit('apContorl', Player, "shot");                    
+            socket.emit('apControl', Player, "shot");                    
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
             var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
             
@@ -828,6 +834,7 @@ Pool.Game.prototype = {
     placeBallForOtherPlayer: function (x, y) {
         if (!Player.isActive){
             this.placeCueBall(x,y);
+            //this.cue.visible = false;
         }
     },
     
@@ -863,11 +870,13 @@ Pool.Game.prototype = {
         if (!Player.isActive){
             this.cueball.reset(x, y);
             this.cueball.body.reset(x, y);
+            this.cue.visible = false;
         } else {
             this.cueball.reset(this.placeball.x, this.placeball.y);
-            this.cueball.body.reset(this.placeball.x, this.placeball.y);  
+            this.cueball.body.reset(this.placeball.x, this.placeball.y);
+            this.cue.visible = true;  
         }
-        this.cueball.visible = true;
+        //this.cueball.visible = true;
         //this.cueball.shadow.visible = true;
 
         this.placeball.visible = false;
@@ -876,11 +885,15 @@ Pool.Game.prototype = {
         this.resetting = false;
         this.firstPlacement = false;
 
-        this.input.onDown.remove(this.placeCueBall, this);
-        this.input.onUp.add(this.takeShot, this);
-
+        this.input.onDown.remove(this.placeCueBall, this); // Remove on click, place ball
+        //this.input.onUp.add(this.takeShot, this);   
+        setTimeout(this.allowShots.bind(this), 1000); // One second after ball is placed allow a shot                              
     },
-
+    
+    allowShots: function() {
+        this.input.onUp.add(this.takeShot, this);   
+    },
+    
     updateCue: function () {
 
         this.aimLine.start.set(this.cueball.x, this.cueball.y);
@@ -929,10 +942,6 @@ Pool.Game.prototype = {
                 var bAngle = Math.asin(oppositeLength/24) - this.shootLine.angle;
                 bAngle = bAngle - 3.14;// + 6.28319;// - acuteAngle;                              
                 var pointContact = new Phaser.Point(closestball.x + Math.cos(bAngle) * hypo, closestball.y - Math.sin(bAngle) * hypo);      
-                                          
-                
-                //console.log("ClosestBall.x : " + closestball.x + " ClosestBall.y : " + closestball.y);
-                console.log();
                 
                 var ninetyDegrees = 1.5708;
                 if (this.shootLine.angle < this.hypotenuse.angle){
@@ -1128,8 +1137,13 @@ Pool.Game.prototype = {
             {
                 // Shows cues and lines once speed is slow enough
                 
-                this.line.visible = false;
-                this.cue.visible = true;
+                if (!Player.isActive){
+                    this.line.visible = false;
+                    this.cue.visible = false;
+                } else {
+                    this.line.visible = true;
+                    this.cue.visible = true;    
+                }                
                 this.fill.visible = true;
                 //this.firstCollision = 0;
             }

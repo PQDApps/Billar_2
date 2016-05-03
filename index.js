@@ -8,6 +8,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var users = [];
 var activeplayer = 1;
+var allowPlayer = 0; // Add to this variable when shot is taken and ball hits pocket
 var playerObj;
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,7 +29,7 @@ io.on('connection', function(socket){
   
   socket.on('assignNumber', function(){
     numberOfClients = users.length;
-    var player = new Player('Player ' + (numberOfClients + 1), (numberOfClients + 1), false, false, socket.id);
+    var player = new Player('Player ' + (numberOfClients + 1), (numberOfClients + 1), false, false, false, socket.id);
     if (player.number == 1){
       player.isActive = true;
     } else {
@@ -87,10 +88,22 @@ io.on('connection', function(socket){
   // Hold who the activeplayer is here
   socket.on('apControl', function(player, shot){
     //1. Client will make Player.isActive = false when shot is taken
-    //2. Client will send Player object here and sever will hold the activeplayer number
-    //3. We will wait to see if that player made a shot with the correct type of ball, if so the client sends the Player object again with description
-    // of the shot. 
+    //2. Client will send Player object here and server will hold the activeplayer number
+    if (shot == "shot") { // Shot was taken, we will wait to see if a ball hits the pocket  
+      allowPlayer++;
+    }
+    else if (shot == "hitpocket"){
+      allowPlayer++; 
+    }
+    
+    //3. We will wait to see if  that player made a shot with the correct type of ball, if so the client sends the Player object again with description
+    // of the shot.
+    if (allowPlayer >= 2){
+      
+    }
+    
     //4. We see that a shot was made, we emit back to the player and set Player.isActive back to true.
+    
   }) 
 });
 
@@ -170,10 +183,11 @@ http.listen(process.env.PORT || 5000, function(){
 
 
 // Player object
-function Player(name, number, isStripe, isActive, socketId) {
+function Player(name, number, isStripe, isSolid, isActive, socketId) {
     this.name = name;
     this.number = number;
     this.isStripe = isStripe;
+    this.isSolid = isSolid
     this.isActive = isActive;
     this.socketId = socketId;
 }
