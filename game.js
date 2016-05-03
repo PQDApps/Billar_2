@@ -1061,11 +1061,19 @@ Pool.Game.prototype = {
         }, this);
         return closestBall;
     },
-
+    
+    shotMade: function () {
+        madeShot = false;
+        socket.emit('apControl', Player, "hitpocket");    
+    },
+    
     update: function () {
-        //console.log("Line:" + this.line.x + " " + this.line.y);
-        //console.log("Cueball:" + this.cueball.x + " " + this.cueball.y);
-
+        if (madeShot)
+        {
+            madeShot = false;
+            setTimeout(this.shotMade, 1000);    
+        }
+        
         if (this.resetting)
         {
             this.placeball.x = this.math.clamp(this.input.x, this.placeRect.left, this.placeRect.right);
@@ -1120,23 +1128,17 @@ Pool.Game.prototype = {
     updateSpeed: function () {
 
         this.speed = Math.sqrt(this.cueball.body.velocity.x * this.cueball.body.velocity.x + this.cueball.body.velocity.y * this.cueball.body.velocity.y);
-
+        this.balls.forEach(function(b) {
+            var ballSpeed = Math.sqrt(b.body.velocity.x * b.body.velocity.x + b.body.velocity.y * b.body.velocity.y);
+            this.speed = this.speed + ballSpeed;
+        });
         if (this.speed < this.allowShotSpeed)
         {
-            if (!madeShot) // If the user didn't make the shot change player
-            {
-                //socket.emit('changeplayer');                               
-            }
-            else // If user made the shot, reset made shot and make player active again
-            {            
-                madeShot = false;
-                Player.isActive = true;
-            }
+            
             
             if (!this.cue.visible)
             {
-                // Shows cues and lines once speed is slow enough
-                
+                // Shows cues and lines once speed is slow enough                
                 if (!Player.isActive){
                     this.line.visible = false;
                     this.cue.visible = false;
@@ -1144,8 +1146,7 @@ Pool.Game.prototype = {
                     this.line.visible = true;
                     this.cue.visible = true;    
                 }                
-                this.fill.visible = true;
-                //this.firstCollision = 0;
+                this.fill.visible = true;                
             }
         }
         else if (this.speed < 3.0)

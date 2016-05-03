@@ -90,6 +90,7 @@ io.on('connection', function(socket){
     //1. Client will make Player.isActive = false when shot is taken
     //2. Client will send Player object here and server will hold the activeplayer number
     if (shot == "shot") { // Shot was taken, we will wait to see if a ball hits the pocket  
+      activeplayer = player.number;
       allowPlayer++;
     }
     else if (shot == "hitpocket"){
