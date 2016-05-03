@@ -28,6 +28,7 @@ var Player = {
 }
 var activePlayer = 1;
 var madeShot = false;
+var missedShot = false;
 
 var socket = io();
 var playerNumber = 0;
@@ -111,9 +112,7 @@ Pool.MainMenu.prototype = {
     start: function () {
         socket.emit('assignNumber');
         this.state.start('Pool.Game');
-
     }
-
 };
 
 Pool.Game = function (game) {
@@ -411,6 +410,7 @@ Pool.Game.prototype = {
         socket.on('placeball', this.placeBallForOtherPlayer.bind(this));
         socket.on('solidstripe', this.setSolidStripe.bind(this));
         socket.on('changeplayer', this.changePlayer.bind(this));
+        socket.on('apControl', this.activePlayerControl.bind(this));
         
         this.cue.visible = false;
         this.resetCueBall(true);
@@ -429,6 +429,12 @@ Pool.Game.prototype = {
         this.ray.visible = false;
         
         
+    },
+    
+    activePlayerControl: function(p) {
+        if (p == Player.number){
+            Player.isActive = true;
+        }
     },
     
     changePlayer: function() {
@@ -761,6 +767,11 @@ Pool.Game.prototype = {
         }
         else
         {
+            // When first ball hits pocket shot is good and player is still active
+            if (this.firstBall){
+                madeShot = true;
+            }
+            
             if (this.score == 0){
                 if(ball.sprite.isStripe == false){
                     Player.isSolid = true;
@@ -773,7 +784,7 @@ Pool.Game.prototype = {
                     socket.emit('solidstripe', 'stripe');
                     this.ssText.text = 'STRIPE';
                 }
-                this.firstBall = true;
+                this.firstBall = false;
             }
             
             if (!this.firstBall)
@@ -782,6 +793,7 @@ Pool.Game.prototype = {
                 if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
                 {
                     //socket.emit('changeplayer'); // Player made ball but made the wrong kind
+                    missedShot = true;
                     this.turnText.visible = true; 
                     if (activePlayer = 1) {activePlayer = 2 } else {activePlayer = 1};
                 }
@@ -1067,11 +1079,21 @@ Pool.Game.prototype = {
         socket.emit('apControl', Player, "hitpocket");    
     },
     
+    shotMissed: function () {
+        missedShot = false;
+        socket.emit('apControl', Player, "missed"); 
+    },
+    
     update: function () {
         if (madeShot)
         {
             madeShot = false;
             setTimeout(this.shotMade, 1000);    
+        }
+        
+        if (missedShot) {
+            missedShot = false;
+            setTimeout(this.shotMissed, 1000);
         }
         
         if (this.resetting)

@@ -94,7 +94,18 @@ io.on('connection', function(socket){
       allowPlayer++;
     }
     else if (shot == "hitpocket"){
-      allowPlayer++; 
+      activeplayer = player.number;
+      allowPlayer++;
+      io.emit('apControl', activeplayer); 
+    }
+    else if (shot == "missed"){
+      if (player.number == 1){
+        activeplayer = 2;
+      } else {
+        activeplayer = 1;
+      }
+      allosPlayer = 0;
+      io.emit('apControl', activeplayer);
     }
     
     //3. We will wait to see if  that player made a shot with the correct type of ball, if so the client sends the Player object again with description
