@@ -129,7 +129,7 @@ Pool.Game = function (game) {
     this.powerText = null;
 
     this.speed = 0;
-    this.allowShotSpeed = 0.1;
+    this.allowShotSpeed = 0.01;
 
     this.balls = null;
     this.pocketBalls = null;
@@ -1156,7 +1156,10 @@ Pool.Game.prototype = {
         });
         if (this.speed < this.allowShotSpeed)
         {
-            
+            // Once balls stop if none went it change players
+            if (!madeShot){
+                missedShot = true;
+            }
             
             if (!this.cue.visible)
             {
