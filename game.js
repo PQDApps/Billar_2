@@ -69,7 +69,7 @@ Pool.Preloader.prototype = {
 
         this.load.bitmapFont('fat-and-tiny');
 
-        this.load.images([ 'logo', 'tableTwo.fw', 'ballContainerTwo', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line', 'effectBall', 'effectPointer', 'effectPlus', 'powerMeter', 'powerLevel' ]);
+        this.load.images([ 'logo', 'tableTwo.fw', 'ballContainerTwo', 'rightRectangle', 'leftRectangle', 'cue', 'fill', 'line', 'effectBall', 'effectPointer', 'effectPlus', 'powerMeter', 'powerLevel', 'activePlayerBox', 'activePlayerArrow', 'solidBall', 'stripeBall' ]);
 
         this.load.spritesheet('balls', 'spriteBalls.png', 24, 24);
         this.load.spritesheet('startBtn','startBtnSheet.png', 67, 28);
@@ -196,7 +196,13 @@ Pool.Game.prototype = {
         this.table.body.loadPolygon('table', 'table');
 
         this.tableMaterial = this.physics.p2.createMaterial('tableMaterial', this.table.body);
-
+        
+        // Active player box        
+        this.activePlayerBox = this.add.sprite(0, 100, 'activePlayerBox');        
+        this.activePlayerArrow = this.add.sprite(90, 105, 'activePlayerArrow');
+        this.solidBall = this.add.sprite(678, 103, 'solidBall');
+        this.stripeBall = this.add.sprite(328, 103, 'stripeBall');
+        
         // Rectangles, buttons and graphics around the pool table
         this.ballContainer = this.add.sprite(80, 474, 'ballContainerTwo'); // The container the balls go into once you score
 
@@ -467,7 +473,7 @@ Pool.Game.prototype = {
         } 
         else
         {
-            Player.emitting = false;
+            
         }
     },
     
@@ -595,7 +601,7 @@ Pool.Game.prototype = {
 
     takeShot: function () {
 
-        if (this.speed > this.allowShotSpeed)
+        if (this.speed >= this.allowShotSpeed)
         {
             return;
         }
@@ -792,8 +798,10 @@ Pool.Game.prototype = {
                 // Change activePlayer when ball isn't the players
                 if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
                 {
-                    //socket.emit('changeplayer'); // Player made ball but made the wrong kind
-                    missedShot = true;
+                    if (Player.isActive){
+                        socket.emit('apControl', "wrongball"); // Player made ball but made the wrong kind    
+                    }                    
+                    //missedShot = true;
                     this.turnText.visible = true; 
                     if (activePlayer = 1) {activePlayer = 2 } else {activePlayer = 1};
                 }
@@ -921,7 +929,7 @@ Pool.Game.prototype = {
         this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
         this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
 
-        if (this.speed < this.allowShotSpeed)
+        if (this.speed <= this.allowShotSpeed)
         {
                 
             // Calculate 
@@ -1076,12 +1084,16 @@ Pool.Game.prototype = {
     
     shotMade: function () {
         madeShot = false;
-        socket.emit('apControl', Player, "hitpocket");    
+        if(Player.isActive){
+            socket.emit('apControl', Player, "hitpocket");    
+        }            
     },
     
     shotMissed: function () {
         missedShot = false;
-        socket.emit('apControl', Player, "missed"); 
+        if(Player.isActive){
+            socket.emit('apControl', Player, "missed");    
+        }        
     },
     
     update: function () {
@@ -1154,11 +1166,12 @@ Pool.Game.prototype = {
             var ballSpeed = Math.sqrt(b.body.velocity.x * b.body.velocity.x + b.body.velocity.y * b.body.velocity.y);
             this.speed = this.speed + ballSpeed;
         });
-        if (this.speed < this.allowShotSpeed)
+        console.log(this.speed);
+        if (this.speed <= this.allowShotSpeed)
         {
             // Once balls stop if none went it change players
             if (!madeShot){
-                missedShot = true;
+                //missedShot = true;
             }
             
             if (!this.cue.visible)

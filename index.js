@@ -89,23 +89,39 @@ io.on('connection', function(socket){
   socket.on('apControl', function(player, shot){
     //1. Client will make Player.isActive = false when shot is taken
     //2. Client will send Player object here and server will hold the activeplayer number
-    if (shot == "shot") { // Shot was taken, we will wait to see if a ball hits the pocket  
-      activeplayer = player.number;
-      allowPlayer++;
-    }
-    else if (shot == "hitpocket"){
-      activeplayer = player.number;
-      allowPlayer++;
-      io.emit('apControl', activeplayer); 
-    }
-    else if (shot == "missed"){
-      if (player.number == 1){
-        activeplayer = 2;
-      } else {
-        activeplayer = 1;
+    if (player.number == activeplayer)
+    {          
+      if (shot == "shot") { // Shot was taken, we will wait to see if a ball hits the pocket  
+        activeplayer = player.number;
+        allowPlayer++;
       }
-      allosPlayer = 0;
-      io.emit('apControl', activeplayer);
+      
+      if (shot == "hitpocket"){
+        activeplayer = player.number;
+        allowPlayer++;
+        io.to(player.socketId).emit('apControl', activeplayer);         
+      }
+      
+      if (shot == "missed"){
+        if (player.number == 1){
+          activeplayer = 2;
+        } else {
+          activeplayer = 1;
+        }
+        allowPlayer = 0;        
+        io.emit('apControl', activeplayer);
+      }
+      
+      if (shot == "wrongball"){
+        if (player.number == 1){
+          activeplayer = 2;
+        } else {
+          activeplayer = 1;
+        }
+        allowPlayer = 0;
+        
+        io.emit('apControl', activeplayer);
+      }
     }
     
     //3. We will wait to see if  that player made a shot with the correct type of ball, if so the client sends the Player object again with description
