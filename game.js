@@ -23,7 +23,7 @@ var Player = {
     number: null,
     isStripe: false,
     isSolid: false,
-    isActive: true,
+    isActive: false,
     socketId: null,
 }
 var activePlayer = 1;
@@ -33,14 +33,6 @@ var missedShot = false;
 var socket = io();
 var playerNumber = 0;
 //socket.emit('assignNumber');
-socket.on('assignNumber', function(i){
-    Player.name = i.name;
-    Player.number = i.number;
-    Player.isStripe = i.isStripe;
-    Player.isActive = i.isActive;
-    Player.socketId = i.socketId;
-    this.playerNumberText.text = i.name;    
-})
 
 
 function isInt(i) {
@@ -110,7 +102,7 @@ Pool.MainMenu.prototype = {
     },
 
     start: function () {
-        socket.emit('assignNumber');
+        
         this.state.start('Pool.Game');
     }
 };
@@ -180,7 +172,14 @@ Pool.Game.prototype = {
     },
 
     create: function () {
-
+        socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
+        socket.on('tookShot', this.shotTaken.bind(this));        
+        socket.on('placeball', this.placeBallForOtherPlayer.bind(this));
+        socket.on('solidstripe', this.setSolidStripe.bind(this));
+        socket.on('changeplayer', this.changePlayer.bind(this));
+        socket.on('apControl', this.activePlayerControl.bind(this));
+        socket.on('assignNumber', this.assignNumber.bind(this));
+        
         this.stage.backgroundColor = 0x001b07;
 
         this.pocketBalls = this.add.physicsGroup(Phaser.Physics.P2JS);
@@ -410,16 +409,8 @@ Pool.Game.prototype = {
         this.input.addMoveCallback(this.updateCue, this); // Updates every frame position of cue
         this.input.onUp.add(this.takeShot, this); // Doesn't shoot until user lets go of mouse button
         this.input.onDown.add(this.pressed, this); // Changes flag if mouse is pressed
-
-        socket.on('newscore', this.updateScore.bind(this)); // Receives new score through socket
-        socket.on('tookShot', this.shotTaken.bind(this));        
-        socket.on('placeball', this.placeBallForOtherPlayer.bind(this));
-        socket.on('solidstripe', this.setSolidStripe.bind(this));
-        socket.on('changeplayer', this.changePlayer.bind(this));
-        socket.on('apControl', this.activePlayerControl.bind(this));
         
-        this.cue.visible = false;
-        this.resetCueBall(true);
+        this.cue.visible = false;        
 
         this.bitmap = this.game.add.bitmapData(800, 600);
         this.bitmap.context.fillStyle = 'rgb(255, 255, 255)';
@@ -433,8 +424,17 @@ Pool.Game.prototype = {
 
         this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
         this.ray.visible = false;
-        
-        
+        socket.emit('assignNumber');                
+    },
+    
+    assignNumber: function(i) {
+        Player.name = i.name;
+        Player.number = i.number;
+        Player.isStripe = i.isStripe;
+        Player.isActive = i.isActive;
+        Player.socketId = i.socketId;
+        this.playerNumberText.text = i.name;
+        this.resetCueBall(true); 
     },
     
     activePlayerControl: function(p) {
