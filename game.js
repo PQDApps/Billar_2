@@ -29,6 +29,7 @@ var Player = {
 var activePlayer = 1;
 var madeShot = false;
 var missedShot = false;
+var pocketBalls = [];
 
 var socket = io();
 var playerNumber = 0;
@@ -424,7 +425,10 @@ Pool.Game.prototype = {
 
         this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
         this.ray.visible = false;
-        socket.emit('assignNumber');                
+        
+        // Once game starts assig number, socket id and other player information to Player object
+        socket.emit('assignNumber');
+        this.okay = 0;                
     },
     
     assignNumber: function(i) {
@@ -434,7 +438,14 @@ Pool.Game.prototype = {
         Player.isActive = i.isActive;
         Player.socketId = i.socketId;
         this.playerNumberText.text = i.name;
-        this.resetCueBall(true); 
+        /*if (i.number == 1){
+            this.playerNumberText.x = 180;
+            this.playerNumberText.y = 98; 
+        } else {
+            this.playerNumberText.x = 520;
+            this.playerNumberText.y = 98;
+        }*/
+        this.resetCueBall(true);
     },
     
     activePlayerControl: function(p) {
@@ -463,17 +474,38 @@ Pool.Game.prototype = {
             if (type != 'stripe')
             {
                 Player.isStripe = true;
+                this.playerNumberText.x = 180;
+                this.playerNumberText.y = 98; 
                 this.ssText.text = 'STRIPE';
             }
             else if (type != 'solid')
             {
                 Player.isSolid = true;
+                this.playerNumberText.x = 520;
+                this.playerNumberText.y = 98;
                 this.ssText.text = 'SOLID';
             }
-        } 
-        else
+        }
+        else if (Player.emitting == true)
         {
-            
+             if (type == 'stripe')
+            {
+                Player.isStripe = true;
+                this.playerNumberText.x = 180;
+                this.playerNumberText.y = 98; 
+                this.ssText.text = 'STRIPE';
+                this.activePlayerArrow.x = 90;
+                this.activePlayerArrow.y = 105;
+            }
+            else if (type == 'solid')
+            {
+                Player.isSolid = true;
+                this.playerNumberText.x = 520;
+                this.playerNumberText.y = 98;
+                this.ssText.text = 'SOLID';
+                this.activePlayerArrow.x = 520;
+                this.activePlayerArrow.y = 105;
+            }
         }
     },
     
@@ -765,7 +797,9 @@ Pool.Game.prototype = {
     },
 
     hitPocket: function (ball, pocket) {
-
+        // Keep track of the balls that hit the pocket in pocketBalls array
+        // Once all balls are stopped
+        
         //  Cue ball reset
         if (ball.sprite === this.cueball)
         {
@@ -775,18 +809,23 @@ Pool.Game.prototype = {
         {
             // When first ball hits pocket shot is good and player is still active
             if (this.firstBall){
-                madeShot = true;
+                //madeShot = true;
+                if (Player.emitting){
+                    Player.isActive = true;    
+                }                
             }
             
             if (this.score == 0){
                 if(ball.sprite.isStripe == false){
                     Player.isSolid = true;
                     Player.emitting = true;
+                    Player.isActive = true;
                     socket.emit('solidstripe', 'solid');
                     this.ssText.text = 'SOLID';
                 } else if (ball.sprite.isStripe == true){
                     Player.isStripe = true;
                     Player.emitting = true;
+                    Player.isActive = true;
                     socket.emit('solidstripe', 'stripe');
                     this.ssText.text = 'STRIPE';
                 }
@@ -798,7 +837,7 @@ Pool.Game.prototype = {
                 // Change activePlayer when ball isn't the players
                 if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
                 {
-                    if (Player.isActive){
+                    if (Player.isActive && Player.emitting){
                         socket.emit('apControl', "wrongball"); // Player made ball but made the wrong kind    
                     }                    
                     //missedShot = true;
@@ -807,7 +846,7 @@ Pool.Game.prototype = {
                 }
                 else
                 {
-                    madeShot = true;
+                    //madeShot = true;
                 }  
             }
                         
@@ -1097,10 +1136,11 @@ Pool.Game.prototype = {
     },
     
     update: function () {
-        if (madeShot)
+        if (madeShot && this.okay == 0)
         {
+            this.okay++;
             madeShot = false;
-            setTimeout(this.shotMade, 1000);    
+            this.shotMade();   
         }
         
         if (missedShot) {
@@ -1167,7 +1207,7 @@ Pool.Game.prototype = {
             this.speed = this.speed + ballSpeed;
         });
         console.log(this.speed);
-        if (this.speed <= this.allowShotSpeed)
+        if (this.speed == 0)
         {
             // Once balls stop if none went it change players
             if (!madeShot){
