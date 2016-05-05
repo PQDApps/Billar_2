@@ -640,7 +640,7 @@ Pool.Game.prototype = {
         
         if (Player.isActive)
         {
-            Player.isActive = false; // Make the player inactive until we know he made a shot
+            //Player.isActive = false; // Make the player inactive until we know he made a shot
             socket.emit('apControl', Player, "shot");                    
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
             var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
@@ -799,6 +799,7 @@ Pool.Game.prototype = {
     hitPocket: function (ball, pocket) {
         // Keep track of the balls that hit the pocket in pocketBalls array
         // Once all balls are stopped
+        pocketBalls.push(ball);
         
         //  Cue ball reset
         if (ball.sprite === this.cueball)
@@ -811,7 +812,7 @@ Pool.Game.prototype = {
             if (this.firstBall){
                 //madeShot = true;
                 if (Player.emitting){
-                    Player.isActive = true;    
+                    //Player.isActive = true;    
                 }                
             }
             
@@ -1135,17 +1136,46 @@ Pool.Game.prototype = {
         }        
     },
     
+    checkPocketBalls: function () {
+        pocketBalls.forEach(function(b) { // Check each ball
+            if (pocketBalls.length == 0){
+                // No balls got into a pocket, so we change player
+                if (Player.isActive){
+                    socket.emit('apControl', Player, 'change');    
+                }                   
+            }
+                        
+            if (b.isSolid == Player.isSolid && b.isStripe == Player.isStripe){
+                
+            } else {
+                // Wrong ball dropped into the 
+                if (Player.isActive){
+                    socket.emit('apControl', Player, 'change');    
+                }
+            }
+        });  
+    },
+    
     update: function () {
+        if (this.speed == 0)
+        {            
+            if (this.okay > 0)
+            {
+                this.okay = 1;
+                this.checkPocketBalls();
+            }
+        }
+        
         if (madeShot && this.okay == 0)
         {
-            this.okay++;
-            madeShot = false;
-            this.shotMade();   
+            //this.okay++;
+            //madeShot = false;
+            //this.shotMade();   
         }
         
         if (missedShot) {
-            missedShot = false;
-            setTimeout(this.shotMissed, 1000);
+            //missedShot = false;
+            //setTimeout(this.shotMissed, 1000);
         }
         
         if (this.resetting)
@@ -1162,8 +1192,7 @@ Pool.Game.prototype = {
         else
         {
             this.updateSpeed();
-            this.updateCue();
-            
+            this.updateCue();            
         }
 
         if (this.checkOverlap(this.effectPointer, this.effectPlus)) {
