@@ -453,6 +453,17 @@ Pool.Game.prototype = {
         if (p == Player.number){
             this.okay = 0;
             Player.isActive = true;
+            if (Player.isStripe){
+                this.activePlayerArrow.x = 90;
+                this.activePlayerArrow.y = 105;
+                this.playerNumberText.x = 180;
+                this.playerNumberText.y = 98;
+            } else if (Player.isSolid){
+                this.activePlayerArrow.x = 520;
+                this.activePlayerArrow.y = 105;
+                this.playerNumberText.x = 520;
+                this.playerNumberText.y = 98;
+            }
         } else {
             this.okay = 0;
             Player.isActive = false;
