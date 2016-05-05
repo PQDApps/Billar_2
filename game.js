@@ -428,7 +428,8 @@ Pool.Game.prototype = {
         
         // Once game starts assig number, socket id and other player information to Player object
         socket.emit('assignNumber');
-        this.okay = 0;                
+        this.okay = 0;
+        this.afterShot = 0;                
     },
     
     assignNumber: function(i) {
@@ -450,7 +451,11 @@ Pool.Game.prototype = {
     
     activePlayerControl: function(p) {
         if (p == Player.number){
+            this.okay = 0;
             Player.isActive = true;
+        } else {
+            this.okay = 0;
+            Player.isActive = false;
         }
     },
     
@@ -470,7 +475,7 @@ Pool.Game.prototype = {
     },
     
     setSolidStripe: function (type) {
-        if (Player.emitting != true) {
+        if (!Player.isActive) {
             if (type != 'stripe')
             {
                 Player.isStripe = true;
@@ -486,7 +491,7 @@ Pool.Game.prototype = {
                 this.ssText.text = 'SOLID';
             }
         }
-        else if (Player.emitting == true)
+        else if (Player.isActive)
         {
              if (type == 'stripe')
             {
@@ -633,20 +638,19 @@ Pool.Game.prototype = {
 
     takeShot: function () {
 
-        if (this.speed >= this.allowShotSpeed)
+        if (this.speed > 0)
         {
             return;
         }
-        
-        if (Player.isActive)
-        {
-            //Player.isActive = false; // Make the player inactive until we know he made a shot
-            socket.emit('apControl', Player, "shot");                    
+        if(Player.isActive){
+            this.afterShot = 1; // Shot was taken, so it is now after the shot
+        }
+        if (Player.isActive && this.okay == 0 && this.afterShot == 1) // Allow shot if active, okay, and shot's been taken
+        {            
+            this.okay = 1; // Make it so the player can't shoot until we know he made a shot
+            //socket.emit('apControl', Player, "shot");                    
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
             var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
-            
-            console.log(upDown);
-            console.log(leftRight);
 
             // Set the effect of the shot depending on the plus sign location
             if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
@@ -799,7 +803,7 @@ Pool.Game.prototype = {
     hitPocket: function (ball, pocket) {
         // Keep track of the balls that hit the pocket in pocketBalls array
         // Once all balls are stopped
-        pocketBalls.push(ball);
+        pocketBalls.push(ball.sprite.isStripe);
         
         //  Cue ball reset
         if (ball.sprite === this.cueball)
@@ -819,13 +823,13 @@ Pool.Game.prototype = {
             if (this.score == 0){
                 if(ball.sprite.isStripe == false){
                     Player.isSolid = true;
-                    Player.emitting = true;
+                    //Player.emitting = true;
                     Player.isActive = true;
                     socket.emit('solidstripe', 'solid');
                     this.ssText.text = 'SOLID';
                 } else if (ball.sprite.isStripe == true){
                     Player.isStripe = true;
-                    Player.emitting = true;
+                    //Player.emitting = true;
                     Player.isActive = true;
                     socket.emit('solidstripe', 'stripe');
                     this.ssText.text = 'STRIPE';
@@ -839,7 +843,7 @@ Pool.Game.prototype = {
                 if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
                 {
                     if (Player.isActive && Player.emitting){
-                        socket.emit('apControl', "wrongball"); // Player made ball but made the wrong kind    
+                        //socket.emit('apControl', "wrongball"); // Player made ball but made the wrong kind    
                     }                    
                     //missedShot = true;
                     this.turnText.visible = true; 
@@ -969,7 +973,7 @@ Pool.Game.prototype = {
         this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
         this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
 
-        if (this.speed <= this.allowShotSpeed)
+        if (this.speed == 0)
         {
                 
             // Calculate 
@@ -1122,46 +1126,37 @@ Pool.Game.prototype = {
         return closestBall;
     },
     
-    shotMade: function () {
-        madeShot = false;
-        if(Player.isActive){
-            socket.emit('apControl', Player, "hitpocket");    
-        }            
-    },
-    
-    shotMissed: function () {
-        missedShot = false;
-        if(Player.isActive){
-            socket.emit('apControl', Player, "missed");    
-        }        
-    },
-    
     checkPocketBalls: function () {
-        pocketBalls.forEach(function(b) { // Check each ball
-            if (pocketBalls.length == 0){
-                // No balls got into a pocket, so we change player
-                if (Player.isActive){
-                    socket.emit('apControl', Player, 'change');    
-                }                   
+        this.afterShot = 0; // After Shot is now 0, and we will not check the pocket balls any longer.
+        if (pocketBalls.length == 0){
+            // No balls got into a pocket, so we change player
+            if (Player.isActive){
+
+                socket.emit('apControl', Player, 'change');    
+            }                   
+        }
+        else{
+            if (Player.isActive){
+                pocketBalls.forEach(function(b) { // Check each ball                            
+                    if (!b == Player.isSolid && b == Player.isStripe){
+
+                    } else {
+                        // Wrong ball dropped into the 
+                        if (Player.isActive){
+                            socket.emit('apControl', Player, 'change');    
+                        }
+                    }
+                });
             }
-                        
-            if (b.isSolid == Player.isSolid && b.isStripe == Player.isStripe){
-                
-            } else {
-                // Wrong ball dropped into the 
-                if (Player.isActive){
-                    socket.emit('apControl', Player, 'change');    
-                }
-            }
-        });  
+        }
+        pocketBalls = []; // Empty the pocket balls array
     },
     
     update: function () {
         if (this.speed == 0)
         {            
-            if (this.okay > 0)
+            if (this.okay > 0 && this.afterShot == 1) // If it's okay and shot's been taken, check the pocket balls
             {
-                this.okay = 1;
                 this.checkPocketBalls();
             }
         }
@@ -1235,14 +1230,8 @@ Pool.Game.prototype = {
             var ballSpeed = Math.sqrt(b.body.velocity.x * b.body.velocity.x + b.body.velocity.y * b.body.velocity.y);
             this.speed = this.speed + ballSpeed;
         });
-        console.log(this.speed);
         if (this.speed == 0)
         {
-            // Once balls stop if none went it change players
-            if (!madeShot){
-                //missedShot = true;
-            }
-            
             if (!this.cue.visible)
             {
                 // Shows cues and lines once speed is slow enough                

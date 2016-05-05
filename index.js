@@ -89,7 +89,7 @@ io.on('connection', function(socket){
   socket.on('apControl', function(player, shot){
     //1. Client will make Player.isActive = false when shot is taken
     //2. Client will send Player object here and server will hold the activeplayer number
-    if (player.number == activeplayer){
+    /*if (player.number == activeplayer){
       //activeplayer = player.number;
       if (player.number == 1){
         activeplayer = 2;
@@ -97,10 +97,20 @@ io.on('connection', function(socket){
         activeplayer = 1;
       }
       io.emit('apControl', activeplayer);
-    }
+    }*/
     
     if (player.number == activeplayer)
-    {          
+    {  
+      if (shot == "change") { // Shot was taken, we will wait to see if a ball hits the pocket  
+        //activeplayer = player.number;
+        if (player.number == 1){
+            activeplayer = 2;
+        } else {
+            activeplayer = 1;
+        }
+        io.emit('apControl', activeplayer);
+      }
+              
       if (shot == "xshot") { // Shot was taken, we will wait to see if a ball hits the pocket  
         activeplayer = player.number;
         allowPlayer++;
