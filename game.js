@@ -459,33 +459,32 @@ Pool.Game.prototype = {
                 this.playerNumberText.x = 180;
                 this.playerNumberText.y = 98;
             } else if (Player.isSolid){
-                this.activePlayerArrow.x = 520;
+                this.activePlayerArrow.x = 480;
                 this.activePlayerArrow.y = 105;
                 this.playerNumberText.x = 520;
                 this.playerNumberText.y = 98;
             }
         } else {
             this.okay = 0;
+            if (!Player.isStripe){
+                this.activePlayerArrow.x = 90;
+                this.activePlayerArrow.y = 105;
+
+            } else if (!Player.isSolid){
+                this.activePlayerArrow.x = 480;
+                this.activePlayerArrow.y = 105;
+            }
+            this.cue.visible = false;
             Player.isActive = false;
         }
     },
     
     changePlayer: function() {
-        /*
-        if (Player.isActive)
-        { 
-            this.turnText.visible = false;
-            Player.isActive = false;            
-        }
-        else
-        {
-            this.turnText.visible = true;
-            Player.isActive = true; 
-        } 
-        */             
+           
     },
     
     setSolidStripe: function (type) {
+        this.okay = 0;
         if (!Player.isActive) {
             if (type != 'stripe')
             {
@@ -497,7 +496,7 @@ Pool.Game.prototype = {
             else if (type != 'solid')
             {
                 Player.isSolid = true;
-                this.playerNumberText.x = 520;
+                this.playerNumberText.x = 480;
                 this.playerNumberText.y = 98;
                 this.ssText.text = 'SOLID';
             }
@@ -519,7 +518,7 @@ Pool.Game.prototype = {
                 this.playerNumberText.x = 520;
                 this.playerNumberText.y = 98;
                 this.ssText.text = 'SOLID';
-                this.activePlayerArrow.x = 520;
+                this.activePlayerArrow.x = 480;
                 this.activePlayerArrow.y = 105;
             }
         }
@@ -743,7 +742,6 @@ Pool.Game.prototype = {
                 this.effectPlus.y = this.effectBall.y- 24 ;                
             }
             this.pressedDown = false; // Mouse no longer pressed
-            //socket.emit('changeplayer');
         }
     },
 
@@ -822,17 +820,9 @@ Pool.Game.prototype = {
             this.resetCueBall();
         }
         else
-        {
-            // When first ball hits pocket shot is good and player is still active
-            if (this.firstBall){
-                //madeShot = true;
-                if (Player.emitting){
-                    //Player.isActive = true;    
-                }                
-            }
-            
+        {           
             if (this.score == 0){
-                if(ball.sprite.isStripe == false){
+                /*if(ball.sprite.isStripe == false){
                     Player.isSolid = true;
                     //Player.emitting = true;
                     Player.isActive = true;
@@ -844,27 +834,8 @@ Pool.Game.prototype = {
                     Player.isActive = true;
                     socket.emit('solidstripe', 'stripe');
                     this.ssText.text = 'STRIPE';
-                }
-                this.firstBall = false;
-            }
-            
-            if (!this.firstBall)
-            {
-                // Change activePlayer when ball isn't the players
-                if (ball.sprite.isStripe != Player.isStripe || ball.sprite.isStripe != Player.isSolid)
-                {
-                    if (Player.isActive && Player.emitting){
-                        //socket.emit('apControl', "wrongball"); // Player made ball but made the wrong kind    
-                    }                    
-                    //missedShot = true;
-                    this.turnText.visible = true; 
-                    if (activePlayer = 1) {activePlayer = 2 } else {activePlayer = 1};
-                }
-                else
-                {
-                    //madeShot = true;
-                }  
-            }
+                } */               
+            }            
                         
             this.makePocketBall(150, 495, ball.sprite.color);
             ball.sprite.destroy();
@@ -1118,7 +1089,7 @@ Pool.Game.prototype = {
 
         return closestIntersection;
     },
-
+    
     getNearestBall: function (intersect) {
         // The color of the
         var closestBall = {color: 0, x:0, y:0}
@@ -1138,19 +1109,33 @@ Pool.Game.prototype = {
     },
     
     checkPocketBalls: function () {
-        this.afterShot = 0; // After Shot is now 0, and we will not check the pocket balls any longer.
+        this.afterShot = 0; // After Shot is now 0, and we will not check the pocket balls any longer.        
         if (pocketBalls.length == 0){
             // No balls got into a pocket, so we change player
             if (Player.isActive){
-
                 socket.emit('apControl', Player, 'change');    
             }                   
-        }
-        else{
+        } else {
             if (Player.isActive){
                 pocketBalls.forEach(function(b) { // Check each ball                            
                     if (!b == Player.isSolid && b == Player.isStripe){
 
+                    } else if (Player.isSolid == false && Player.isStripe == false){
+                        if(b == false){
+                            Player.isSolid = true;
+                            //Player.emitting = true;
+                            //Player.isActive = true;
+                            this.okay = 0;
+                            socket.emit('solidstripe', 'solid');
+                            //this.ssText.text = 'SOLID';
+                        } else if (b == true){
+                            Player.isStripe = true;
+                            //Player.emitting = true;
+                            //Player.isActive = true;
+                            this.okay = 0;
+                            socket.emit('solidstripe', 'stripe');
+                            //this.ssText.text = 'STRIPE';
+                        }
                     } else {
                         // Wrong ball dropped into the 
                         if (Player.isActive){
@@ -1160,6 +1145,7 @@ Pool.Game.prototype = {
                 });
             }
         }
+        this.okay = 0;
         pocketBalls = []; // Empty the pocket balls array
     },
     

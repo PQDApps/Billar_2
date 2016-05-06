@@ -29,6 +29,7 @@ io.on('connection', function(socket){
   
   socket.on('assignNumber', function(){
     numberOfClients = users.length;
+    activeplayer = 1;
     var player = new Player('Player ' + (numberOfClients + 1), (numberOfClients + 1), false, false, false, socket.id);
     if (player.number == 1){
       player.isActive = true;
@@ -98,7 +99,8 @@ io.on('connection', function(socket){
       }
       io.emit('apControl', activeplayer);
     }*/
-    
+    console.log("Player number: " + player.number);
+    console.log("Active Player: " + activeplayer);
     if (player.number == activeplayer)
     {  
       if (shot == "change") { // Shot was taken, we will wait to see if a ball hits the pocket  
@@ -109,46 +111,11 @@ io.on('connection', function(socket){
             activeplayer = 1;
         }
         io.emit('apControl', activeplayer);
-      }
-              
-      if (shot == "xshot") { // Shot was taken, we will wait to see if a ball hits the pocket  
-        activeplayer = player.number;
-        allowPlayer++;
-      }
-      
-      if (shot == "xhitpocket"){
-        activeplayer = player.number;
-        allowPlayer++;
-        io.to(player.socketId).emit('apControl', activeplayer);         
-      }
-      
-      if (shot == "xmissed"){
-        if (player.number == 1){
-          activeplayer = 2;
-        } else {
-          activeplayer = 1;
-        }
-        allowPlayer = 0;        
-        io.emit('apControl', activeplayer);
-      }
-      
-      if (shot == "xwrongball"){
-        if (player.number == 1){
-          activeplayer = 2;
-        } else {
-          activeplayer = 1;
-        }
-        allowPlayer = 0;
-        
-        io.emit('apControl', activeplayer);
-      }
+      }              
     }
     
     //3. We will wait to see if  that player made a shot with the correct type of ball, if so the client sends the Player object again with description
     // of the shot.
-    if (allowPlayer >= 2){
-      
-    }
     
     //4. We see that a shot was made, we emit back to the player and set Player.isActive back to true.
     
