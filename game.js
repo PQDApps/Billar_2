@@ -252,7 +252,7 @@ Pool.Game.prototype = {
 
         this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
         this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
-        this.pockets.body.addCircle(46, 682, 436); // Bottom right pocket
+        this.pockets.body.addCircle(14, 682, 436); // Bottom right pocket
 
         //  Ball shadows
         //this.shadows = this.add.group();
