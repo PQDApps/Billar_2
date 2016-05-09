@@ -25,6 +25,7 @@ var Player = {
     isSolid: false,
     isActive: false,
     socketId: null,
+    room: roomName,
 }
 var activePlayer = 1;
 var madeShot = false;
@@ -32,9 +33,12 @@ var missedShot = false;
 var pocketBalls = [];
 
 var socket = io();
+socket.emit('joinroom', roomName, Player);
+
 var playerNumber = 0;
 //socket.emit('assignNumber');
-
+var textnode = document.createTextNode("HELLO");
+//document.getElementById("messages").appendChild();
 
 function isInt(i) {
    return i % 1 === 0;
@@ -891,7 +895,7 @@ Pool.Game.prototype = {
         var cuex = this.placeball.x;
         var cuey = this.placeball.y;
         if (Player.isActive){
-            socket.emit('placeball', cuex, cuey);
+            socket.emit('placeball', cuex, cuey, Player.room);
         }                     
         var a = new Phaser.Circle(x, y, 26);
         var b = new Phaser.Circle(0, 0, 26);

@@ -40,7 +40,13 @@ io.on('connection', function(socket){
     var i = numberOfClients;
     socket.emit('assignNumber', player);
   });
-
+  
+  // Assign room
+  socket.on('joinroom' , function(room, player) {
+    console.log("User joined room: " + room);
+    socket.join(room);
+  });
+  
   // Socket chat message
   socket.on('chat message', function(msg) {
     io.emit('chat message', msg);
@@ -66,8 +72,16 @@ io.on('connection', function(socket){
   });
   
   // Listen for player placing the ball
-  socket.on('placeball', function(x, y) {
-    io.emit('placeball', x, y);
+  socket.on('placeball', function(x, y, room) {
+    //io.emit('placeball', x, y);
+    if (room == "")
+    {
+       io.emit('placeball', x, y); 
+    }
+    else
+    {
+        io.to(room).emit('placeball', x, y);
+    }
     console.log("X: " + x + " Y: " + y);
   });
 

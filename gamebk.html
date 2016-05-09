@@ -27,10 +27,14 @@
 
 <div id="game"></div>
 
-<script type="text/javascript" src="game.js"></script>
+<script type="text/javascript">
+    var roomName = location.search;
+    roomName = roomName.replace("?roomName=", "");
+</script>
+<script type="text/javascript" src="gamebk.js"></script>
 <script type="text/javascript">
     System.import('/lib/phaser.js').then(function(){
-        System.import('game.js');
+        System.import('gamebk.js');
     });
 
 </script>
