@@ -48,7 +48,7 @@
 
   <script>
     $('form').submit(function(){
-        socket.emit('chat message', $('#m').val());
+        socket.emit('chat message', $('#m').val(), roomName);
         $('#m').val('');
         return false;
       });

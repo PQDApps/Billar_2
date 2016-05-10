@@ -33,12 +33,10 @@ var missedShot = false;
 var pocketBalls = [];
 
 var socket = io();
-socket.emit('joinroom', roomName, Player);
+socket.emit('joinroom', roomName);
 
 var playerNumber = 0;
-//socket.emit('assignNumber');
 var textnode = document.createTextNode("HELLO");
-//document.getElementById("messages").appendChild();
 
 function isInt(i) {
    return i % 1 === 0;
@@ -181,7 +179,6 @@ Pool.Game.prototype = {
         socket.on('tookShot', this.shotTaken.bind(this));        
         socket.on('placeball', this.placeBallForOtherPlayer.bind(this));
         socket.on('solidstripe', this.setSolidStripe.bind(this));
-        socket.on('changeplayer', this.changePlayer.bind(this));
         socket.on('apControl', this.activePlayerControl.bind(this));
         socket.on('assignNumber', this.assignNumber.bind(this));
         
@@ -431,7 +428,7 @@ Pool.Game.prototype = {
         this.ray.visible = false;
         
         // Once game starts assig number, socket id and other player information to Player object
-        socket.emit('assignNumber');
+        socket.emit('assignNumber', roomName);
         this.okay = 0;
         this.afterShot = 0;                
     },
@@ -443,13 +440,6 @@ Pool.Game.prototype = {
         Player.isActive = i.isActive;
         Player.socketId = i.socketId;
         this.playerNumberText.text = i.name;
-        /*if (i.number == 1){
-            this.playerNumberText.x = 180;
-            this.playerNumberText.y = 98; 
-        } else {
-            this.playerNumberText.x = 520;
-            this.playerNumberText.y = 98;
-        }*/
         this.resetCueBall(true);
     },
     
@@ -481,10 +471,6 @@ Pool.Game.prototype = {
             this.cue.visible = false;
             Player.isActive = false;
         }
-    },
-    
-    changePlayer: function() {
-           
     },
     
     setSolidStripe: function (type) {
@@ -650,8 +636,7 @@ Pool.Game.prototype = {
         return ball;
     },
 
-    takeShot: function () {
-        $('#messages').append($('<li>').text(msg));        
+    takeShot: function () {       
         if (this.speed > 0)
         {
             return;
@@ -740,7 +725,7 @@ Pool.Game.prototype = {
                 this.fill.visible = false;
                 this.powerRect.height = 0;
                 this.powerLevel.updateCrop();
-                socket.emit('tookShot', px, py);
+                socket.emit('tookShot', px, py, roomName);
                 this.firstCollision = 0;
                 this.effectPlus.x = this.effectBall.x - 25;
                 this.effectPlus.y = this.effectBall.y- 24 ;                
@@ -824,28 +809,12 @@ Pool.Game.prototype = {
             this.resetCueBall();
         }
         else
-        {           
-            if (this.score == 0){
-                /*if(ball.sprite.isStripe == false){
-                    Player.isSolid = true;
-                    //Player.emitting = true;
-                    Player.isActive = true;
-                    socket.emit('solidstripe', 'solid');
-                    this.ssText.text = 'SOLID';
-                } else if (ball.sprite.isStripe == true){
-                    Player.isStripe = true;
-                    //Player.emitting = true;
-                    Player.isActive = true;
-                    socket.emit('solidstripe', 'stripe');
-                    this.ssText.text = 'STRIPE';
-                } */               
-            }            
-                        
+        {             
             this.makePocketBall(150, 495, ball.sprite.color);
             ball.sprite.destroy();
 
             this.score += 30;
-            socket.emit('newscore', this.score);
+            socket.emit('newscore', this.score, roomName);
             
             if (this.balls.total === 1)
             {
@@ -895,7 +864,7 @@ Pool.Game.prototype = {
         var cuex = this.placeball.x;
         var cuey = this.placeball.y;
         if (Player.isActive){
-            socket.emit('placeball', cuex, cuey, Player.room);
+            socket.emit('placeball', cuex, cuey, roomName);
         }                     
         var a = new Phaser.Circle(x, y, 26);
         var b = new Phaser.Circle(0, 0, 26);
@@ -1130,14 +1099,14 @@ Pool.Game.prototype = {
                             //Player.emitting = true;
                             //Player.isActive = true;
                             this.okay = 0;
-                            socket.emit('solidstripe', 'solid');
+                            socket.emit('solidstripe', 'solid', roomName);
                             //this.ssText.text = 'SOLID';
                         } else if (b == true){
                             Player.isStripe = true;
                             //Player.emitting = true;
                             //Player.isActive = true;
                             this.okay = 0;
-                            socket.emit('solidstripe', 'stripe');
+                            socket.emit('solidstripe', 'stripe', roomName);
                             //this.ssText.text = 'STRIPE';
                         }
                     } else {

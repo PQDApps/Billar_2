@@ -27,17 +27,23 @@ io.on('connection', function(socket){
   console.log('a user connected '+ socket.id);
   //numberOfClients++; //Increment when user connects
   
-  socket.on('assignNumber', function(){
+  socket.on('assignNumber', function(room){
     numberOfClients = users.length;
     activeplayer = 1;
-    var player = new Player('Player ' + (numberOfClients + 1), (numberOfClients + 1), false, false, false, socket.id);
+    var num = numberOfClients + 1;
+    function isOdd(number) { return number % 2;}
+    if (isOdd(num) == 0){
+        num = 2;
+    } else if (isOdd(num) == 1){
+        num = 1;
+    }
+    var player = new Player('Player ' + (num), (num), false, false, false, socket.id);
     if (player.number == 1){
       player.isActive = true;
     } else {
       player.isActive = false;
     }
     users.push(player);
-    var i = numberOfClients;
     socket.emit('assignNumber', player);
   });
   
@@ -45,11 +51,13 @@ io.on('connection', function(socket){
   socket.on('joinroom' , function(room, player) {
     console.log("User joined room: " + room);
     socket.join(room);
+    //socket.room = room;
   });
   
   // Socket chat message
-  socket.on('chat message', function(msg) {
-    io.emit('chat message', msg);
+  socket.on('chat message', function(msg, room) {
+    io.to(room).emit('chat message', msg);
+    //io.emit('chat message', msg);
   });
 
   // Socket disconnection execute following function
@@ -66,9 +74,9 @@ io.on('connection', function(socket){
   });
 
   // Listen for new score
-  socket.on('newscore', function(score) {
-    io.emit('newscore', score);
-    console.log(score + ' + points');
+  socket.on('newscore', function(score, room) {
+    io.to(room).emit('newscore', score);
+    console.log(room + " " + score + ' + points');
   });
   
   // Listen for player placing the ball
@@ -86,19 +94,14 @@ io.on('connection', function(socket){
   });
 
   // Listen for player shooting
-  socket.on('tookShot', function(px, py){
-    socket.broadcast.emit('tookShot', px, py);
+  socket.on('tookShot', function(px, py, room){
+    socket.broadcast.to(room).emit('tookShot', px, py);
   });
   
   // Set solid or stripe
-  socket.on('solidstripe', function(type){
-    io.emit('solidstripe', type);
+  socket.on('solidstripe', function(type, room){
+    io.to(room).emit('solidstripe', type);
   })
-  
-  // Change the activeplayer
-  socket.on('changeplayer', function(){
-    io.emit('changeplayer');
-  });
   
   // Hold who the activeplayer is here
   socket.on('apControl', function(player, shot){
@@ -124,7 +127,7 @@ io.on('connection', function(socket){
         } else {
             activeplayer = 1;
         }
-        io.emit('apControl', activeplayer);
+        io.to(player.room).emit('apControl', activeplayer);
       }              
     }
     
