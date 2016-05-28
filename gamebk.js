@@ -959,8 +959,13 @@ Pool.Game.prototype = {
                 adjacentLength = Math.sqrt(adjacentLength);
                 var hypo = 24;
                 var bAngle = Math.asin(oppositeLength/24) - this.shootLine.angle;
-                bAngle = bAngle - 3.14;// + 6.28319;// - acuteAngle;                              
+                bAngle = bAngle - 3.14;// + 6.28319;// - acuteAngle;
+                
+                // The point where the white guide ball is drawn                              
                 var pointContact = new Phaser.Point(closestball.x + Math.cos(bAngle) * hypo, closestball.y - Math.sin(bAngle) * hypo);      
+                // Te point where the shot angle line ends
+                var angleContact = new Phaser.Point(pointContact.x + Math.cos(bAngle) * hypo, pointContact.y - Math.sin(bAngle) * hypo);
+                
                 
                 var ninetyDegrees = 1.5708;
                 if (this.shootLine.angle < this.hypotenuse.angle){
@@ -976,8 +981,8 @@ Pool.Game.prototype = {
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(pointContact.x, pointContact.y);
-                //this.bitmap.context.moveTo(intersect.x, intersect.y);
-                //this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
+                this.bitmap.context.moveTo(pointContact.x, pointContact.y);
+                this.bitmap.context.lineTo(angleContact.x, angleContact.y);
                 
                 // TODO: DO math here to know what the x and y of the circle should be                        
                 this.bitmap.context.stroke();

@@ -136,6 +136,8 @@ Pool.Game = function (game) {
 
     this.line = null; // The sprite line that shows where you are aiming
     this.shootLine = null; // The geometry line that shows aiming, only shows in debug
+    this.cueballLine = null; // The angle that's 
+    this.hitballLine = null;
     this.lineRect = null; // Rectangle to crop line
     this.ray = null;
     this.reflection = null;
@@ -359,6 +361,8 @@ Pool.Game.prototype = {
         // Geometry lines, help point cue and shoot line
         this.aimLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
         this.shootLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
+        this.cueballLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
+        this.hitballLine = new Phaser.Line(this.cueball.x, this.cueball.y, this.cueball.x, this.cueball.y);
 
         // Shoot line sprite
         this.line = this.add.sprite(0, 0, 'line');
@@ -998,11 +1002,52 @@ Pool.Game.prototype = {
                 
                 var outgoing = this.ray.reflect(bounceLine);
                 //this.reflection.fromAngle(closestball.x, closestball.y, outgoing, 50);
+
+                var speed = 15;
+                
+                var mass1 = 12;
+                var mass2 = 12;
+                var velX1 = 0;
+                var velX2 = (Math.cos(this.shootLine.angle) * speed); // 
+                var velY1 = 0;
+                var velY2 = (Math.sin(this.shootLine.angle) * speed);
+                
+                console.log(this.shootLine.angle);
+                var newVelX1 = (velX1 * (mass1 - mass2) + (2 * mass2 * velX2)) / (mass1 + mass2);
+                var newVelX2 = (velX2 * (mass2 - mass1) + (2 * mass1 * velX1)) / (mass1 + mass2);
+                var newVelY1 = (velY1 * (mass1 - mass2) + (2 * mass2 * velY2)) / (mass1 + mass2);
+                var newVelY2 = (velY2 * (mass2 - mass1) + (2 * mass1 * velY1)) / (mass1 + mass2);
+				
+                var hitballAngle = Math.atan2(newVelX1, newVelY1);                
+                var cueballAngle = Math.atan2(newVelX2, newVelY2);
+                console.log("HitBall " + hitballAngle);
+                console.log("Cueball " + cueballAngle);
+				this.cueballLine.fromAngle(pointContact.x, pointContact.y, cueballAngle + ninetyDegrees, 36);
+                this.hitballLine.fromAngle(pointContact.x, pointContact.y, hitballAngle + ninetyDegrees, 136);
+                
+                /*
+                firstBall.speed.x = newVelX1;
+                secondBall.speed.x = newVelX2;
+                firstBall.speed.y = newVelY1;
+                secondBall.speed.y = newVelY2;
+                /*
+                firstBall.x = firstBall.x + newVelX1;
+                firstBall.y = firstBall.y + newVelY1;
+                secondBall.x = secondBall.x + newVelX2;
+                secondBall.y = secondBall.y + newVelY2;
+                */
                 
                 // Draw the line, circle, and line showing predicted trajectory
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(pointContact.x, pointContact.y);
+                
+                this.bitmap.context.moveTo(pointContact.x, pointContact.y);                
+                this.bitmap.context.lineTo(this.cueballLine.end.x, this.cueballLine.end.y);
+                
+                this.bitmap.context.moveTo(pointContact.x, pointContact.y);
+                this.bitmap.context.lineTo(this.hitballLine.end.x, this.hitballLine.end.y);
+                
                 //this.bitmap.context.moveTo(intersect.x, intersect.y);
                 //this.bitmap.context.lineTo(this.reflection.x, this.reflection.y);
                 
@@ -1011,7 +1056,7 @@ Pool.Game.prototype = {
                 
                 
                 this.bitmap2.context.beginPath();
-                this.bitmap2.context.arc(pointContact.x, pointContact.y, 10, 0, Math.PI*2, true);
+                this.bitmap2.context.arc(pointContact.x, pointContact.y, 10, 0, Math.PI*2, true);                
                 this.bitmap2.context.stroke();
             } else {
                 this.bitmap.context.beginPath();
