@@ -18,6 +18,7 @@ app.use(express.static(__dirname));
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/game.html');
 });
+// Heroic API key: 1e4c41fba416462ea73ac8ae2d6ac125
 
 var numberOfClients = 0; // Keep track of clients connected to socket
 
@@ -56,7 +57,8 @@ io.on('connection', function(socket){
   
   // Socket chat message
   socket.on('chat message', function(msg, room) {
-    io.to(room).emit('chat message', msg);
+    var message = socket.id + " " + msg;
+    io.to(room).emit('chat message', message);
     //io.emit('chat message', msg);
   });
 
@@ -142,10 +144,14 @@ io.on('connection', function(socket){
 ////////////////////////////
 // Mongo Database Testing //
 ////////////////////////////
-var mongoURL = "mongodb://localhost:27017/local";
+//var mongoURL = "mongodb://localhost:27017/local";
+var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
 MongoClient.connect(mongoURL, function(err, db) {
     if(!err) {
         console.log("Connected to Mongo Local");
+    }
+    if(err) {
+      console.log(err);
     }
 });
 
@@ -170,8 +176,29 @@ router.get('/', function(req, res) {
 });
 
 // Stuff
-router.get('/login', function(req, res){
-  res.status(200).send({message : "HELLO"})
+router.post('/login', function(req, res){
+  var user = req.body.userName;
+  var pass = req.body.password;
+  MongoClient.connect(mongoURL, function(err, db) {
+    if (!err) {
+      var users = db.collection("users");
+      users.findOne({"email" : user}, function findUser (err, usersItem){ // Find the user
+        if (err) {
+          console.log("Mongo error: " + err);
+        }
+        console.log(usersItem);        
+        if (usersItem) { //If user is found       
+          if (usersItem.password == pass) { // compare the password and the hash in mongo           
+              res.status(200).send({Status: 'Success'});
+            } else {
+               res.status(401).send({Message: 'Password is incorrect'});
+            }
+        } else {
+          res.status(404).send({Message: 'Username does not exist'});
+        }
+      }); 
+    }
+  });
 })
 
 //Sign up API, userName and password
@@ -180,30 +207,28 @@ router.post('/signupnow', function(req,res){
   //res.json({message: req.body});
   var user = req.body.userName;
   var pass = req.body.password;
-  var userExists = false;
+  // var userExists = false;
   //var resultOfInsert = saveNewUser(user, pass);
   MongoClient.connect(mongoURL, function(err, db) {
-  if (!err) {
-    var users = db.collection("users");
-    var cursor = db.collection('users').findOne({ "email" : user});
-    cursor.each(function(err, doc){
-      assert.equal(err, null);
-      if (doc != null) {
-        userExists = true;               
-      }  
-    });
-    users.insert({email: user, password: pass}, function createUser (err, result){
+    if (!err) {
+      var users = db.collection("users");
+      users.findOne({"email" : user}, function findUser (err, usersItem){
         if (err) {
-          res.json({Success: false, error: err})           
-        }        
-        console.log(result);
-        res.json({Status: 'Success'});
-        //res.sendStatus(200);                  
-      });
-    }
-  })
-  //res.json({Status: true});
-  //res.sendStatus(200); 
+          console.log("Mongo error: " + err);
+        }
+        if (!usersItem) {
+          console.log("User not found, creating new user");
+          users.insert({email: user, password: pass}, function createUser (err, result){
+            if (err) {
+              res.status(500).send({Status: error, error: err});
+            }
+            console.log(result);
+            res.status(200).send({Status: 'Success'});
+          });
+        }  
+      })
+    }  
+  }) 
 })
 
 // Register our api urls with /api

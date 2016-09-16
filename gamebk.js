@@ -100,8 +100,8 @@ Pool.MainMenu.prototype = {
         start.smoothed = false;
         start.tint = 0xff0000;
 
-        this.input.onDown.addOnce(this.start, this);
-
+        //this.input.onDown.addOnce(this.start, this);
+        this.start();
     },
 
     start: function () {

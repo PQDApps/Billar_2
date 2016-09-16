@@ -40,8 +40,11 @@
                 event.preventDefault();
                 var data = $('#login').serialize();
                 
-                $.get('/api/login', data, function(resp){
+                $.post('/api/login', data, function(resp){
                     console.log(resp);
+                    if (resp.Status == "Success"){
+                        window.location.href = '/rooms.html';
+                    }
                 });                
             });
         });
