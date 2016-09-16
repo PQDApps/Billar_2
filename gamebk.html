@@ -28,6 +28,7 @@
 <div id="game"></div>
 
 <script type="text/javascript">
+    var username = document.cookie;
     var roomName = location.search;
     roomName = roomName.replace("?roomName=", "");
 </script>
@@ -36,7 +37,6 @@
     System.import('/lib/phaser.js').then(function(){
         System.import('gamebk.js');
     });
-
 </script>
 
 <div id="chatBox">

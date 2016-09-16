@@ -43,6 +43,7 @@
                 $.post('/api/login', data, function(resp){
                     console.log(resp);
                     if (resp.Status == "Success"){
+                        document.cookie = "username="+resp.Username;
                         window.location.href = '/rooms.html';
                     }
                 });                

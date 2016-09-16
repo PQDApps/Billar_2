@@ -18,7 +18,6 @@ app.use(express.static(__dirname));
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/game.html');
 });
-// Heroic API key: 1e4c41fba416462ea73ac8ae2d6ac125
 
 var numberOfClients = 0; // Keep track of clients connected to socket
 
@@ -189,7 +188,7 @@ router.post('/login', function(req, res){
         console.log(usersItem);        
         if (usersItem) { //If user is found       
           if (usersItem.password == pass) { // compare the password and the hash in mongo           
-              res.status(200).send({Status: 'Success'});
+              res.status(200).send({Status: 'Success', Username: user});
             } else {
                res.status(401).send({Message: 'Password is incorrect'});
             }

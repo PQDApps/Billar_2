@@ -20,6 +20,7 @@ var Pool = {
 
 var Player = {
     name: null,
+    user: username,
     number: null,
     isStripe: false,
     isSolid: false,
