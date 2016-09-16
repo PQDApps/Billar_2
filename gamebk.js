@@ -429,7 +429,7 @@ Pool.Game.prototype = {
         this.ray.visible = false;
         
         // Once game starts assig number, socket id and other player information to Player object
-        socket.emit('assignNumber', roomName);
+        socket.emit('assignNumber', roomName, Player);
         this.okay = 0;
         this.afterShot = 0;                
     },

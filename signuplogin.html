@@ -41,6 +41,7 @@
                 
                 $.post('/api/signupnow', data, function(resp){
                     console.log(resp);
+                    window.location.href = '/login.html';
                 });                
             });
         });

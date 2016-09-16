@@ -10,6 +10,7 @@ var users = [];
 var activeplayer = 1;
 var allowPlayer = 0; // Add to this variable when shot is taken and ball hits pocket
 var playerObj;
+var rooms = [];
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,7 +28,7 @@ io.on('connection', function(socket){
   console.log('a user connected '+ socket.id);
   //numberOfClients++; //Increment when user connects
   
-  socket.on('assignNumber', function(room){
+  socket.on('assignNumber', function(room, playerClient){
     numberOfClients = users.length;
     activeplayer = 1;
     var num = numberOfClients + 1;
@@ -37,7 +38,7 @@ io.on('connection', function(socket){
     } else if (isOdd(num) == 1){
         num = 1;
     }
-    var player = new Player('Player ' + (num), (num), false, false, false, socket.id);
+    var player = new Player('Player ' + (num), playerClient.user, (num), false, false, false, socket.id);
     if (player.number == 1){
       player.isActive = true;
     } else {
@@ -239,8 +240,9 @@ http.listen(process.env.PORT || 5000, function(){
 
 
 // Player object
-function Player(name, number, isStripe, isSolid, isActive, socketId) {
+function Player(name, user, number, isStripe, isSolid, isActive, socketId) {
     this.name = name;
+    this.user = user;
     this.number = number;
     this.isStripe = isStripe;
     this.isSolid = isSolid
