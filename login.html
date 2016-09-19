@@ -45,6 +45,9 @@
                     if (resp.Status == "Success"){
                         document.cookie = "username="+resp.Username;
                         window.location.href = '/rooms.html';
+                    } 
+                    if (resp.Message == "Username does not exist"){
+                        window.location.href = '/signuplogin.html';
                     }
                 });                
             });
