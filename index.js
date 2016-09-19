@@ -231,6 +231,12 @@ router.post('/signupnow', function(req,res){
   }) 
 })
 
+router.post('/createroom', function(req,res){
+    var roomName = req.body.roomName;
+    console.log(roomName);
+    res.status(200).send({Status: 'Success', RoomName: roomName});
+})
+
 // Register our api urls with /api
 app.use('/api', router);
 

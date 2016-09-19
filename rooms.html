@@ -36,13 +36,14 @@
 <body>
     <script type="text/javascript">
         $(document).ready(function(){
-            $('#but').click(function(event){
-                window.location = 'gamebk.html' + '?' + $('#setroom').serialize();
-            });
-            $('#inputEmail').keydown(function(event){
-                if(event.keyCode == 13){
-                    //window.location = 'gamebk.html' + '?' + $('#setroom').serialize();    
-                }                
+            $('#setroom').submit(function(event){
+                event.preventDefault();
+                var data = $('#setroom').serialize();
+                
+                $.post('/api/createroom', data, function(resp){
+                    console.log(resp);
+                    //window.location.href = '/login.html';
+                });                
             });
         });
     </script>
@@ -55,9 +56,9 @@
     <div style="width:330px;margin:0 auto">
       <form id="setroom" class="form-signin">
         <h2 class="form-signin-heading">Enter Room Name</h2>
-        <label for="inputEmail" class="sr-only">Room Name</label>
-        <input name="roomName" type="text" id="inputEmail" class="form-control" placeholder="Room Name" required autofocus>
-        <button id='but' class="btn-wisteria" type="button">Enter the Room</button>
+        <label for="inputRoom" class="sr-only">Room Name</label>
+        <input name="roomName" type="text" id="inputRoom" class="form-control" placeholder="Room Name" required autofocus>
+        <button id='but' class="btn-wisteria" type="submit">Enter the Room</button>
       </form>
     </div> 
 </body>
