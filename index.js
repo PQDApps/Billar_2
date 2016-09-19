@@ -22,6 +22,20 @@ app.get('/', function(req, res){
 
 var numberOfClients = 0; // Keep track of clients connected to socket
 
+////////////////////////////
+// Mongo Database Testing //
+////////////////////////////
+//var mongoURL = "mongodb://localhost:27017/local";
+var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
+MongoClient.connect(mongoURL, function(err, db) {
+    if(!err) {
+        console.log("Connected to Mongo Local");
+    }
+    if(err) {
+      console.log(err);
+    }
+});
+
 // New socket connection
 io.on('connection', function(socket){
   // Socket connection successful
@@ -141,20 +155,9 @@ io.on('connection', function(socket){
   }) 
 });
 
-////////////////////////////
-// Mongo Database Testing //
-////////////////////////////
-//var mongoURL = "mongodb://localhost:27017/local";
-var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
-MongoClient.connect(mongoURL, function(err, db) {
-    if(!err) {
-        console.log("Connected to Mongo Local");
-    }
-    if(err) {
-      console.log(err);
-    }
-});
 
+
+// APIs
 function saveNewUser(user, pass) {  
   MongoClient.connect(mongoURL, function(err, db) {
   if (!err) {
@@ -231,6 +234,7 @@ router.post('/signupnow', function(req,res){
   }) 
 })
 
+// Create a room in the rooms collection 
 router.post('/createroom', function(req,res){
   var roomName = req.body.roomName;
   var username = req.body.username;
@@ -256,6 +260,10 @@ router.post('/createroom', function(req,res){
       })
     }
   })
+})
+
+router.put('/updateroom', function(req, res){
+  var roomName = req.body.roomName
 })
 
 // Register our api urls with /api
