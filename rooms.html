@@ -35,11 +35,12 @@
 
 <body>
     <script type="text/javascript">
+        var username = document.cookie;
+        username = username.replace("username=", "");
         $(document).ready(function(){
             $('#setroom').submit(function(event){
                 event.preventDefault();
-                var data = $('#setroom').serialize();
-                
+                var data = $('#setroom').serialize() + "&username=" + username;
                 $.post('/api/createroom', data, function(resp){
                     console.log(resp);
                     //window.location.href = '/login.html';

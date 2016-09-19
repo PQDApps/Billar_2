@@ -232,9 +232,30 @@ router.post('/signupnow', function(req,res){
 })
 
 router.post('/createroom', function(req,res){
-    var roomName = req.body.roomName;
-    console.log(roomName);
-    res.status(200).send({Status: 'Success', RoomName: roomName});
+  var roomName = req.body.roomName;
+  var username = req.body.username;
+  console.log(roomName);
+  MongoClient.connect(mongoURL, function(err, db) {
+    if(!err){
+      var rooms = db.collection("rooms");
+      rooms.findOne({"roomName" : roomName}, function findRoom (err, roomItem) {
+        if (err) {
+          console.log("Mongo error: " + err);
+          res.status(409).send({Message: "Room name already exists."});
+        }
+        if (!roomItem) {
+          console.log("Room name not found, creating a new room");
+          rooms.insert({room:roomName, createdBy: username, playerOne : null, playerTwo : null}, function createRoom (err, result){
+            if (err) {
+              res.status(500).send({Status: error, error: err});
+            }
+            console.log(result);
+            res.status(200).send({Status: 'Successfully Created Room'});
+          });
+        }
+      })
+    }
+  })
 })
 
 // Register our api urls with /api
