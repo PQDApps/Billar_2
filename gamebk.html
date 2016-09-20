@@ -49,7 +49,7 @@
 
   <script>
     $('form').submit(function(){
-        socket.emit('chat message', $('#m').val(), roomName);
+        socket.emit('chat message', $('#m').val(), roomName, username);
         $('#m').val('');
         return false;
       });

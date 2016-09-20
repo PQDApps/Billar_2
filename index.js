@@ -61,14 +61,18 @@ io.on('connection', function(socket){
             if (roomItem.playerOne == playerClient.user || roomItem.playerTwo == playerClient.user) {
               console.log("This user is already in this room");
               canSet = false;
-              // TODO: Send player object back through sockets since they're already in the room
+              if (roomItem.playerOne == playerClient.user){
+                var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id); 
+                socket.emit('assignNumber', player);
+              } else {
+                var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
+                socket.emit('assignNumber', player);
+              }
             }
             // If user is not part of the room yet assign the user to a room
             if (canSet == true) {
-              //var alreadySet = false;
               // TODO: Make this if statement just one rooms.update by using a variable in $set
               if (roomItem.playerOne == null) { // No users in room, set player one
-                //alreadySet = true;
                 rooms.update({"room":roomName}, {$set: {"playerOne": playerClient.user}}, function createRoom (err, result){
                   if (err) {
                     //TODO: do something with error
@@ -105,8 +109,8 @@ io.on('connection', function(socket){
   });
   
   // Socket chat message
-  socket.on('chat message', function(msg, room) {
-    var message = socket.id + " " + msg;
+  socket.on('chat message', function(msg, room, username) {
+    var message = username + " " + msg;
     io.to(room).emit('chat message', message);
     //io.emit('chat message', msg);
   });
