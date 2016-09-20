@@ -42,24 +42,59 @@ io.on('connection', function(socket){
   console.log('a user connected '+ socket.id);
   //numberOfClients++; //Increment when user connects
   
-  socket.on('assignNumber', function(room, playerClient){
-    numberOfClients = users.length;
-    activeplayer = 1;
-    var num = numberOfClients + 1;
-    function isOdd(number) { return number % 2;}
-    if (isOdd(num) == 0){
-        num = 2;
-    } else if (isOdd(num) == 1){
-        num = 1;
-    }
-    var player = new Player('Player ' + (num), playerClient.user, (num), false, false, false, socket.id);
-    if (player.number == 1){
-      player.isActive = true;
-    } else {
-      player.isActive = false;
-    }
-    users.push(player);
-    socket.emit('assignNumber', player);
+  socket.on('assignNumber', function(roomName, playerClient){
+    numberOfClients = numberOfClients++;
+    MongoClient.connect(mongoURL, function(err, db) {
+      if(!err){
+        var rooms = db.collection("rooms");
+        rooms.findOne({"room" : roomName}, function findRoom (err, roomItem) {
+          if (err) {
+            console.log("Mongo error: " + err);
+            //res.status(409).send({Message: "Room name already exists."});
+          }
+          if (roomItem) {
+            console.log("Adding user to room");
+            var playerNumber = "";
+            var canSet = true;
+
+            // Check if the user is already in this room
+            if (roomItem.playerOne == playerClient.user || roomItem.playerTwo == playerClient.user) {
+              console.log("This user is already in this room");
+              canSet = false;
+              // TODO: Send player object back through sockets since they're already in the room
+            }
+            // If user is not part of the room yet assign the user to a room
+            if (canSet == true) {
+              //var alreadySet = false;
+              // TODO: Make this if statement just one rooms.update by using a variable in $set
+              if (roomItem.playerOne == null) { // No users in room, set player one
+                //alreadySet = true;
+                rooms.update({"room":roomName}, {$set: {"playerOne": playerClient.user}}, function createRoom (err, result){
+                  if (err) {
+                    //TODO: do something with error
+                  }
+                  console.log(result);
+                  // Create user and emit user back to player
+                  var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id);
+                  socket.emit('assignNumber', player);
+                });
+              } else if (roomItem.playerTwo == null) { // One user in room, set player two
+                rooms.update({"room":roomName}, {$set: {"playerTwo": playerClient.user}}, function createRoom (err, result){
+                  if (err) {
+                    //TODO: do something with error
+                  }
+                  console.log(result);
+                  var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
+                  socket.emit('assignNumber', player);
+                });
+              } else {
+                console.log("Room is full");
+              }
+            }
+          }
+        })
+      }
+    })
   });
   
   // Assign room
@@ -242,7 +277,7 @@ router.post('/createroom', function(req,res){
   MongoClient.connect(mongoURL, function(err, db) {
     if(!err){
       var rooms = db.collection("rooms");
-      rooms.findOne({"roomName" : roomName}, function findRoom (err, roomItem) {
+      rooms.findOne({"room" : roomName}, function findRoom (err, roomItem) {
         if (err) {
           console.log("Mongo error: " + err);
           res.status(409).send({Message: "Room name already exists."});
