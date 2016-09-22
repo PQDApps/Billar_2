@@ -182,6 +182,7 @@ Pool.Game.prototype = {
         socket.on('solidstripe', this.setSolidStripe.bind(this));
         socket.on('apControl', this.activePlayerControl.bind(this));
         socket.on('assignNumber', this.assignNumber.bind(this));
+        socket.on('ready', this.ready.bind(this));
         
         this.stage.backgroundColor = 0x001b07;
 
@@ -434,6 +435,7 @@ Pool.Game.prototype = {
         this.afterShot = 0;                
     },
     
+    // Server emits the player info once both have connected to one room
     assignNumber: function(i) {
         Player.name = i.name;
         Player.number = i.number;
@@ -441,7 +443,16 @@ Pool.Game.prototype = {
         Player.isActive = i.isActive;
         Player.socketId = i.socketId;
         this.playerNumberText.text = i.name;
-        this.resetCueBall(true);
+        socket.emit('ready', roomName, Player);
+        //this.resetCueBall(true);
+    },
+
+    // Both players are ready, Player 1 starts and places cue ball
+    ready: function() {
+        if (Player.number == 1) {
+            Player.isActive = true;
+            this.resetCueBall(true);
+        }
     },
     
     activePlayerControl: function(p) {
@@ -815,7 +826,7 @@ Pool.Game.prototype = {
             ball.sprite.destroy();
 
             this.score += 30;
-            socket.emit('newscore', this.score, roomName);
+            //socket.emit('newscore', this.score, roomName);
             
             if (this.balls.total === 1)
             {
@@ -1092,7 +1103,7 @@ Pool.Game.prototype = {
         if (pocketBalls.length == 0){
             // No balls got into a pocket, so we change player
             if (Player.isActive){
-                socket.emit('apControl', Player, 'change');    
+                //socket.emit('apControl', Player, 'change');    
             }                   
         } else {
             if (Player.isActive){
@@ -1105,20 +1116,20 @@ Pool.Game.prototype = {
                             //Player.emitting = true;
                             //Player.isActive = true;
                             this.okay = 0;
-                            socket.emit('solidstripe', 'solid', roomName);
+                            //socket.emit('solidstripe', 'solid', roomName);
                             //this.ssText.text = 'SOLID';
                         } else if (b == true){
                             Player.isStripe = true;
                             //Player.emitting = true;
                             //Player.isActive = true;
                             this.okay = 0;
-                            socket.emit('solidstripe', 'stripe', roomName);
+                            //socket.emit('solidstripe', 'stripe', roomName);
                             //this.ssText.text = 'STRIPE';
                         }
                     } else {
                         // Wrong ball dropped into the 
                         if (Player.isActive){
-                            socket.emit('apControl', Player, 'change');    
+                            //socket.emit('apControl', Player, 'change');    
                         }
                     }
                 });

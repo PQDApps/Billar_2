@@ -100,6 +100,13 @@ io.on('connection', function(socket){
       }
     })
   });
+
+  // Both players are in the room and ready to play 
+  socket.on('ready', function(room, player){
+    if (player.number == 2) {
+      io.to(room).emit('ready');  
+    }
+  });
   
   // Assign room
   socket.on('joinroom' , function(room, player) {
