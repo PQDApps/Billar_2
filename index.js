@@ -102,10 +102,16 @@ io.on('connection', function(socket){
   });
 
   // Both players are in the room and ready to play 
-  socket.on('ready', function(room, player){
+  socket.on('ready', function(room, player, balls){
     if (player.number == 2) {
+      console.log(balls);
       io.to(room).emit('ready');  
     }
+  });
+  
+  // Save balls for the room
+  socket.on('startgame', function(room, balls){
+    console.log("Stop");
   });
   
   // Assign room
@@ -156,8 +162,8 @@ io.on('connection', function(socket){
   });
 
   // Listen for player shooting
-  socket.on('tookShot', function(px, py, room){
-    socket.broadcast.to(room).emit('tookShot', px, py);
+  socket.on('tookShot', function(px, py, effect, room){
+    socket.broadcast.to(room).emit('tookShot', px, py, effect);
   });
   
   // Set solid or stripe

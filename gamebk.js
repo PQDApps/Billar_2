@@ -33,6 +33,8 @@ var madeShot = false;
 var missedShot = false;
 var pocketBalls = [];
 
+var GameBalls = [];
+
 var socket = io();
 socket.emit('joinroom', roomName);
 
@@ -183,6 +185,7 @@ Pool.Game.prototype = {
         socket.on('apControl', this.activePlayerControl.bind(this));
         socket.on('assignNumber', this.assignNumber.bind(this));
         socket.on('ready', this.ready.bind(this));
+        socket.on('startgame', this.startReady.bind(this));
         
         this.stage.backgroundColor = 0x001b07;
 
@@ -429,7 +432,7 @@ Pool.Game.prototype = {
         this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
         this.ray.visible = false;
         
-        // Once game starts assig number, socket id and other player information to Player object
+        // Once game starts assign number, socket id and other player information to Player object
         socket.emit('assignNumber', roomName, Player);
         this.okay = 0;
         this.afterShot = 0;                
@@ -443,7 +446,17 @@ Pool.Game.prototype = {
         Player.isActive = i.isActive;
         Player.socketId = i.socketId;
         this.playerNumberText.text = i.name;
-        socket.emit('ready', roomName, Player);
+        var gameballs = [];
+        for (var i = 0; i < this.balls.length; i++)
+        {
+            var ball = this.balls.children[i];
+            var serverBall = {color: ball.color, isStripe: ball.body.sprite.isStripe, x: ball.x, y: ball.y};
+            gameballs.push(serverBall);
+            console.log(ball.color);
+            console.log(ball.x + " " + ball.y);
+            console.log(ball.body.sprite.isStripe);
+        }
+        socket.emit('ready', roomName, Player, gameballs);
         //this.resetCueBall(true);
     },
 
@@ -452,7 +465,12 @@ Pool.Game.prototype = {
         if (Player.number == 1) {
             Player.isActive = true;
             this.resetCueBall(true);
+            // Emit the balls to server
         }
+    },
+    
+    startReady: function() {
+      console.log("YO YO YO YO");  
     },
     
     activePlayerControl: function(p) {
@@ -563,7 +581,9 @@ Pool.Game.prototype = {
         this.scoreText.text = "SCORE: " + this.score;
     },
 
-    shotTaken: function (px, py) {
+    shotTaken: function (px, py, effect) {
+        this.effect = effect;
+        console.log(px + " " + py);
         this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
     },
 
@@ -579,7 +599,6 @@ Pool.Game.prototype = {
     },
 
     makeBall: function (x, y, color) {
-
         var ball = this.balls.create(x, y, 'balls', color);
         ball.color = color;
         if (color > 8){
@@ -599,13 +618,11 @@ Pool.Game.prototype = {
         ball.body.damping = 0.70;
         ball.body.angularDamping = 0.75;
         ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
-
+        
         return ball;
-
     },
 
     makePocketBall: function (x, y, color) {
-
         var ball = this.pocketBalls.create(x, y, 'balls', color);
         ball.color = color;
         ball.body.setCircle(10);
@@ -627,7 +644,6 @@ Pool.Game.prototype = {
         ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
         */
         return ball;
-
     },
 
     stopPocketBall: function(body, bodyB, shapeA, shapeB, equation) {
@@ -716,6 +732,7 @@ Pool.Game.prototype = {
 
                 var px = (Math.cos(this.aimLine.angle) * speed);
                 var py = (Math.sin(this.aimLine.angle) * speed);
+                console.log(px + " " + py);
                 
                 this.angle = this.aimLine.angle;
                 if(speed > 10){
@@ -737,7 +754,8 @@ Pool.Game.prototype = {
                 this.fill.visible = false;
                 this.powerRect.height = 0;
                 this.powerLevel.updateCrop();
-                socket.emit('tookShot', px, py, roomName);
+                var emitEffect = this.effect;
+                socket.emit('tookShot', px, py, emitEffect, roomName);
                 this.firstCollision = 0;
                 this.effectPlus.x = this.effectBall.x - 25;
                 this.effectPlus.y = this.effectBall.y- 24 ;                
@@ -748,7 +766,6 @@ Pool.Game.prototype = {
 
     // Function executed when cueball collides with anything
     hitBall: function(body, bodyB, shapeA, shapeB, equation){
-        console.log("HIT BALL FUNCTION");
         if(body){
             if(body.sprite.key == "balls"){
                 this.time.events.add(50, this.doEffect, this);
