@@ -11,6 +11,12 @@ var activeplayer = 1;
 var allowPlayer = 0; // Add to this variable when shot is taken and ball hits pocket
 var playerObj;
 var rooms = [];
+var games = [];
+/*
+Game consists of:
+array of current balls and room name
+Game = balls:[], roomName, 
+*/
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -105,6 +111,7 @@ io.on('connection', function(socket){
   socket.on('ready', function(room, player, balls){
     if (player.number == 2) {
       console.log(balls);
+      games.push({room: room, balls: balls});
       io.to(room).emit('ready');  
     }
   });
