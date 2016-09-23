@@ -116,6 +116,60 @@ io.on('connection', function(socket){
     }
   });
   
+  // Compare the state of the server and client games
+  socket.on('compareState', function(room, player, balls){
+    var serverGame = games.filter(function (obj) {
+      return obj.room === room;
+    });
+    console.log(serverGame);
+    var serverBalls = serverGame[0].balls;
+    if (serverBalls.length == balls.length){
+      // Still the same number of balls, change activeplayer
+      io.to(room).emit('changePlayer', player.number); 
+      console.log(Player.user + " " + "didn't make a shot");
+    }
+    if (serverBalls.length != balls.length){
+      // The number of balls in the server and client are different
+      console.log(Player.user + " " + "made a shot");
+      
+      // Serverballs length is 15 so you need to set the isStripe flag on both users
+      if (serverBalls.length == 15){
+        var missingBalls = []; // Array that holds which balls are no longer on the client side
+        for (var i = 0; i < serverBalls.length; i++){
+          var missingBallColor = null; // Hold the color of the server ball
+          var check = balls.filter(function (obj) {
+            missingBallColor = serverBalls[i].color
+            return obj.color === serverBalls[i].color;
+          });
+          
+          // If client ball is missing check if the ball isStripe
+          if (check.length == 0){
+            var findBall = serverBalls.filter(function (obj) {           
+              return obj.color === missingBallColor;
+            });
+            missingBalls.push(findBall[0]);
+          }
+          console.log(check);
+        }
+        
+        // If client ball is missing check if the ball isStripe
+        var stripeCount = 0;
+        var solidCount = 0;
+        for (var i=0; i < missingBalls.length; i++){
+          
+        }
+        // Stripe count or solid count is 0 assign isStripe to player        
+      }
+      
+      // Serverballs length is less than 15, compare the arrays      
+      if (serverBalls.length < 15){
+        for (var i = 0; i < serverBalls.length; i++){
+          
+        }
+      }
+    }
+  });
+  
   // Save balls for the room
   socket.on('startgame', function(room, balls){
     console.log("Stop");
@@ -334,12 +388,13 @@ http.listen(process.env.PORT || 5000, function(){
 
 
 // Player object
-function Player(name, user, number, isStripe, isSolid, isActive, socketId) {
+function Player(name, user, number, isStripe, isSolid, isActive, isCurrent, socketId) {
     this.name = name;
     this.user = user;
     this.number = number;
     this.isStripe = isStripe;
     this.isSolid = isSolid
     this.isActive = isActive;
+    this.isCurrent = isCurrent
     this.socketId = socketId;
 }

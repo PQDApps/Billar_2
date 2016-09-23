@@ -25,6 +25,7 @@ var Player = {
     isStripe: false,
     isSolid: false,
     isActive: false,
+    isCurrent: false,
     socketId: null,
     room: roomName,
 }
@@ -186,6 +187,7 @@ Pool.Game.prototype = {
         socket.on('assignNumber', this.assignNumber.bind(this));
         socket.on('ready', this.ready.bind(this));
         socket.on('startgame', this.startReady.bind(this));
+        socket.on('changePlayer', this.changePlayer.bind(this));
         
         this.stage.backgroundColor = 0x001b07;
 
@@ -457,15 +459,32 @@ Pool.Game.prototype = {
             console.log(ball.body.sprite.isStripe);
         }
         socket.emit('ready', roomName, Player, gameballs);
-        //this.resetCueBall(true);
     },
-
+    
+    getGameBalls: function() {
+        var gameballs = [];
+        for (var i = 0; i < this.balls.length; i++)
+        {
+            var ball = this.balls.children[i];
+            var serverBall = {color: ball.color, isStripe: ball.body.sprite.isStripe, x: ball.x, y: ball.y};
+            gameballs.push(serverBall);
+        }
+        return gameballs;    
+    },
+    
     // Both players are ready, Player 1 starts and places cue ball
     ready: function() {
         if (Player.number == 1) {
-            Player.isActive = true;
+            Player.isActive = true;            
             this.resetCueBall(true);
             // Emit the balls to server
+        }
+    },
+    
+    changePlayer: function(i) {
+        // Set the other player to isActive true
+        if (Player.number != i){
+            Player.isActive = true;
         }
     },
     
@@ -523,7 +542,7 @@ Pool.Game.prototype = {
         }
         else if (Player.isActive)
         {
-             if (type == 'stripe')
+            if (type == 'stripe')
             {
                 Player.isStripe = true;
                 this.playerNumberText.x = 180;
@@ -674,7 +693,8 @@ Pool.Game.prototype = {
         }
         if (Player.isActive) // Allow shot if active, okay, and shot's been taken
         {
-            Player.isActive = false;            
+            Player.isActive = false;
+            Player.isCurrent = true;            
             this.okay = 1; // Make it so the player can't shoot until we know he made a shot
             //socket.emit('apControl', Player, "shot");                    
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
@@ -1159,23 +1179,13 @@ Pool.Game.prototype = {
     
     update: function () {
         if (this.speed == 0)
-        {            
-            if (this.okay > 0 && this.afterShot == 1) // If it's okay and shot's been taken, check the pocket balls
-            {
-                this.checkPocketBalls();
-            }
-        }
-        
-        if (madeShot && this.okay == 0)
         {
-            //this.okay++;
-            //madeShot = false;
-            //this.shotMade();   
-        }
-        
-        if (missedShot) {
-            //missedShot = false;
-            //setTimeout(this.shotMissed, 1000);
+            if (Player.isCurrent == true){
+                //this.checkPocketBalls();
+                Player.isCurrent = false;
+                var currentBalls = this.getGameBalls();
+                socket.emit('compareState', roomName, Player, currentBalls);    
+            }                                
         }
         
         if (this.resetting)
