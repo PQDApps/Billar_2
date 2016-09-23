@@ -672,8 +672,9 @@ Pool.Game.prototype = {
         if(Player.isActive){
             this.afterShot = 1; // Shot was taken, so it is now after the shot
         }
-        if (Player.isActive && this.okay == 0 && this.afterShot == 1) // Allow shot if active, okay, and shot's been taken
-        {            
+        if (Player.isActive) // Allow shot if active, okay, and shot's been taken
+        {
+            Player.isActive = false;            
             this.okay = 1; // Make it so the player can't shoot until we know he made a shot
             //socket.emit('apControl', Player, "shot");                    
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
