@@ -224,6 +224,13 @@ io.on('connection', function(socket){
     }
   });
   
+  // When cueball falls in the hole
+  socket.on('cueball', function(room, player){
+    if (player.isCurrent){
+      io.to(room).emit('cueball'); 
+    }    
+  });
+  
   // Save balls for the room
   socket.on('startgame', function(room, balls){
     console.log("Stop");
