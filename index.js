@@ -156,9 +156,22 @@ io.on('connection', function(socket){
         var stripeCount = 0;
         var solidCount = 0;
         for (var i=0; i < missingBalls.length; i++){
-          
+          if (missingBalls[i].isStripe == false){
+            solidCount++;            
+          } else {
+            stripeCount++;
+          }          
         }
-        // Stripe count or solid count is 0 assign isStripe to player        
+
+        // Stripe count or solid count is 0 assign isStripe to player 
+        if (solidCount == 0){
+          // Emit isStripe = true to the player
+          io.to(room).emit('solidstripe', player.number, true);
+        }
+        if (stripeCount == 0){
+          // Emit isStripe = false to the player
+          io.to(room).emit('solidstripe', player.number, false);
+        }       
       }
       
       // Serverballs length is less than 15, compare the arrays      
@@ -393,8 +406,8 @@ function Player(name, user, number, isStripe, isSolid, isActive, isCurrent, sock
     this.user = user;
     this.number = number;
     this.isStripe = isStripe;
-    this.isSolid = isSolid
+    this.isSolid = isSolid;
     this.isActive = isActive;
-    this.isCurrent = isCurrent
+    this.isCurrent = isCurrent;
     this.socketId = socketId;
 }
