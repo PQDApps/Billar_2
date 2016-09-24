@@ -204,31 +204,22 @@ io.on('connection', function(socket){
             missingBalls.push(findBall[0]);
           }
           console.log(check);
-          
-          var playertype = !player.isStripe;
-          // See if there's a ball in the pocket that the isn't the players type, stripe/solid
-          var findDifferentBall = missingBalls.filter(function (obj) {           
-            return obj.isStripe === playertype;
-          });
-          
-          if (findDifferentBall.length > 0){
-            // Change players
-            io.to(room).emit('changePlayer', player.number);
-          } else {
-            // Dont change player
-            io.to(room).emit('dontChangePlayer', player.number); 
-          }
-                   
-          for (var i=0; i < missingBalls.length; i++){
-            if (missingBalls[i].isStripe == true){
-              solidCount++;            
-            } else {
-              stripeCount++;
-            }          
-          }                  
-        }                
+        }
+        
+        var playertype = !player.isStripe;
+        // See if there's a ball in the pocket that the isn't the players type, stripe/solid
+        var findDifferentBall = missingBalls.filter(function (obj) {           
+          return obj.isStripe === playertype;
+        });
+        
+        if (findDifferentBall.length > 0){
+          // Change players
+          io.to(room).emit('changePlayer', player.number);
+        } else {
+          // Dont change player
+          io.to(room).emit('dontChangePlayer', player.number); 
+        }                                      
       }
-      
       serverGame[0].balls = balls;
     }
   });
