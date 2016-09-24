@@ -188,6 +188,7 @@ Pool.Game.prototype = {
         socket.on('ready', this.ready.bind(this));
         socket.on('startgame', this.startReady.bind(this));
         socket.on('changePlayer', this.changePlayer.bind(this));
+        socket.on('dontChangePlayer', this.dontChangePlayer.bind(this));
         
         this.stage.backgroundColor = 0x001b07;
 
@@ -408,12 +409,12 @@ Pool.Game.prototype = {
         this.turnText.visible = false;
         
         //  Press P to pause and resume the game
-        this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
-        this.pauseKey.onDown.add(this.togglePause, this);
+        //this.pauseKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
+        //this.pauseKey.onDown.add(this.togglePause, this);
 
         //  Press D to toggle the debug display
-        this.debugKey = this.input.keyboard.addKey(Phaser.Keyboard.D);
-        this.debugKey.onDown.add(this.toggleDebug, this);
+        //this.debugKey = this.input.keyboard.addKey(Phaser.Keyboard.D);
+        //this.debugKey.onDown.add(this.toggleDebug, this);
 
         this.input.addMoveCallback(this.updateCue, this); // Updates every frame position of cue
         this.input.onUp.add(this.takeShot, this); // Doesn't shoot until user lets go of mouse button
@@ -488,6 +489,13 @@ Pool.Game.prototype = {
         }
     },
     
+    dontChangePlayer: function(i) {
+        // Set the other player to isActive true
+        if (Player.number == i){
+            Player.isActive = true;
+        }
+    },
+    
     startReady: function() {
       console.log("YO YO YO YO");  
     },
@@ -522,8 +530,33 @@ Pool.Game.prototype = {
         }
     },
     
-    setSolidStripe: function (type) {
-        this.okay = 0;
+    // playernumber, 'solid' or 'stripe', true or false
+    setSolidStripe: function (playernumber, type, set) {
+        if (Player.number == playernumber){
+            if (type == 'solid'){
+                Player.isSolid = true;
+            } else if (type == 'stripe'){
+                Player.isStripe = true;    
+            }                       
+        }
+        if (Player.number != playerNumber){
+            if (type == 'solid'){
+                Player.isStripe = true;
+            } else if (type == 'stripe'){
+                Player.isSolid = true;    
+            }            
+        }
+        if (Player.isSolid){
+            this.playerNumberText.x = 480;
+            this.playerNumberText.y = 98;
+            this.ssText.text = 'SOLID';
+        }
+        if (Player.isStripe){
+            this.playerNumberText.x = 180;
+            this.playerNumberText.y = 98; 
+            this.ssText.text = 'STRIPE';
+        }
+        /*
         if (!Player.isActive) {
             if (type != 'stripe')
             {
@@ -560,7 +593,7 @@ Pool.Game.prototype = {
                 this.activePlayerArrow.x = 480;
                 this.activePlayerArrow.y = 105;
             }
-        }
+        }*/
     },
     
     movePlus : function (sprite, pointer) {

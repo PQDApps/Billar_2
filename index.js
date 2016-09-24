@@ -123,18 +123,24 @@ io.on('connection', function(socket){
     });
     console.log(serverGame);
     var serverBalls = serverGame[0].balls;
+    
+    // Same amount of balls, switch player
     if (serverBalls.length == balls.length){
       // Still the same number of balls, change activeplayer
       io.to(room).emit('changePlayer', player.number); 
       console.log(Player.user + " " + "didn't make a shot");
     }
+    
+    // Different amount of balls
     if (serverBalls.length != balls.length){
       // The number of balls in the server and client are different
       console.log(Player.user + " " + "made a shot");
       
+      var missingBalls = []; // Array that holds which balls are no longer on the client side
+      var stripeCount = 0;
+      var solidCount = 0;      
       // Serverballs length is 15 so you need to set the isStripe flag on both users
-      if (serverBalls.length == 15){
-        var missingBalls = []; // Array that holds which balls are no longer on the client side
+      if (serverBalls.length == 15){        
         for (var i = 0; i < serverBalls.length; i++){
           var missingBallColor = null; // Hold the color of the server ball
           var check = balls.filter(function (obj) {
@@ -152,9 +158,7 @@ io.on('connection', function(socket){
           console.log(check);
         }
         
-        // If client ball is missing check if the ball isStripe
-        var stripeCount = 0;
-        var solidCount = 0;
+        // If client ball is missing check if the ball isStripe        
         for (var i=0; i < missingBalls.length; i++){
           if (missingBalls[i].isStripe == false){
             solidCount++;            
@@ -166,20 +170,66 @@ io.on('connection', function(socket){
         // Stripe count or solid count is 0 assign isStripe to player 
         if (solidCount == 0){
           // Emit isStripe = true to the player
-          io.to(room).emit('solidstripe', player.number, true);
+          io.to(room).emit('solidstripe', player.number, 'stripe');
+          io.to(room).emit('dontChangePlayer', player.number);
         }
         if (stripeCount == 0){
           // Emit isStripe = false to the player
-          io.to(room).emit('solidstripe', player.number, false);
+          io.to(room).emit('solidstripe', player.number, 'solid');
+          io.to(room).emit('dontChangePlayer', player.number);
+        }
+        
+        // If both solids and stripes made it into the pockets
+        if (solidCount > 0 && stripeCount > 0){
+          io.to(room).emit('solidstripe', player.number, 'solid');
+          // Two balls fell so change player
+          io.to(room).emit('changePlayer', player.number);
         }       
       }
       
       // Serverballs length is less than 15, compare the arrays      
       if (serverBalls.length < 15){
         for (var i = 0; i < serverBalls.length; i++){
+          var missingBallColor = null; // Hold the color of the server ball
+          var check = balls.filter(function (obj) {
+            missingBallColor = serverBalls[i].color
+            return obj.color === serverBalls[i].color;
+          });
           
-        }
+          // If client ball is missing check if the ball isStripe
+          if (check.length == 0){
+            var findBall = serverBalls.filter(function (obj) {           
+              return obj.color === missingBallColor;
+            });
+            missingBalls.push(findBall[0]);
+          }
+          console.log(check);
+          
+          var playertype = !player.isStripe;
+          // See if there's a ball in the pocket that the isn't the players type, stripe/solid
+          var findDifferentBall = missingBalls.filter(function (obj) {           
+            return obj.isStripe === playertype;
+          });
+          
+          if (findDifferentBall.length > 0){
+            // Change players
+            io.to(room).emit('changePlayer', player.number);
+          } else {
+            // Dont change player
+            io.to(room).emit('dontChangePlayer', player.number); 
+          }
+                   
+          for (var i=0; i < missingBalls.length; i++){
+            if (missingBalls[i].isStripe == true){
+              solidCount++;            
+            } else {
+              stripeCount++;
+            }          
+          }                  
+        }                
       }
+      
+      serverGame[0].balls = balls;
     }
   });
   
