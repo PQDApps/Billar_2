@@ -108,16 +108,17 @@ io.on('connection', function(socket){
   });
 
   // Both players are in the room and ready to play 
-  socket.on('ready', function(room, player, balls){
+  socket.on('ready', function(room, player, balls, cueball){
     if (player.number == 2) {
       console.log(balls);
-      games.push({room: room, balls: balls});
+      games.push({room: room, balls: balls, cueball: cueball});
       io.to(room).emit('ready');  
     }
   });
   
   // Compare the state of the server and client games
-  socket.on('compareState', function(room, player, balls){
+  socket.on('compareState', function(room, player, balls, cueball){
+    //io.to(room).emit('placeballs', balls);
     var serverGame = games.filter(function (obj) {
       return obj.room === room;
     });
@@ -128,7 +129,7 @@ io.on('connection', function(socket){
     if (serverBalls.length == balls.length){
       // Still the same number of balls, change activeplayer
       io.to(room).emit('changePlayer', player.number); 
-      console.log(Player.user + " " + "didn't make a shot");
+      console.log(Player.name + " " + "didn't make a shot");
     }
     
     // Different amount of balls
@@ -220,8 +221,10 @@ io.on('connection', function(socket){
           io.to(room).emit('dontChangePlayer', player.number); 
         }                                      
       }
-      serverGame[0].balls = balls;
     }
+    serverGame[0].balls = balls;
+    serverGame[0].cueball = cueball;
+    io.to(room).emit('placeballs', serverGame[0].balls, serverGame[0].cueball);
   });
   
   // When cueball falls in the hole

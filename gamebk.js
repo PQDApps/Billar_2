@@ -191,6 +191,7 @@ Pool.Game.prototype = {
         socket.on('changePlayer', this.changePlayer.bind(this));
         socket.on('dontChangePlayer', this.dontChangePlayer.bind(this));
         socket.on('cueball', this.cueballServer.bind(this));
+        socket.on('placeballs', this.placeBalls.bind(this));
         
         this.stage.backgroundColor = 0x001b07;
 
@@ -443,6 +444,12 @@ Pool.Game.prototype = {
         this.afterShot = 0;                
     },
     
+    getCueBall: function() {
+        var currentCueBall = this.cueball.body;
+        var serverCueBall = {x: currentCueBall.x, y: currentCueBall.y};
+        return serverCueBall;
+    },
+
     // Server emits the player info once both have connected to one room
     assignNumber: function(i) {
         Player.name = i.name;
@@ -461,9 +468,11 @@ Pool.Game.prototype = {
             console.log(ball.x + " " + ball.y);
             console.log(ball.body.sprite.isStripe);
         }
-        socket.emit('ready', roomName, Player, gameballs);
+        //TODO: Add cueball to ready
+        var sendCueBall = this.getCueBall();
+        socket.emit('ready', roomName, Player, gameballs, sendCueBall);
     },
-    
+
     getGameBalls: function() {
         var gameballs = [];
         for (var i = 0; i < this.balls.length; i++)
@@ -724,6 +733,19 @@ Pool.Game.prototype = {
         return ball;
     },
 
+    placeBalls: function (serverBalls, serverCueBall) {
+        console.log(serverBalls);
+        console.log(this.balls.children);
+        this.cueball.body.setZeroVelocity();
+        this.cueball.body.x = serverCueBall.x;
+        this.cueball.body.y = serverCueBall.y;
+        for (var i; i < serverBalls.length; i++) {
+            this.balls.children[i].body.setZeroVelocity();
+            this.balls.children[i].body.x = serverBalls[i].x;
+            this.balls.children[i].body.y = serverBalls[i].y;            
+        }
+    },
+
     takeShot: function () {       
         if (this.speed > 0)
         {
@@ -782,9 +804,9 @@ Pool.Game.prototype = {
                 }
                 
                 var speed = ((this.aimLine.length + relativeSpeed) / 2);
-                if (speed > 112)
+                if (speed > 90)
                 {
-                    speed = 112;
+                    speed = 90;
                 }
                 console.log("RELATIVE SPEED: " + relativeSpeed);
                 console.log("LENGTH: " + this.aimLine.length);
@@ -1194,55 +1216,15 @@ Pool.Game.prototype = {
         return closestBall;
     },
     
-    checkPocketBalls: function () {
-        this.afterShot = 0; // After Shot is now 0, and we will not check the pocket balls any longer.        
-        if (pocketBalls.length == 0){
-            // No balls got into a pocket, so we change player
-            if (Player.isActive){
-                //socket.emit('apControl', Player, 'change');    
-            }                   
-        } else {
-            if (Player.isActive){
-                pocketBalls.forEach(function(b) { // Check each ball                            
-                    if (!b == Player.isSolid && b == Player.isStripe){
-
-                    } else if (Player.isSolid == false && Player.isStripe == false){
-                        if(b == false){
-                            Player.isSolid = true;
-                            //Player.emitting = true;
-                            //Player.isActive = true;
-                            this.okay = 0;
-                            //socket.emit('solidstripe', 'solid', roomName);
-                            //this.ssText.text = 'SOLID';
-                        } else if (b == true){
-                            Player.isStripe = true;
-                            //Player.emitting = true;
-                            //Player.isActive = true;
-                            this.okay = 0;
-                            //socket.emit('solidstripe', 'stripe', roomName);
-                            //this.ssText.text = 'STRIPE';
-                        }
-                    } else {
-                        // Wrong ball dropped into the 
-                        if (Player.isActive){
-                            //socket.emit('apControl', Player, 'change');    
-                        }
-                    }
-                });
-            }
-        }
-        this.okay = 0;
-        pocketBalls = []; // Empty the pocket balls array
-    },
-    
     update: function () {
         if (this.speed == 0)
         {
             if (Player.isCurrent == true){
-                //this.checkPocketBalls();
                 Player.isCurrent = false;
                 var currentBalls = this.getGameBalls();
-                socket.emit('compareState', roomName, Player, currentBalls);    
+                // TODO: Add cueball to compare state
+                var sendCueBall = this.getCueBall();
+                socket.emit('compareState', roomName, Player, currentBalls, sendCueBall);    
             }                                
         }
         
