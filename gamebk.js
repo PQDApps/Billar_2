@@ -739,7 +739,7 @@ Pool.Game.prototype = {
         this.cueball.body.setZeroVelocity();
         this.cueball.body.x = serverCueBall.x;
         this.cueball.body.y = serverCueBall.y;
-        for (var i; i < serverBalls.length; i++) {
+        for (var i = 0; i < serverBalls.length; i++) {
             this.balls.children[i].body.setZeroVelocity();
             this.balls.children[i].body.x = serverBalls[i].x;
             this.balls.children[i].body.y = serverBalls[i].y;            
