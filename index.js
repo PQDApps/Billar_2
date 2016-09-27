@@ -428,10 +428,10 @@ router.post('/createroom', function(req,res){
           console.log("Room name not found, creating a new room");
           rooms.insert({room:roomName, createdBy: username, playerOne : null, playerTwo : null}, function createRoom (err, result){
             if (err) {
-              res.status(500).send({Status: error, error: err});
+              res.status(500).send({Status: error, error: err, Room: roomName});
             }
             console.log(result);
-            res.status(200).send({Status: 'Successfully Created Room'});
+            res.status(200).send({Status: 'Successfully Created Room', Room: roomName});
           });
         }
       })

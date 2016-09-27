@@ -15,7 +15,15 @@
 
     <!-- Custom CSS -->
     <link href="css/stylish-portfolio.css" rel="stylesheet">
-    
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages li:nth-child(even) { background: #BEBEBE; }
+      #chatBox { width: 800px; margin: 0 auto; top: 400px; overflow-y: auto; height: 200px;}
+    </style>
     <!-- Custom Fonts 
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
@@ -43,6 +51,14 @@
                 var data = $('#setroom').serialize() + "&username=" + username;
                 $.post('/api/createroom', data, function(resp){
                     console.log(resp);
+                    var mydiv = document.getElementById("messages");
+                    var listItem = document.createElement('li');
+                    var aTag = document.createElement('a');
+                    aTag.setAttribute('href','/gamebk.html?roomName=' + resp.Room);
+                    aTag.innerHTML = "Room Created Successfully: " + resp.Room + "--------" + "Click here to join.";
+                    listItem.appendChild(aTag);
+                    mydiv.appendChild(listItem);
+                    //$('#messages').append($('<li>').text("ROOM CREATED: " + resp.Room + "" + <a href="/gamebk.html?roomName="+resp.Room>Click Here to Join</a>));
                     //window.location.href = '/login.html';
                 });                
             });
@@ -64,11 +80,11 @@
     </div>
     <br>
     <br>
+    <br>
+    <br>
     <div style="width:500px;margin:0 auto">
         <h2>Enter Room</h2>
-        <h4>Room Name:</h4>
-        <p>salaUno</p>
-        <a href="/gamebk.html?roomName=salaUno">Click Here to Join</a>
+        <ul id="messages"></ul>
     </div>
     <br>
 </body>
