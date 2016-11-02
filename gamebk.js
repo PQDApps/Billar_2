@@ -260,11 +260,11 @@ Pool.Game.prototype = {
 
         this.pockets.body.addCircle(14, 118, 164); // Top left pocket 14
         this.pockets.body.addCircle(10, 400, 152); // Top center pocket 10
-        this.pockets.body.addCircle(14, 682, 164); // Top right pocket
+        this.pockets.body.addCircle(11, 682, 164); // Top right pocket. Modified from 14 to 11 so the player won't place it on the pocket
 
         this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
         this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
-        this.pockets.body.addCircle(14, 682, 436); // Bottom right pocket
+        this.pockets.body.addCircle(11, 682, 436); // Bottom right pocket. Modified from 14 to 11 so the player won't place it on the pocket
 
         //  Ball shadows
         //this.shadows = this.add.group();
@@ -619,10 +619,11 @@ Pool.Game.prototype = {
     },
 
     pressed : function () {
-        var x1 = 80; // left x point of table
-        var x2 = 720; // right x point of table
-        var y1 = 125; // Top y point of table
-        var y2 = 475; // Bottom y point of table 
+        //Extended to the whole game are so the current player's click won't affect the turn
+        var x1 = 0; // left x point of table // Original: 80 
+        var x2 = 800; // right x point of table // Original: 720 
+        var y1 = 0; // Top y point of table // Original: 125
+        var y2 = 600; // Bottom y point of table // Original: 475 
         
         var x = this.input.activePointer.x;
         var y = this.input.activePointer.y;
@@ -948,8 +949,9 @@ Pool.Game.prototype = {
         this.cueball.body.setZeroVelocity();
 
         //  Move it to a 'safe' area
-        this.cueball.body.x = 16;
-        this.cueball.body.y = 16;         
+        //Rather than a solution, a temporal solution. It places the Cue on the table so the player can't hit it while waiting
+        this.cueball.body.x = 250;
+        this.cueball.body.y = 302;         
     },
     
     resetCueBall: function (first) {
@@ -958,8 +960,8 @@ Pool.Game.prototype = {
         cueballInPocket = false; 
         
         //  Move it to a 'safe' area
-        this.cueball.body.x = 16;
-        this.cueball.body.y = 16;
+        this.cueball.body.x = 16; 
+        this.cueball.body.y = 16; 
 
         if (first == true) {
             this.firstPlacement = true;
