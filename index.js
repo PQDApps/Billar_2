@@ -10,13 +10,28 @@ var users = [];
 var activeplayer = 1;
 var allowPlayer = 0; // Add to this variable when shot is taken and ball hits pocket
 var playerObj;
-var rooms = [];
+var numberRooms;
+//var cache = require('memory-cache'); //To persist data
+var cuartos = []; //Areeglo que contendrá  a los objetos tipo cuarto!
+var i=-1; //contador de los cuartos
+//var rooms = [];
+
+//Schema de los rooms
+/*var rooms ={
+  room: String,
+  createdBy: String,
+  playerOne: String,
+  playerTwo: String
+}*/
 var games = [];
 /*
 Game consists of:
 array of current balls and room name
 Game = balls:[], roomName, 
 */
+//
+//jjwk
+//Hacer consulta al DB pa que se traiga las listas
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -43,8 +58,11 @@ MongoClient.connect(mongoURL, function(err, db) {
 });
 
 // New socket connection
+
+
 io.on('connection', function(socket){
   // Socket connection successful
+  /*
   console.log('a user connected '+ socket.id);
   //numberOfClients++; //Increment when user connects
   
@@ -52,7 +70,8 @@ io.on('connection', function(socket){
     numberOfClients = numberOfClients++;
     MongoClient.connect(mongoURL, function(err, db) {
       if(!err){
-        var rooms = db.collection("rooms");
+
+      //  createRooms();
         rooms.findOne({"room" : roomName}, function findRoom (err, roomItem) {
           if (err) {
             console.log("Mongo error: " + err);
@@ -105,7 +124,112 @@ io.on('connection', function(socket){
         })
       }
     })
-  });
+  });*/
+
+  console.log('a user connected '+ socket.id);
+  //numberOfClients++; //Increment when user connects
+  
+  //socket.on('assignNumber', function(roomName, playerClient, cuartos){
+    socket.on('assignNumber', function(roomName, playerClient){
+    numberOfClients = numberOfClients++;
+    console.log("Ya entró al assignNumber");
+    //cuartos = localStorage.get('cuartos'); // Persistence
+    console.log(cuartos[i]);
+    console.log("Ya entendió  a la var cuartos[i]");
+    //roomItem = cuartos[i];
+
+
+      //  createRooms();
+      //usar findRoom(cuartos);
+      //cuartos.roomName
+      //roomItem sera la variable cuartos
+ function findRoom (roomItem) {
+
+            console.log("Adding user to room");
+            console.log(roomItem);
+            //console.log(cuartos.playerOne);
+            console.log("Probando");
+            var playerNumber = "";
+            var canSet = true;
+            console.log("roomItem.room: "+roomItem.room);
+            // Check if the user is already in this room
+            if (roomItem.playerOne == playerClient.user || roomItem.playerTwo == playerClient.user) {
+              console.log("This user is already in this room");
+              canSet = false;
+              if (roomItem.playerOne == playerClient.user){
+                var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id); 
+                socket.emit('assignNumber', player);
+              } else {
+                var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
+                socket.emit('assignNumber', player);
+              }
+            }
+            // If user is not part of the room yet assign the user to a room
+            if (canSet == true) {
+              // TODO: Make this if statement just one rooms.update by using a variable in $set
+              if (roomItem.playerOne == '') { // No users in room, set player one
+                //cuartos.playerOne = playerClient.user;
+                //rooms.update({"room":roomName}, {$set: {"playerOne": playerClient.user}}, function createRoom (err, result){
+                  /*if (err) {
+                    //TODO: do something with error
+                  }*/
+                  //console.log(result);
+                  // Create user and emit user back to player
+                  var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id);
+                  console.log("(pa modificar su atributo playerOne) Cuartos: "+roomItem.playerOne);
+                  //cuartos[i].cuartosInSide.playerOne = playerClient.user;
+                  roomItem.playerOne = playerClient.user;
+                  console.log("(pa modificar su atributo playerOne) Cuartos: "+roomItem.playerOne);
+                  console.log("roomItem: "+roomItem);
+                  socket.emit('assignNumber', player);
+                //});
+              } else if (roomItem.playerTwo == '') { // One user in room, set player two
+                //rooms.update({"room":roomName}, {$set: {"playerTwo": playerClient.user}}, function createRoom (err, result){
+                  /*if (err) {
+                    //TODO: do something with error
+                  }*/
+
+                  //console.log(result);
+                  var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
+                   console.log("(pa modificar su atributo playerOne) Cuartos: "+roomItem.playerOne);
+                  //cuartos[i].cuartosInSide.playerOne = playerClient.user;
+                  roomItem.playerTwo = playerClient.user;
+                  socket.emit('assignNumber', player);
+                //});
+              } else {
+                console.log("Room is full");
+              }
+            }
+          }
+
+          findRoom(cuartos[i]);
+          console.log("Usuario añadido exitosamente!");
+    })
+      
+  
+  
+
+
+/*
+var rooms = {
+  room: String,
+  createdBy: String,
+  playerOne: String,
+  playerTwo: String
+}
+*/
+
+
+/*rooms = {
+      room: "",
+      createdBy:"Player",
+      playerOne: "",
+      playerTwo: "" 
+    }*/
+
+
+
+
 
   // Both players are in the room and ready to play 
   socket.on('ready', function(room, player, balls, cueball){
@@ -411,33 +535,40 @@ router.post('/signupnow', function(req,res){
   }) 
 })
 
-// Create a room in the rooms collection 
+//object rooms
+function rooms(a, b, c, d){
+ //var cuartos = new rooms(a, b, c, d); 
+  this.room = a;
+  this.createdBy = b;
+  this.playerOne = c;
+  this.playerTwo = d;
+
+}
+
+// Create a room in the rooms array without using MongoDB
 router.post('/createroom', function(req,res){
+  i++;
   var roomName = req.body.roomName;
   var username = req.body.username;
-  console.log(roomName);
-  MongoClient.connect(mongoURL, function(err, db) {
-    if(!err){
-      var rooms = db.collection("rooms");
-      rooms.findOne({"room" : roomName}, function findRoom (err, roomItem) {
-        if (err) {
-          console.log("Mongo error: " + err);
-          res.status(409).send({Message: "Room name already exists."});
-        }
-        if (!roomItem) {
-          console.log("Room name not found, creating a new room");
-          rooms.insert({room:roomName, createdBy: username, playerOne : null, playerTwo : null}, function createRoom (err, result){
-            if (err) {
-              res.status(500).send({Status: error, error: err, Room: roomName});
-            }
-            console.log(result);
-            res.status(200).send({Status: 'Successfully Created Room', Room: roomName});
-          });
-        }
-      })
-    }
-  })
+  console.log("roomName: "+roomName);
+  console.log("userName: "+username);
+  var cuartosInSide = new rooms(roomName, username, "", "");
+
+  //createRooms(roomName,username,"","");
+  console.log(cuartosInSide);
+  //localStorage.set('cuartos', cuartos);
+  cuartos.push(cuartosInSide);
+  //CuartosPersistentes = JSON.stringify(cuartos);
+  //localStorage.set('cuartos', CuartosPersistentes);
+  console.log("Enviando datos");
+  //res.status(200).send({Status: 'Successfully Created Room', Room: roomName});
+  res.status(200).send({Status: 'Successfully Created Room', Room: roomName, cuartos: cuartosInSide});
+  console.log(cuartos[i]);
+  //global.cuartos = cuartos;
 })
+
+
+
 
 router.put('/updateroom', function(req, res){
   var roomName = req.body.roomName

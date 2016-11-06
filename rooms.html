@@ -47,10 +47,12 @@
         username = username.replace("username=", "");
         $(document).ready(function(){
             $('#setroom').submit(function(event){
-                event.preventDefault();
+                event.preventDefault();//Evita que se recargue la pagina?
                 var data = $('#setroom').serialize() + "&username=" + username;
+                console.log("Probando");
                 $.post('/api/createroom', data, function(resp){
-                    console.log(resp);
+                    console.log("Response: "+resp);
+                    var cuartos = resp.cuartos;
                     var mydiv = document.getElementById("messages");
                     var listItem = document.createElement('li');
                     var aTag = document.createElement('a');
@@ -58,8 +60,23 @@
                     aTag.innerHTML = "Room Created Successfully: " + resp.Room + "--------" + "Click here to join.";
                     listItem.appendChild(aTag);
                     mydiv.appendChild(listItem);
-                    //$('#messages').append($('<li>').text("ROOM CREATED: " + resp.Room + "" + <a href="/gamebk.html?roomName="+resp.Room>Click Here to Join</a>));
-                    //window.location.href = '/login.html';
+                   // console.log(data);
+                    //console.log("Data: "+data);
+                    //alert(cuartos);
+                    alert("Room Created Successfully: " + resp.Room);
+                   // console.log(resp.Room);
+                    //console.log(resp.cuartos);
+                    //var cuartos = resp.cuartos;
+                   // console.log("Ya se guardó resp.cuartos en cuartos");
+                    //console.log("Ya se guardó resp.cuartos en cuartos");
+                    //CuartosPersistentes = JSON.stringify(cuartos);
+                    //console.log("Se strinkifico cuartos");
+                    //sessionStorage.setItem('cuartos', CuartosPersistentes);
+                    //console.log("Cuartos se hizo persistente");
+                    //var loQueSea = sessionStorage.getItem('cuartos');
+                    //console.log("Valor: " + loQueSea);
+                    //console.log(cuartos);
+                    console.log("Probando");
                 });                
             });
         });
