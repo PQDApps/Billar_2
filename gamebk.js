@@ -1,3 +1,16 @@
+//a function that extracts data from de URL
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+//var roomName = req.param.roomName;
+//var roomNumber = req.param.roomNumber;
+//extracting variables from the URL by using the getParameterByName function
+var roomName = getParameterByName('roomName');
+var roomNumber = getParameterByName('roomNumber');
+
 var Pool = {
     //showDebug: true,
     white: 0,
@@ -29,6 +42,7 @@ var Player = {
     socketId: null,
     room: roomName,
 }
+
 var activePlayer = 1;
 var madeShot = false;
 var missedShot = false;
@@ -439,7 +453,7 @@ Pool.Game.prototype = {
         this.ray.visible = false;
         
         // Once game starts assign number, socket id and other player information to Player object
-        socket.emit('assignNumber', roomName, Player);
+        socket.emit('assignNumber', roomName, Player, roomNumber);
         this.okay = 0;
         this.afterShot = 0;                
     },

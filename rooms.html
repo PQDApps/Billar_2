@@ -46,37 +46,42 @@
         var username = document.cookie;
         username = username.replace("username=", "");
         $(document).ready(function(){
-            $('#setroom').submit(function(event){
-                event.preventDefault();//Evita que se recargue la pagina?
-                var data = $('#setroom').serialize() + "&username=" + username;
-                console.log("Probando");
-                $.post('/api/createroom', data, function(resp){
-                    console.log("Response: "+resp);
-                    var cuartos = resp.cuartos;
+            //Calling the API thowRooms, wich will give the rooms contained in memory
+            $.get('/api/throwRooms', function(resp){
+                console.log("user entered API throwRooms");
+                console.log("before our forEach");
+                console.log("Response from the API: "+resp);
+                //alert(resp);
+                resp.forEach(function(singleRoom) {
                     var mydiv = document.getElementById("messages");
                     var listItem = document.createElement('li');
                     var aTag = document.createElement('a');
-                    aTag.setAttribute('href','/gamebk.html?roomName=' + resp.Room);
+                    console.log(singleRoom);
+                    console.log("Value of singleRoom: "+singleRoom);
+                    aTag.setAttribute('href','/gamebk.html?roomName=' + singleRoom.room +'&roomNumber='+singleRoom.i);
+                   // aTag.setAttribute('href','/gamebk.html?roomName=' + singleRoom.room);
+                    aTag.innerHTML = "Room Created Successfully: " + singleRoom.room + "--------" + "Click here to join.";
+                    listItem.appendChild(aTag);
+                    mydiv.appendChild(listItem);
+                });
+                console.log("forEach reached its end");
+                //aTag.setAttribute('href','/gamebk.html?roomName=' + resp.Room);  URL without roomNumber
+            });
+            $('#setroom').submit(function(event){
+                event.preventDefault();//Evita que se recargue la pagina?
+                var data = $('#setroom').serialize() + "&username=" + username;
+               // console.log("Probando");
+                $.post('/api/createroom', data, function(resp){
+                    console.log("Response: "+resp);
+                    //var cuartos = resp.cuartos;
+                    var mydiv = document.getElementById("messages");
+                    var listItem = document.createElement('li');
+                    var aTag = document.createElement('a');
+                    aTag.setAttribute('href','/gamebk.html?roomName=' + resp.Room+'&roomNumber='+resp.i);
                     aTag.innerHTML = "Room Created Successfully: " + resp.Room + "--------" + "Click here to join.";
                     listItem.appendChild(aTag);
                     mydiv.appendChild(listItem);
-                   // console.log(data);
-                    //console.log("Data: "+data);
-                    //alert(cuartos);
-                    alert("Room Created Successfully: " + resp.Room);
-                   // console.log(resp.Room);
-                    //console.log(resp.cuartos);
-                    //var cuartos = resp.cuartos;
-                   // console.log("Ya se guardó resp.cuartos en cuartos");
-                    //console.log("Ya se guardó resp.cuartos en cuartos");
-                    //CuartosPersistentes = JSON.stringify(cuartos);
-                    //console.log("Se strinkifico cuartos");
-                    //sessionStorage.setItem('cuartos', CuartosPersistentes);
-                    //console.log("Cuartos se hizo persistente");
-                    //var loQueSea = sessionStorage.getItem('cuartos');
-                    //console.log("Valor: " + loQueSea);
-                    //console.log(cuartos);
-                    console.log("Probando");
+                 //   console.log("Probando");
                 });                
             });
         });

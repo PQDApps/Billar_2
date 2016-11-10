@@ -13,16 +13,9 @@ var playerObj;
 var numberRooms;
 //var cache = require('memory-cache'); //To persist data
 var cuartos = []; //Areeglo que contendrá  a los objetos tipo cuarto!
-var i=-1; //contador de los cuartos
+var i = -1; //contador de los cuartos
 //var rooms = [];
 
-//Schema de los rooms
-/*var rooms ={
-  room: String,
-  createdBy: String,
-  playerOne: String,
-  playerTwo: String
-}*/
 var games = [];
 /*
 Game consists of:
@@ -30,7 +23,7 @@ array of current balls and room name
 Game = balls:[], roomName, 
 */
 //
-//jjwk
+//
 //Hacer consulta al DB pa que se traiga las listas
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -130,11 +123,11 @@ io.on('connection', function(socket){
   //numberOfClients++; //Increment when user connects
   
   //socket.on('assignNumber', function(roomName, playerClient, cuartos){
-    socket.on('assignNumber', function(roomName, playerClient){
+    socket.on('assignNumber', function(roomName, playerClient, roomNumber){
     numberOfClients = numberOfClients++;
     console.log("Ya entró al assignNumber");
     //cuartos = localStorage.get('cuartos'); // Persistence
-    console.log(cuartos[i]);
+    console.log(cuartos[roomNumber]);
     console.log("Ya entendió  a la var cuartos[i]");
     //roomItem = cuartos[i];
 
@@ -156,7 +149,7 @@ io.on('connection', function(socket){
             if (roomItem.playerOne == playerClient.user || roomItem.playerTwo == playerClient.user) {
               console.log("This user is already in this room");
               canSet = false;
-              if (roomItem.playerOne == playerClient.user){
+                if (roomItem.playerOne == playerClient.user){
                 var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id); 
                 socket.emit('assignNumber', player);
               } else {
@@ -202,7 +195,7 @@ io.on('connection', function(socket){
             }
           }
 
-          findRoom(cuartos[i]);
+          findRoom(cuartos[roomNumber]);
           console.log("Usuario añadido exitosamente!");
     })
       
@@ -536,39 +529,43 @@ router.post('/signupnow', function(req,res){
 })
 
 //object rooms
-function rooms(a, b, c, d){
+function rooms(a, b, c, d, e, f){
  //var cuartos = new rooms(a, b, c, d); 
   this.room = a;
   this.createdBy = b;
   this.playerOne = c;
   this.playerTwo = d;
+  this.ID = e;
+  this.i = f;
 
 }
 
-// Create a room in the rooms array without using MongoDB
+// Creates a room in the rooms array without using MongoDB
 router.post('/createroom', function(req,res){
   i++;
   var roomName = req.body.roomName;
   var username = req.body.username;
   console.log("roomName: "+roomName);
   console.log("userName: "+username);
-  var cuartosInSide = new rooms(roomName, username, "", "");
-
-  //createRooms(roomName,username,"","");
+    //var ID = (Math.random() *10) +1;
+    var ID = i.toString(16);
+  //var cuartosInSide = new rooms(roomName, username, "", "",i);
+    var cuartosInSide = new rooms(roomName, username, "", "",ID,i);
   console.log(cuartosInSide);
-  //localStorage.set('cuartos', cuartos);
   cuartos.push(cuartosInSide);
-  //CuartosPersistentes = JSON.stringify(cuartos);
-  //localStorage.set('cuartos', CuartosPersistentes);
   console.log("Enviando datos");
   //res.status(200).send({Status: 'Successfully Created Room', Room: roomName});
   res.status(200).send({Status: 'Successfully Created Room', Room: roomName, cuartos: cuartosInSide});
   console.log(cuartos[i]);
-  //global.cuartos = cuartos;
+
 })
 
-
-
+//This returns to the client an array that contains the rooms
+router.get('/throwRooms',function(req, res){
+    console.log("Client has accesed API throwRooms");
+    console.log("The following data will be sent: "+cuartos);
+    res.status(200).send(cuartos);
+});
 
 router.put('/updateroom', function(req, res){
   var roomName = req.body.roomName
