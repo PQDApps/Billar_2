@@ -53,6 +53,8 @@
                 console.log("Response from the API: "+resp);
                 //alert(resp);
                 resp.forEach(function(singleRoom) {
+                    console.log("Valor de playerone en singleroom: "+singleRoom.playerOne);
+                    if(singleRoom.playerOne === "" || singleRoom.playerTwo === ""){
                     var mydiv = document.getElementById("messages");
                     var listItem = document.createElement('li');
                     var aTag = document.createElement('a');
@@ -63,6 +65,7 @@
                     aTag.innerHTML = "Room Created Successfully: " + singleRoom.room + "--------" + "Click here to join.";
                     listItem.appendChild(aTag);
                     mydiv.appendChild(listItem);
+                    }
                 });
                 console.log("forEach reached its end");
                 //aTag.setAttribute('href','/gamebk.html?roomName=' + resp.Room);  URL without roomNumber

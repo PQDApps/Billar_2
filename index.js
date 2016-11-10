@@ -564,7 +564,10 @@ router.post('/createroom', function(req,res){
 router.get('/throwRooms',function(req, res){
     console.log("Client has accesed API throwRooms");
     console.log("The following data will be sent: "+cuartos);
+    //Not needed since it's already in rooms.html
+    //if(cuartos[i].playerOne = ''){
     res.status(200).send(cuartos);
+    //}
 });
 
 router.put('/updateroom', function(req, res){
