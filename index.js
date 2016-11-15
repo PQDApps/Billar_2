@@ -522,7 +522,11 @@ router.post('/signupnow', function(req,res){
             console.log(result);
             res.status(200).send({Status: 'Success'});
           });
-        }  
+        }
+        if (usersItem) {
+          console.log("User already exists");
+          res.status(409).send({Status: "User already exists"});
+        }   
       })
     }  
   }) 
