@@ -155,6 +155,7 @@ io.on('connection', function(socket){
               } else {
                 var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
                 socket.emit('assignNumber', player);
+                
               }
             }
             // If user is not part of the room yet assign the user to a room
@@ -175,6 +176,7 @@ io.on('connection', function(socket){
                   console.log("(pa modificar su atributo playerOne) Cuartos: "+roomItem.playerOne);
                   console.log("roomItem: "+roomItem);
                   socket.emit('assignNumber', player);
+                  socket.emit('waitingPlayerTwo');
                 //});
               } else if (roomItem.playerTwo == '') { // One user in room, set player two
                 //rooms.update({"room":roomName}, {$set: {"playerTwo": playerClient.user}}, function createRoom (err, result){
@@ -193,10 +195,17 @@ io.on('connection', function(socket){
                 console.log("Room is full");
               }
             }
+     
+     if(roomItem.playerTwo != ""){
+                    socket.broadcast.emit('gameStarted');
+                    socket.emit('gameStarted');
+                }
+                
           }
 
           findRoom(cuartos[roomNumber]);
           console.log("Usuario añadido exitosamente!");
+        
     })
       
   

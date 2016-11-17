@@ -10,7 +10,7 @@ function getParameterByName(name) {
 //extracting variables from the URL by using the getParameterByName function
 var roomName = getParameterByName('roomName');
 var roomNumber = getParameterByName('roomNumber');
-
+//TODO: Intentar usar la idea de objetos dentro de objetos
 var Pool = {
     //showDebug: true,
     white: 0,
@@ -30,7 +30,31 @@ var Pool = {
     strGreen: 14,
     strViolet: 15,
 };
-
+/*
+var Pool = {
+    //showDebug: true,
+    white = {
+        anim1 = 0,
+        anim2 = 1,
+        anim3 = 3
+        },
+    yellow: 1,
+    blue: 2,
+    red: 3,
+    pink: 4,
+    orange: 5,
+    green: 6,
+    violet: 7,
+    black: 8,
+    strYhellow: 9,
+    strBlue: 10,
+    strRed: 11,
+    strPink: 12,
+    strOrange: 13,
+    strGreen: 14,
+    strViolet: 15,
+};
+*/
 var Player = {
     name: null,
     user: username,
@@ -48,7 +72,7 @@ var madeShot = false;
 var missedShot = false;
 var cueballInPocket = false;
 var pocketBalls = [];
-
+var roja;
 var GameBalls = [];
 
 var socket = io();
@@ -89,6 +113,8 @@ Pool.Preloader.prototype = {
         this.load.spritesheet('startBtn','startBtnSheet.png', 67, 28);
         this.load.spritesheet('practiceBtn','practiceBtnSheet.png', 67, 28);
         this.load.spritesheet('standupBtn','standupBtnSheet.png', 67, 28);
+        this.load.spritesheet('roja', 'balls/bg.png',24,24);
+        //this.load.atlasJSONHash( 'game', 'balls/bg.png', 'bals/controller.json' );
 
 
         this.load.physics('table');
@@ -98,7 +124,10 @@ Pool.Preloader.prototype = {
     create: function () {
 
         this.state.start('Pool.MainMenu');
-
+        roja = game.add.sprite(0,0, 'roja');
+        
+        roja.animations.add('right', [0,1,2]);
+        
     }
 
 };
@@ -206,6 +235,23 @@ Pool.Game.prototype = {
         socket.on('dontChangePlayer', this.dontChangePlayer.bind(this));
         socket.on('cueball', this.cueballServer.bind(this));
         socket.on('placeballs', this.placeBalls.bind(this));
+        socket.on('gameStarted', function(){
+            alert("El juego ya ha iniciado!");
+        });
+        socket.on('gameOver', function(){
+            if(confirm("Game Over, do you want to restart? Otherwise, you will return to the rooms menu")){
+                location.reload(); 
+            }else{
+                 location.href='rooms.html';
+            }
+            
+           
+            
+        });
+        socket.on('waitingPlayerTwo', function(){
+            alert("Waiting for Player 2");
+        });
+        
         
         this.stage.backgroundColor = 0x001b07;
 
@@ -965,7 +1011,8 @@ Pool.Game.prototype = {
         //  Move it to a 'safe' area
         //Rather than a solution, a temporal solution. It places the Cue on the table so the player can't hit it while waiting
         this.cueball.body.x = 250;
-        this.cueball.body.y = 302;         
+        this.cueball.body.y = 302;
+        roja.animations.play('right',10, true);
     },
     
     resetCueBall: function (first) {
