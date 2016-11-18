@@ -38,19 +38,41 @@
         $(document).ready(function(){
             $('#login').submit(function(event){
                 event.preventDefault();
+                $('#alerts').append('Validating username and password...please wait...<br/>');
                 var data = $('#login').serialize();
-                
                 $.post('/api/login', data, function(resp){
                     console.log(resp);
                     if (resp.Status == "Success"){
                         document.cookie = "username="+resp.Username;
                         window.location.href = '/rooms.html';
                     } 
-                    if (resp.Message == "Username does not exist"){
-                        window.location.href = '/signuplogin.html';
+                    if (resp.Status == "Username does not exist"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Username does not exist! Please try again!');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Username does not exist, please try again</Strong><br/>');
+                        $('#modal').append('<p><Strong>Username does not exist, please try again</Strong></p><br/>');
+                        //$('#modal').modal('show');
+                         setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
                     }
+                    if (resp.Status == "Password is incorrect"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Password is incorrect, please try again');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Password is incorrect, please try again</Strong><br/>');
+                        $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');
+                        setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                     $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');                    
                 });                
             });
+            /*socket.on('wrongUsrPaswd', function(){
+                alert('Username or password is incorrect, please try again');
+            });*/
         });
     </script>
     <div style="width:330px;margin:0 auto">
@@ -69,6 +91,16 @@
         <button class="btn-wisteria" type="submit">Log In</button>
       </form>
     </div> 
+    <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" id="modal">
+      ...
+    </div>
+  </div>
+</div>
+    <div id="alerts">
+  <strong></strong>
+</div>
 </body>
 
 </html>

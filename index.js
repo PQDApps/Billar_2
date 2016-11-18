@@ -497,10 +497,14 @@ router.post('/login', function(req, res){
           if (usersItem.password == pass) { // compare the password and the hash in mongo           
               res.status(200).send({Status: 'Success', Username: user});
             } else {
-               res.status(401).send({Message: 'Password is incorrect'});
+               res.send({Status: 'Password is incorrect'});
+               // res.status(401).send({Status: 'Password is incorrect'});
+                //socket.emit('wrongUsrPaswd');
             }
         } else {
-          res.status(404).send({Message: 'Username does not exist'});
+            res.send({Status: 'Username does not exist'});
+          //res.status(404).send({Status: 'Username does not exist'});
+            //socket.emit('wrongUsrPaswd');
         }
       }); 
     }
