@@ -680,10 +680,10 @@ Pool.Game.prototype = {
 
     pressed : function () {
         //Extended to the whole game are so the current player's click won't affect the turn
-        var x1 = 0; // left x point of table // Original: 80 
-        var x2 = 800; // right x point of table // Original: 720 
-        var y1 = 0; // Top y point of table // Original: 125
-        var y2 = 600; // Bottom y point of table // Original: 475 
+        var x1 = 80; // left x point of table // Original: 80 
+        var x2 = 720; // right x point of table // Original: 720 
+        var y1 = 125; // Top y point of table // Original: 125
+        var y2 = 475; // Bottom y point of table // Original: 475 
         
         var x = this.input.activePointer.x;
         var y = this.input.activePointer.y;
@@ -815,6 +815,9 @@ Pool.Game.prototype = {
         if(Player.isActive){
             this.afterShot = 1; // Shot was taken, so it is now after the shot
         }
+        if(this.pressedDown == false){
+            return;
+        }
         if (Player.isActive) // Allow shot if active, okay, and shot's been taken
         {
             Player.isActive = false;
@@ -873,7 +876,7 @@ Pool.Game.prototype = {
                 console.log("LENGTH: " + this.aimLine.length);
                 console.log("SPEED: " + speed);
                 //this.updateCue();
-                //this.pressedDown = false; // Mouse no longer pressed
+                this.pressedDown = false; // Mouse no longer pressed
 
                 var px = (Math.cos(this.aimLine.angle) * speed);
                 var py = (Math.sin(this.aimLine.angle) * speed);
