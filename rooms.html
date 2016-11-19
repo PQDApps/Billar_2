@@ -76,16 +76,8 @@
                // console.log("Probando");
                 $.post('/api/createroom', data, function(resp){
                     console.log("Response: "+resp);
-                    //var cuartos = resp.cuartos;
-                    var mydiv = document.getElementById("messages");
-                    var listItem = document.createElement('li');
-                    var aTag = document.createElement('a');
-                    aTag.setAttribute('href','/gamebk.html?roomName=' + resp.Room+'&roomNumber='+resp.i);
-                    aTag.innerHTML = "Room Created Successfully: " + resp.Room + "--------" + "Click here to join.";
-                    listItem.appendChild(aTag);
-                    mydiv.appendChild(listItem);
-                 //   console.log("Probando");
-                });                
+                });  
+                location.reload();
             });
         });
     </script>
