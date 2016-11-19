@@ -711,8 +711,12 @@ Pool.Game.prototype = {
         this.scoreText.text = "SCORE: " + this.score;
     },
 
-    shotTaken: function (px, py, effect) {
+    // Takes shot for player that was not active
+    shotTaken: function (px, py, effect, angle, speed) {
         this.effect = effect;
+        this.angle = angle;
+        this.effectSpeed = speed;
+        this.firstCollision = 0;
         console.log(px + " " + py);
         this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
     },
@@ -883,11 +887,13 @@ Pool.Game.prototype = {
                 console.log(px + " " + py);
                 
                 this.angle = this.aimLine.angle;
+                 var emitAngle = this.angle;
                 if(speed > 10){
                     this.effectSpeed = speed/4;
                 } else {
                     this.effectSpeed = speed/4;
                 }
+                var emitEffectSpeed = this.effectSpeed;
 
                 this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
 
@@ -903,7 +909,8 @@ Pool.Game.prototype = {
                 this.powerRect.height = 0;
                 this.powerLevel.updateCrop();
                 var emitEffect = this.effect;
-                socket.emit('tookShot', px, py, emitEffect, roomName);
+               
+                socket.emit('tookShot', px, py, emitEffect, emitAngle, emitEffectSpeed, roomName);
                 this.firstCollision = 0;
                 this.effectPlus.x = this.effectBall.x - 25;
                 this.effectPlus.y = this.effectBall.y- 24 ;                
@@ -949,27 +956,32 @@ Pool.Game.prototype = {
         if (this.firstCollision == 0) {
             this.firstCollision = 1;
             var e = this.effect;
+            console.log("Effect Type: " + e);
             if (e == "stop") {
                 this.cueball.body.setZeroVelocity();
             } else if (e == "back") {
                 var newAngle = this.angle + 3.14;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
                 var py = (Math.sin(newAngle) * this.effectSpeed);
+                console.log("Do Effect: " +newAngle+ " " + px +","+py);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "front") {
                 var newAngle = this.angle + 3.14;
                 var px = (Math.cos(newAngle) * -this.effectSpeed);
                 var py = (Math.sin(newAngle) * -this.effectSpeed);
+                console.log("Do Effect: " +newAngle+ " " + px +","+py);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "left") {
                 var newAngle = this.angle - 1.5708;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
                 var py = (Math.sin(newAngle) * this.effectSpeed);
+                console.log("Do Effect: " +newAngle+ " " + px +","+py);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "right") {
                 var newAngle = this.angle + 1.5708;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
                 var py = (Math.sin(newAngle) * this.effectSpeed);
+                console.log("Do Effect: " +newAngle+ " " + px +","+py);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             }
         }

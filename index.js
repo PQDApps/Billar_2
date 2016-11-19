@@ -413,8 +413,8 @@ var rooms = {
   });
 
   // Listen for player shooting
-  socket.on('tookShot', function(px, py, effect, room){
-    socket.broadcast.to(room).emit('tookShot', px, py, effect);
+  socket.on('tookShot', function(px, py, effect, angle, speed, room){
+    socket.broadcast.to(room).emit('tookShot', px, py, effect, angle, speed);
   });
   
   // Set solid or stripe
