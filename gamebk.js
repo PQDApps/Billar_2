@@ -236,7 +236,7 @@ Pool.Game.prototype = {
         socket.on('cueball', this.cueballServer.bind(this));
         socket.on('placeballs', this.placeBalls.bind(this));
         socket.on('gameStarted', function(){
-            alert("El juego ya ha iniciado!");
+            alert("Game started!");
         });
         socket.on('gameOver', function(){
             if(confirm("Game Over, do you want to restart? Otherwise, you will return to the rooms menu")){
