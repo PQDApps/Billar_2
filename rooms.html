@@ -73,6 +73,9 @@
             $('#setroom').submit(function(event){
                 event.preventDefault();//Evita que se recargue la pagina?
                 var data = $('#setroom').serialize() + "&username=" + username;
+                /*if(data.nameRoom == singleRoom.room){
+                    w
+                }*/
                // console.log("Probando");
                 $.post('/api/createroom', data, function(resp){
                     console.log("Response: "+resp);

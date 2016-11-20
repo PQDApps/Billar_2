@@ -122,6 +122,7 @@ io.on('connection', function(socket){
   console.log('a user connected '+ socket.id);
   //numberOfClients++; //Increment when user connects
   
+    
   //socket.on('assignNumber', function(roomName, playerClient, cuartos){
     socket.on('assignNumber', function(roomName, playerClient, roomNumber){
     numberOfClients = numberOfClients++;
@@ -209,8 +210,13 @@ io.on('connection', function(socket){
     })
       
   
-  
+  socket.on('gameOver', function(){
+     socket.emit('gameOver'); 
+  });
 
+  socket.on('genericAlert',function(){
+        socket.emit('genericAlert');
+    });
 
 /*
 var rooms = {
@@ -583,7 +589,9 @@ router.get('/throwRooms',function(req, res){
     console.log("The following data will be sent: "+cuartos);
     //Not needed since it's already in rooms.html
     //if(cuartos[i].playerOne = ''){
-    res.status(200).send(cuartos);
+    //var uniq = [ ...new Set(cuartos) ];
+    var uniq = removeDuplicates(cuartos, "roomName");
+    res.status(200).send(uniq);
     //}
 });
 
@@ -610,3 +618,15 @@ function Player(name, user, number, isStripe, isSolid, isActive, isCurrent, sock
     this.isCurrent = isCurrent;
     this.socketId = socketId;
 }
+
+function removeDuplicates(originalArray, prop) {
+     var newArray = [];
+     var lookupObject  = {};
+     for(var i in originalArray) {
+        lookupObject[originalArray[i][prop]] = originalArray[i];
+     }
+     for(i in lookupObject) {
+         newArray.push(lookupObject[i]);
+     }
+      return newArray;
+ }

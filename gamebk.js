@@ -242,15 +242,16 @@ Pool.Game.prototype = {
             if(confirm("Game Over, do you want to restart? Otherwise, you will return to the rooms menu")){
                 location.reload(); 
             }else{
-                 location.href='rooms.html';
+                 alert("Redirecting to rooms menu...");
+                 location.href='/rooms.html';
             }
-            
-           
-            
         });
         socket.on('waitingPlayerTwo', function(){
             alert("Waiting for Player 2");
         });
+        /*socket.on('genericAlert',function(){
+            alert('Vas por buen camino ;)');
+        });*/
         
         
         this.stage.backgroundColor = 0x001b07;
@@ -509,7 +510,7 @@ Pool.Game.prototype = {
         var serverCueBall = {x: currentCueBall.x, y: currentCueBall.y};
         return serverCueBall;
     },
-
+    
     // Server emits the player info once both have connected to one room
     assignNumber: function(i) {
         Player.name = i.name;
@@ -996,7 +997,10 @@ Pool.Game.prototype = {
         // Keep track of the balls that hit the pocket in pocketBalls array
         // Once all balls are stopped
         pocketBalls.push(ball.sprite.isStripe);
-        
+        //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING       1');
+        /*socket.emit('genericAlert', function(){
+            alert('Vas bien!');
+        });*/
         //  Cue ball reset
         if (ball.sprite === this.cueball)
         {
@@ -1011,13 +1015,19 @@ Pool.Game.prototype = {
             ball.sprite.destroy();
 
             this.score += 30;
+            //console.log("V has come to: "+this)
             //socket.emit('newscore', this.score, roomName);
-            
+            //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING    No cue Ball inside');
             if (this.balls.total === 1)
             {
                 this.time.events.add(3000, this.gameOver, this);
             }
+            socket.emit('gameOver');
+            if(ball.isStripe == 8){
+                socket.emit('gameOver');
+            }
         }
+        //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING       2');
     },
     
     waitCueball: function() {
