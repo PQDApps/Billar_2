@@ -387,7 +387,7 @@ var rooms = {
 
   // Socket disconnection execute following function
   socket.on('disconnect', function() {    
-    console.log("Disconnected from socekt server:" + socket.id);
+    console.log("Disconnected from socket server:" + socket.id);
     var minusPlayer;
     for(var i = 0; i < users.length; i++){
       if(users[i].socketId == socket.id){

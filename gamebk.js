@@ -1035,12 +1035,13 @@ Pool.Game.prototype = {
         //  Cue ball reset
         if (ball.sprite === this.cueball){
             //TODO
+            //alert(inspeccionar(ball));
             cueballInPocket = true;
             //socket.emit('cueball', roomName, Player);                                        
             this.waitCueball();
         }else{             
             this.makePocketBall(150, 495, ball.sprite.color);
-            ball.sprite.destroy();
+            //ball.sprite.destroy();
             if(Player.isStripe == true && ball.isStripe == true && Player.isActive == true){
             //this.score += 30;
                 Player.playerScore += 30;
@@ -1048,7 +1049,7 @@ Pool.Game.prototype = {
             console.log("Numero de player: "+Player.name);
             console.log("Numero de player: "+Player.name);
             //socket.emit('newscore', this.score, roomName);*/
-            alert("V has come to: "+inspeccionar(Player));
+            //alert("V has come to: "+inspeccionar(Player));
             /*alert("Numero de player: "+player.name);
             alert("Es Stripe (rayada)?: "+player.isStripe);
             alert("es solido?: "+player.isSolid);*/
@@ -1066,10 +1067,11 @@ Pool.Game.prototype = {
                 socket.emit('gameOver');
             }
             //socket.emit('gameOver');
-            //alert(inspeccionar(this.ball));
-            alert(ball.isStripe);
+            //alert(inspeccionar(ball));
+            //alert(ball.isStripe);
             //if(ball.isStripe === 8){
-            if(ball.sprite == ball.black){
+            //if(ball.sprite === this.black){
+            if(ball.sprite.isStripe === 8 || ball.sprite.isStripe === Pool.black){
                 if(Player.isActive == true){
                     var responsible8 = Player.number;
                     alert("You put ball 8 inside a pocket");
