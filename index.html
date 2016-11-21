@@ -38,33 +38,15 @@
    -->
   <div id="preloader" data-spinner="spinner1" data-screenbg="#fff"></div>
 
-  <!-- Page Wrapper -->
-  <div class="page-wrapper">
-
-    <!-- Social Bar -->
-    <!-- Change modifier class to ".bar-fixed-left" to position social bar on the left side of the page. -->
-    <div class="social-bar bar-fixed-right">
-      <a href="#" class="sb-skype">
-        <i class="fa fa-skype"></i>
-      </a>
-      <a href="#" class="sb-facebook">
-        <i class="fa fa-facebook"></i>
-      </a>
-      <a href="#" class="sb-twitter">
-        <i class="fa fa-twitter"></i>
-      </a>
-    </div><!-- .social-bar -->
-
-    <!-- Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+   <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
       <div class="modal-dialog">
         <button type="button" class="close-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <div class="modal-content text-center">
-          <h4>Login With Social Account</h4>
+          <h4>Login With</h4>
           <div class="space-bottom-2x">
-            <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
-            <a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>
             <a href="#" class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
+            <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
+            <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>-->
           </div>
           <h4>Or by Email</h4>
           <form method="post">
@@ -81,8 +63,84 @@
       </div><!-- .modal-dialog -->
     </div><!-- .modal.fade -->
 
+    <div class="modal fade" id="signup" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <button type="button" class="close-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div class="modal-content text-center">
+          <h4>Sign up with</h4>
+          <div class="space-bottom-2x">
+            <a href="#" class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
+            <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
+            <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>-->
+          </div>
+          <h4>Or by Email</h4>
+
+           <form id="signup" method="post">
+            <input type="email" name="userName" class="form-control" placeholder="Email" required>
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
+            <div class="form-group">
+              <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Register<i class="icon-head"></i></button>
+            </div>
+             <div id="messages">
+            <Strong></Strong>
+              </div>
+            <div class="text-left">
+              <span class="text-sm text-semibold">have a accoount?<a href="#loginModal">Login</a></span>
+            </div>
+          </form><!-- <form> -->
+
+
+        </div><!-- .modal-content -->
+      </div><!-- .modal-dialog -->
+    </div><!-- .modal.fade -->
+
+  <!-- Page Wrapper -->
+  <div class="page-wrapper">
+
+    <!-- Social Bar -->
+    <!-- Change modifier class to ".bar-fixed-left" to position social bar on the left side of the page. -->
+    <div class="social-bar bar-fixed-right">
+      <a href="#" class="sb-skype">
+        <i class="fa fa-skype"></i>
+      </a>
+      <a href="#" class="sb-facebook">
+        <i class="fa fa-facebook"></i>
+      </a>
+        <a href="#" class="sb-twitter">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </div><!-- .social-bar -->
+
+    <div class="page-wrapper">
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <button type="button" class="close-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div class="modal-content text-center">
+          <h4>Login With Social Account</h4>
+          <div class="space-bottom-2x">
+            <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
+          
+            <a href="#" class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
+          </div>
+          <h4>Or by Email</h4>
+          <form method="post">
+            <input type="email" class="form-control" placeholder="Email" required>
+            <input type="password" class="form-control" placeholder="Password" required>
+            <div class="form-group">
+              <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
+            </div>
+            <div class="text-left">
+              <span class="text-sm text-semibold">New in KlassicPool? <a href="#">Sign Up</a></span>
+            </div>
+          </form><!-- <form> -->
+        </div><!-- .modal-content -->
+      </div><!-- .modal-dialog -->
+    </div><!-- .modal.fade -->
+  </div>
+
     
-    <section class="fw-section bg-parallax padding-top-3x text-center" style="background-image: url(img/home/backgray.jpg);" data-stellar-background-ratio="0.65">
+    <section class="fw-section bg-parallax padding-top-3x text-center" style="background-image: url(img/home/backfinal.jpg);" data-stellar-background-ratio="0.65">
       <div class="container padding-top-3x padding-bottom">
         <div class="scrollReveal sr-bottom sr-ease-in-out-back">
 
@@ -91,7 +149,7 @@
         <img src="img/home/logo.png" class="scrollReveal sr-scaleUp sr-delay-1 sr-ease-in-out-back" alt="Pebble Time">
         </div>
            <div class="text-center padding-top padding-bottom-2x">
-            <a href="login.html" class="btn btn-default btn-3d space-top-none space-bottom-none">Play</a>
+            <a href="#signup" data-toggle="modal" class="btn btn-default btn-3d space-top-none space-bottom-none">Play</a>
           </div>
         <img src="img/home/pool3.png" class="pull-right scrollReveal sr-scaleUp sr-delay-1 sr-ease-in-out-back" alt="Pebble Time">
         <div class="padding-bottom-2x visible-xs"></div>
