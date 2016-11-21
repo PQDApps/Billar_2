@@ -1019,44 +1019,65 @@ Pool.Game.prototype = {
     },
     
     //hitPocket: function (ball, pocket) {
-    hitPocket: function (ball, pocket, player) {
+    hitPocket: function (ball, pocket) {
         // Keep track of the balls that hit the pocket in pocketBalls array
         // Once all balls are stopped
         pocketBalls.push(ball.sprite.isStripe);
+        if(pocketBalls.length == 1){
+            if(Player.isActive == true){
+                Player.playerScore += 30;
+            }
+        }
         //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING       1');
         /*socket.emit('genericAlert', function(){
             alert('Vas bien!');
         });*/
         //  Cue ball reset
-        if (ball.sprite === this.cueball)
-        {
+        if (ball.sprite === this.cueball){
             //TODO
             cueballInPocket = true;
             //socket.emit('cueball', roomName, Player);                                        
             this.waitCueball();
-        }
-        else
-        {             
+        }else{             
             this.makePocketBall(150, 495, ball.sprite.color);
             ball.sprite.destroy();
-
-            this.score += 30;
+            if(Player.isStripe == true && ball.isStripe == true && Player.isActive == true){
+            //this.score += 30;
+                Player.playerScore += 30;
             /*console.log("V has come to: "+Player);
             console.log("Numero de player: "+Player.name);
             console.log("Numero de player: "+Player.name);
             //socket.emit('newscore', this.score, roomName);*/
-            /*alert("V has come to: "+inspeccionar(player));
-            alert("Numero de player: "+player.name);
+            alert("V has come to: "+inspeccionar(Player));
+            /*alert("Numero de player: "+player.name);
             alert("Es Stripe (rayada)?: "+player.isStripe);
             alert("es solido?: "+player.isSolid);*/
+            }else{
+                Player.playerScore -=30;
+            }
+            if(Player.isSolid == true && ball.isStripe == false){
+                Player.playerScore += 30;
+            }else{
+                Player.playerScore -=30;
+            }
             if (this.balls.total === 0)
             {
-                this.time.events.add(3000, this.gameOver, this);
+                //this.time.events.add(3000, this.gameOver, this);
                 socket.emit('gameOver');
             }
             //socket.emit('gameOver');
-            if(ball.isStripe === 8){
-                this.time.events.add(3000, this.gameOver, this);
+            //alert(inspeccionar(this.ball));
+            alert(ball.isStripe);
+            //if(ball.isStripe === 8){
+            if(ball.sprite == ball.black){
+                if(Player.isActive == true){
+                    var responsible8 = Player.number;
+                    alert("You put ball 8 inside a pocket");
+                }else{
+                    alert("Your opponent put the ball 8 inside a pocket");
+                }
+                //alert("Player "+responsible8+" put the ball 8 inside a pocket");
+                //this.time.events.add(3000, this.gameOver, this);
                 socket.emit('gameOver');
             }
         }
