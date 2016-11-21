@@ -1,217 +1,191 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <meta charset="utf-8">
+  <title>Classic Pool</title>
 
-    <title>Project</title>
+  <!--SEO Meta Tags-->
+  <meta name="description" content="The Classic Pool Returns" />
+  <meta name="keywords" content="multipurpose, technology, business, corporate, hosting, web, startup, app showcase, mobile, blog, portfolio, landing, shortcodes, html5, css3, jquery, js, gallery, slider, touch, creative" />
+  <meta name="author" content="8Guild" />
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!--Mobile Specific Meta Tag-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <!-- Custom CSS -->
-    <link href="css/stylish-portfolio.css" rel="stylesheet">
+  <!--Favicon-->
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+  <!-- All Theme Styles including Bootstrap, FontAwesome, etc. compiled from styles.scss-->
+  <link href="css/styles.min.css" rel="stylesheet" media="screen">
 
-
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+  <!--Modernizr / Detectizr-->
+  <script src="js/vendor/modernizr.custom.js"></script>
+  <script src="js/vendor/detectizr.min.js"></script>
 </head>
 
-<body>
-    
-    <!-- Navigation -->
-    <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
-    <nav id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
-            <li class="sidebar-brand">
-                <a href="#top"  onclick = $("#menu-close").click(); >Sinfonía Games</a>
-            </li>
-            <li>
-                <a href="#top" onclick = $("#menu-close").click(); >Home</a>
-            </li>
-            <li>
-                <a href="#about" onclick = $("#menu-close").click(); >Games</a>
-            </li>
-            <!--<li>
-                <a href="#services" onclick = $("#menu-close").click(); >more</a>
-            </li>
-            <li>
-                <a href="#portfolio" onclick = $("#menu-close").click(); >more</a>
-            </li>
-            <li>
-                <a href="#contact" onclick = $("#menu-close").click(); >more</a>
-            </li>-->
-        </ul>
-    </nav>
+<!-- Body -->
+<!-- "is-preloader preloading" is a helper classes if preloader is enabled. -->
+<!-- Adding/Removing class ".parallax" is enabling/disabling background parallax effect on elements with background images and attributes data-stellar-background-ratio applied to them. Make sure you also added/removed link to stellar.js script before </body>. -->
+<body class="is-preloader preloading parallax">
 
-    <!-- Header -->
-    <header id="top" class="header">
-        <div class="text-vertical-center">
-        	<span class="sin">SIN</span>
-        	<span class="f">F</span>
-        	<span class="onia">ONÍA</span>
-        	<span class="games">games</span>
-            <!--<h3>welcome</h3>-->
-            <br>
-            <a href="#services" class="btn btn-dark btn-lg">Play Now!</a>
-        </div>
-    </header>
+  <!-- Preloader -->
+  <!--
+      Data API:
+      data-spinner - Options: 'spinner1', 'spinner2', 'spinner3', 'spinner4', 'spinner5', 'spinner6', 'spinner7'
+      data-screenbg - Screen background color. Hex, RGB or RGBA colors
+   -->
+  <div id="preloader" data-spinner="spinner1" data-screenbg="#fff"></div>
 
-   
-    <!-- Services -->
-    <!-- The circle icons use Font Awesome's stacked icon classes. For more information, visit http://fontawesome.io/examples/ -->
-    <section id="services" class="services bg-primary">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-lg-10 col-lg-offset-1">
-                    <h2>Games</h2>
-                    <hr class="small">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <div class="service-item">
-                                <a href="login.html"><img src="img/pool.jpg"></a>
-                                <h4>
-                                    <strong>Pool</strong>
-                                </h4>
-                                <p>The best classic for everyone.</p>
-                                <a href="login.html" class="btn btn-light">Go!</a>
-                            </div>
-                        </div>
-                        <!--<div class="col-md-3 col-sm-6">
-                            <div class="service-item">
-                                <span class="fa-stack fa-4x">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-compass fa-stack-1x text-primary"></i>
-                            </span>
-                                <h4>
-                                    <strong>Service Name</strong>
-                                </h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                                <a href="#" class="btn btn-light">Learn More</a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <div class="service-item">
-                                <span class="fa-stack fa-4x">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-flask fa-stack-1x text-primary"></i>
-                            </span>
-                                <h4>
-                                    <strong>Service Name</strong>
-                                </h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                                <a href="#" class="btn btn-light">Learn More</a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <div class="service-item">
-                                <span class="fa-stack fa-4x">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-shield fa-stack-1x text-primary"></i>
-                            </span>
-                                <h4>
-                                    <strong>Service Name</strong>
-                                </h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                                <a href="#" class="btn btn-light">Learn More</a>
-                            </div>
-                        </div>-->
-                    </div>
-                    <!-- /.row (nested) -->
-                </div>
-                <!-- /.col-lg-10 -->
+  <!-- Page Wrapper -->
+  <div class="page-wrapper">
+
+    <!-- Social Bar -->
+    <!-- Change modifier class to ".bar-fixed-left" to position social bar on the left side of the page. -->
+    <div class="social-bar bar-fixed-right">
+      <a href="#" class="sb-skype">
+        <i class="fa fa-skype"></i>
+      </a>
+      <a href="#" class="sb-facebook">
+        <i class="fa fa-facebook"></i>
+      </a>
+      <a href="#" class="sb-twitter">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </div><!-- .social-bar -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <button type="button" class="close-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div class="modal-content text-center">
+          <h4>Login With Social Account</h4>
+          <div class="space-bottom-2x">
+            <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
+            <a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>
+            <a href="#" class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
+          </div>
+          <h4>Or by Email</h4>
+          <form method="post">
+            <input type="email" class="form-control" placeholder="Email" required>
+            <input type="password" class="form-control" placeholder="Password" required>
+            <div class="form-group">
+              <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
             </div>
-            <!-- /.row -->
+            <div class="text-left">
+              <span class="text-sm text-semibold">New to Nucleus? <a href="#">Sign Up</a></span>
+            </div>
+          </form><!-- <form> -->
+        </div><!-- .modal-content -->
+      </div><!-- .modal-dialog -->
+    </div><!-- .modal.fade -->
+
+    
+    <section class="fw-section bg-parallax padding-top-3x text-center" style="background-image: url(img/home/backgray.jpg);" data-stellar-background-ratio="0.65">
+      <div class="container padding-top-3x padding-bottom">
+        <div class="scrollReveal sr-bottom sr-ease-in-out-back">
+
+ 
+       
+        <img src="img/home/logo.png" class="scrollReveal sr-scaleUp sr-delay-1 sr-ease-in-out-back" alt="Pebble Time">
         </div>
-        <!-- /.container -->
-    </section>
+           <div class="text-center padding-top padding-bottom-2x">
+            <a href="login.html" class="btn btn-default btn-3d space-top-none space-bottom-none">Play</a>
+          </div>
+        <img src="img/home/pool3.png" class="pull-right scrollReveal sr-scaleUp sr-delay-1 sr-ease-in-out-back" alt="Pebble Time">
+        <div class="padding-bottom-2x visible-xs"></div>
+      </div><!-- .container -->
+      <div class="angle"></div>
+    </section><!-- .fw-section -->
+
+    <!-- Features -->
+    <section class="container padding-top-2x">
+      <h2 class="block-title text-center scrollReveal sr-bottom">
+        Remembering unforgettable moments
+        <small>A friendly interface to control your time.</small>
+      </h2>
+     
+    </section><!-- .container -->
+
+
+
+
+    <!-- Scroll To Top Button -->
+    <a href="#" class="scroll-to-top-btn">
+      <i class="icon-arrow-up"></i>
+    </a><!-- .scroll-to-top-btn -->
 
     <!-- Footer -->
-    <footer>
+    <footer class="footer">
+      <div class="top-footer">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-10 col-lg-offset-1 text-center">
-                    <h4><strong></strong>
-                    </h4>
-                    <p><br></p>
-                    <!--<ul class="list-unstyled">
-                        <li><i class="fa fa-phone fa-fw"></i> </li>
-                        <li><i class="fa fa-envelope-o fa-fw"></i>  <a href="mailto:name@example.com"></a>
-                        </li>
-                    </ul>-->
-                    <br>
-                    <ul class="list-inline">
-                        <li>
-                            <a href="#"><i class="fa fa-facebook fa-fw fa-3x"></i></a>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-twitter fa-fw fa-3x"></i></a>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-dribbble fa-fw fa-3x"></i></a>
-                        </li>
-                    </ul>
-                    <hr class="small">
-                    <p class="text-muted"></p>
-                </div>
+          <div class="tools">
+            <div class="cell">
+              <i><img src="img/footer/icons/help.png" alt="Email"></i>
+              <span><a href="mailto:info@email.com">info@email.com</a></span>
             </div>
-        </div>
-    </footer>
+            <div class="cell">
+              <i><img src="img/footer/icons/phone.png" alt="Phone"></i>
+              <span><a href="#">+10 (8) 555 333</a></span>
+            </div>
+            <div class="cell">
+              <i><img src="img/footer/icons/chat.png" alt="Chat"></i>
+              <span><a href="#">Live Chat</a></span>
+            </div>
+          </div>
+          <div class="subscribe">
+            <div class="subscribe-form">
+              <i><img src="img/footer/icons/envelope.png" alt="Subscribe"></i>
+              <form action="//8guild.us3.list-manage.com/subscribe/post?u=168a366a98d3248fbc35c0b67&amp;id=011a3332a0" method="post" target="_blank" novalidate autocomplete="off">
+                <label for="subscr_email" class="sr-only">Subscribe to latest news</label>
+                <input type="email" class="form-control" id="subscr_email" placeholder="Your Email">
+                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                <div style="position: absolute; left: -5000px;">
+                  <input type="text" name="b_168a366a98d3248fbc35c0b67_011a3332a0" tabindex="-1" value="">
+                </div>
+                <button type="submit"><i class="icon-mail"></i></button>
+              </form>
+            </div>
+          </div>
+        </div><!-- .container -->
+      </div><!-- .top-footer -->
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+      <div class="bottom-footer">
+        <div class="container">
+         
+          <div class="copyright">
+            <div class="column">
+              <p>&copy; Classic Pool 2016. Made by <a href="http://8guild.com/" target="_blank">8Guild</a> with <i class="fa fa-heart text-danger"></i> love.</p>
+            </div><!-- .column -->
+            <div class="column">
+              <div class="cards">
+                <img src="img/cards.png" alt="Credit Cards">
+              </div>
+            </div><!-- .column -->
+          </div><!-- .copyright -->
+        </div><!-- .container -->
+      </div><!-- .bottom-footer -->
+    </footer><!-- .footer -->
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+  </div><!-- .page-wrapper -->
 
-    <!-- Custom Theme JavaScript -->
-    <script>
-    // Closes the sidebar menu
-    $("#menu-close").click(function(e) {
-        e.preventDefault();
-        $("#sidebar-wrapper").toggleClass("active");
-    });
+  <!-- JavaScript (jQuery) libraries, plugins and custom scripts -->
+  <script src="js/vendor/jquery-2.1.4.min.js"></script>
+  <script src="js/vendor/preloader.min.js"></script>
+  <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/vendor/waves.min.js"></script>
+  <script src="js/vendor/placeholder.js"></script>
+  <script src="js/vendor/smoothscroll.js"></script>
+  <script src="js/vendor/waypoints.min.js"></script>
+  <script src="js/vendor/isotope.pkgd.min.js"></script>
+  <script src="js/vendor/velocity.min.js"></script>
+  <script src="js/vendor/magnific-popup.min.js"></script>
+  <script src="js/vendor/owl.carousel.min.js"></script>
+  <script src="js/vendor/jquery.stellar.min.js"></script>
+  <script src="js/vendor/scrollreveal.min.js"></script>
+  <script src="js/scripts.js"></script>
 
-    // Opens the sidebar menu
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#sidebar-wrapper").toggleClass("active");
-    });
-
-    // Scrolls to the selected menu item on the page
-    $(function() {
-        $('a[href*=#]:not([href=#])').click(function() {
-            if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
-
-                var target = $(this.hash);
-                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-                if (target.length) {
-                    $('html,body').animate({
-                        scrollTop: target.offset().top
-                    }, 1000);
-                    return false;
-                }
-            }
-        });
-    });
-    </script>
-
-</body>
+</body><!-- <body> -->
 
 </html>
