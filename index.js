@@ -39,8 +39,9 @@ var numberOfClients = 0; // Keep track of clients connected to socket
 ////////////////////////////
 // Mongo Database Testing //
 ////////////////////////////
-//var mongoURL = "mongodb://localhost:27017/local";
-var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
+var mongoURL = "mongodb://localhost:27017/local";
+//var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
+
 MongoClient.connect(mongoURL, function(err, db) {
     if(!err) {
         console.log("Connected to Mongo Local");
