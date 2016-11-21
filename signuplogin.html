@@ -37,13 +37,24 @@
         $(document).ready(function(){
             $('#signup').submit(function(event){
                 event.preventDefault();
+                $("#messages").empty();
+                $("#messages").append("Validating data...please wait....");
                 var data = $('#signup').serialize();
                 
                 $.post('/api/signupnow', data, function(resp){
                     console.log(resp);
+                    if(resp.Status === "User already exists"){
+                        $("#messages").empty();
+                        $("#messages").append("User already exists! please choose another Name");
+                    }else{
+                    alert("User created succesfully!");
                     window.location.href = '/login.html';
+                    }
                 });                
             });
+        });
+        socket.on('userAlreadyExists', function(){
+             alert("User already exists! choose another!");
         });
     </script>
     <div style="width:330px;margin:0 auto">
@@ -62,6 +73,9 @@
         <button class="btn-wisteria" type="submit">Sign Up</button>
       </form>
     </div> 
+    <div id="messages">
+        <Strong></Strong>
+    </div>
 </body>
 
 </html>

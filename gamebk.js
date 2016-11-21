@@ -11,6 +11,29 @@ function getParameterByName(name) {
 var roomName = getParameterByName('roomName');
 var roomNumber = getParameterByName('roomNumber');
 //TODO: Intentar usar la idea de objetos dentro de objetos
+function inspeccionar(obj){
+	  var msg = '';
+	  for (var property in obj)
+	  {
+	    if (typeof obj[property] == 'function')
+	    {
+	      var inicio = obj[property].toString().indexOf('function');
+	      var fin = obj[property].toString().indexOf(')')+1;
+	      var propertyValue=obj[property].toString().substring(inicio,fin);
+	      msg +=(typeof obj[property])+' '+property+' : '+propertyValue+' ;\n';
+	    }
+	    else if (typeof obj[property] == 'unknown')
+	    {
+	      msg += 'unknown '+property+' : unknown ;\n';
+	    }
+	    else
+	    {
+	      msg +=(typeof obj[property])+' '+property+' : '+obj[property]+' ;\n';
+	    }
+	  }
+	  return msg;
+	}
+
 var Pool = {
     //showDebug: true,
     white: 0,
@@ -65,6 +88,7 @@ var Player = {
     isCurrent: false,
     socketId: null,
     room: roomName,
+    playerScore: 0,
 }
 
 var activePlayer = 1;
@@ -247,11 +271,14 @@ Pool.Game.prototype = {
             }
         });
         socket.on('waitingPlayerTwo', function(){
-            alert("Waiting for Player 2");
+            alert("Waiting for another Player");
         });
         /*socket.on('genericAlert',function(){
             alert('Vas por buen camino ;)');
         });*/
+        socket.on('userAlreadyExists', function(){
+             alert("User already exists! choose another!");
+        });
         
         
         this.stage.backgroundColor = 0x001b07;
@@ -993,7 +1020,8 @@ Pool.Game.prototype = {
         this.resetCueBall();                   
     },
     
-    hitPocket: function (ball, pocket) {
+    //hitPocket: function (ball, pocket) {
+    hitPocket: function (ball, pocket, player) {
         // Keep track of the balls that hit the pocket in pocketBalls array
         // Once all balls are stopped
         pocketBalls.push(ball.sprite.isStripe);
@@ -1015,15 +1043,21 @@ Pool.Game.prototype = {
             ball.sprite.destroy();
 
             this.score += 30;
-            //console.log("V has come to: "+this)
-            //socket.emit('newscore', this.score, roomName);
-            //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING    No cue Ball inside');
-            if (this.balls.total === 1)
+            /*console.log("V has come to: "+Player);
+            console.log("Numero de player: "+Player.name);
+            console.log("Numero de player: "+Player.name);
+            //socket.emit('newscore', this.score, roomName);*/
+            alert("V has come to: "+inspeccionar(player));
+            alert("Numero de player: "+player.name);
+            alert("Es Stripe (rayada)?: "+player.isStripe);
+            alert("es solido?: "+player.isSolid);
+            if (this.balls.total === 0)
             {
                 this.time.events.add(3000, this.gameOver, this);
+                socket.emit('gameOver');
             }
-            socket.emit('gameOver');
-            if(ball.isStripe == 8){
+            //socket.emit('gameOver');
+            if(ball.isStripe === 8){
                 socket.emit('gameOver');
             }
         }

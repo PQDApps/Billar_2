@@ -544,7 +544,9 @@ router.post('/signupnow', function(req,res){
         }
         if (usersItem) {
           console.log("User already exists");
-          res.status(409).send({Status: "User already exists"});
+            //socket.emit('userAlreadyExists');
+          res.send({Status: "User already exists"});
+          //res.status(409).send({Status: "User already exists"});
         }   
       })
     }  
@@ -587,10 +589,11 @@ router.post('/createroom', function(req,res){
 router.get('/throwRooms',function(req, res){
     console.log("Client has accesed API throwRooms");
     console.log("The following data will be sent: "+cuartos);
+    console.log("roomName: "+cuartos);
     //Not needed since it's already in rooms.html
     //if(cuartos[i].playerOne = ''){
     //var uniq = [ ...new Set(cuartos) ];
-    var uniq = removeDuplicates(cuartos, "roomName");
+    var uniq = removeDuplicates(cuartos, "room.roomName");
     res.status(200).send(uniq);
     //}
 });
