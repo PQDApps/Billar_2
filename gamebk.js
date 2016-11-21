@@ -276,9 +276,7 @@ Pool.Game.prototype = {
         /*socket.on('genericAlert',function(){
             alert('Vas por buen camino ;)');
         });*/
-        socket.on('userAlreadyExists', function(){
-             alert("User already exists! choose another!");
-        });
+        
         
         
         this.stage.backgroundColor = 0x001b07;
@@ -1047,10 +1045,10 @@ Pool.Game.prototype = {
             console.log("Numero de player: "+Player.name);
             console.log("Numero de player: "+Player.name);
             //socket.emit('newscore', this.score, roomName);*/
-            alert("V has come to: "+inspeccionar(player));
+            /*alert("V has come to: "+inspeccionar(player));
             alert("Numero de player: "+player.name);
             alert("Es Stripe (rayada)?: "+player.isStripe);
-            alert("es solido?: "+player.isSolid);
+            alert("es solido?: "+player.isSolid);*/
             if (this.balls.total === 0)
             {
                 this.time.events.add(3000, this.gameOver, this);
@@ -1058,6 +1056,7 @@ Pool.Game.prototype = {
             }
             //socket.emit('gameOver');
             if(ball.isStripe === 8){
+                this.time.events.add(3000, this.gameOver, this);
                 socket.emit('gameOver');
             }
         }
