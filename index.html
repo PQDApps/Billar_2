@@ -29,6 +29,7 @@
 <!-- "is-preloader preloading" is a helper classes if preloader is enabled. -->
 <!-- Adding/Removing class ".parallax" is enabling/disabling background parallax effect on elements with background images and attributes data-stellar-background-ratio applied to them. Make sure you also added/removed link to stellar.js script before </body>. -->
 <body class="is-preloader preloading parallax">
+    
 
   <!-- Preloader -->
   <!--
@@ -56,7 +57,7 @@
               <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
             </div>
             <div class="text-left">
-              <span class="text-sm text-semibold">New to Nucleus? <a href="#">Sign Up</a></span>
+              <span class="text-sm text-semibold">New Klassic Pool? <a  data-dismiss="modal" data-toggle="modal" href="#signup">Sign Up</a></span>
             </div>
           </form><!-- <form> -->
         </div><!-- .modal-content -->
@@ -75,7 +76,7 @@
           </div>
           <h4>Or by Email</h4>
 
-           <form id="signup" method="post">
+           <form id="form" method="post">
             <input type="email" name="userName" class="form-control" placeholder="Email" required>
             <input type="password" name="password" class="form-control" placeholder="Password" required>
             <div class="form-group">
@@ -85,7 +86,7 @@
             <Strong></Strong>
               </div>
             <div class="text-left">
-              <span class="text-sm text-semibold">have a accoount?<a href="#loginModal">Login</a></span>
+              <span class="text-sm text-semibold">have a accoount?<a data-dismiss="modal" data-toggle="modal" href="#loginModal" >Login</a></span>
             </div>
           </form><!-- <form> -->
 
@@ -243,6 +244,31 @@
   <script src="js/vendor/jquery.stellar.min.js"></script>
   <script src="js/vendor/scrollreveal.min.js"></script>
   <script src="js/scripts.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#form').submit(function(event){
+                event.preventDefault();
+                $("#messages").empty();
+                $("#messages").append("Validating data...please wait....");
+                var data = $('#form').serialize();
+                
+                $.post('/api/signupnow', data, function(resp){
+                    console.log(resp);
+                    if(resp.Status === "User already exists"){
+                        $("#messages").empty();
+                        $("#messages").append("User already exists! please choose another Name");
+                    }else{
+                    alert("User created succesfully!");
+                    window.location.href = '/login.html';
+                    }
+                });                
+            });
+        });
+        socket.on('userAlreadyExists', function(){
+             alert("User already exists! choose another!");
+        });
+    </script>
 
 </body><!-- <body> -->
 
