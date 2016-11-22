@@ -50,7 +50,7 @@
             <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>-->
           </div>
           <h4>Or by Email</h4>
-          <form method="post">
+          <form id="login" method="post">
             <input type="email" class="form-control" placeholder="Email" required>
             <input type="password" class="form-control" placeholder="Password" required>
             <div class="form-group">
@@ -76,7 +76,7 @@
           </div>
           <h4>Or by Email</h4>
 
-           <form id="form" method="post">
+           <form id="sign" method="post">
             <input type="email" name="userName" class="form-control" placeholder="Email" required>
             <input type="password" name="password" class="form-control" placeholder="Password" required>
             <div class="form-group">
@@ -125,9 +125,9 @@
             <a href="#" class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
           </div>
           <h4>Or by Email</h4>
-          <form method="post">
-            <input type="email" class="form-control" placeholder="Email" required>
-            <input type="password" class="form-control" placeholder="Password" required>
+          <form id="login" method="post">
+            <input name="userName" type="email" class="form-control" placeholder="Email" required>
+            <input name="password" type="password" class="form-control" placeholder="Password" required>
             <div class="form-group">
               <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
             </div>
@@ -247,11 +247,48 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $('#form').submit(function(event){
+            $('#login').submit(function(event){
+                event.preventDefault();
+                $('#alerts').append('Validating username and password...please wait...<br/>');
+                var data = $('#login').serialize();
+                $.post('/api/login', data, function(resp){
+                    console.log(resp);
+                    if (resp.Status == "Success"){
+                        document.cookie = "username="+resp.Username;
+                        window.location.href = '/rooms.html';
+                    } 
+                    if (resp.Status == "Username does not exist"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Username does not exist! Please try again!');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Username does not exist, please try again</Strong><br/>');
+                        $('#modal').append('<p><Strong>Username does not exist, please try again</Strong></p><br/>');
+                        //$('#modal').modal('show');
+                         setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                    if (resp.Status == "Password is incorrect"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Password is incorrect, please try again');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Password is incorrect, please try again</Strong><br/>');
+                        $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');
+                        setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                     $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');                    
+                });                
+            });
+
+
+
+            $('#sign').submit(function(event){
                 event.preventDefault();
                 $("#messages").empty();
                 $("#messages").append("Validating data...please wait....");
-                var data = $('#form').serialize();
+                var data = $('#sign').serialize();
                 
                 $.post('/api/signupnow', data, function(resp){
                     console.log(resp);
@@ -260,14 +297,17 @@
                         $("#messages").append("User already exists! please choose another Name");
                     }else{
                     alert("User created succesfully!");
-                    window.location.href = '/login.html';
+                    location.reload();
                     }
                 });                
             });
-        });
+        
         socket.on('userAlreadyExists', function(){
              alert("User already exists! choose another!");
         });
+
+       
+          });
     </script>
 
 </body><!-- <body> -->
