@@ -1082,6 +1082,7 @@ Pool.Game.prototype = {
                 //this.time.events.add(3000, this.gameOver, this);
                 socket.emit('gameOver');
             }
+            ball.sprite.destroy();
         }
         //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING       2');
     },
