@@ -541,6 +541,7 @@ Pool.Game.prototype = {
         Player.name = i.name;
         Player.number = i.number;
         Player.isStripe = i.isStripe;
+        //Player.isSolid = i.isSolid;
         Player.isActive = i.isActive;
         Player.socketId = i.socketId;
         this.playerNumberText.text = i.name;
@@ -634,18 +635,30 @@ Pool.Game.prototype = {
     
     // playernumber, 'solid' or 'stripe', true or false
     setSolidStripe: function (playernumber, type, set) {
+        alert("type: "+type);
         if (Player.number == playernumber){
+            /*alert("type: "+type);
+            alert("Player.number: "+Player.number);
+            alert("playernumber: "+playernumber);*/
             if (type == 'solid'){
+                //alert("Asignando valor SOLID")
                 Player.isSolid = true;
+                Player.isStripe = false;
+                //alert("Player es solid? "+Player.isSolid);
+                //alert("Player es stripe? "+Player.isStripe);
             } else if (type == 'stripe'){
-                Player.isStripe = true;    
+                alert("Asignando valor STRIPE");
+                Player.isSolid = false;
+                Player.isStripe = true; 
             }                       
-        }
+        }else
         if (Player.number != playerNumber){
             if (type == 'solid'){
+                Player.isSolid = false;
                 Player.isStripe = true;
             } else if (type == 'stripe'){
-                Player.isSolid = true;    
+                Player.isSolid = true; 
+                Player.isStripe = false;
             }            
         }
         if (Player.isSolid){

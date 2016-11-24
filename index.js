@@ -39,9 +39,15 @@ var numberOfClients = 0; // Keep track of clients connected to socket
 ////////////////////////////
 // Mongo Database Testing //
 ////////////////////////////
+<<<<<<< HEAD
+//var mongoURL = "mongodb://localhost:27017/local";
+var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
+//var mongoURL = "mongodb://ec2-52-25-163-107.us-west-2.compute.amazonaws.com:27017/local";
+=======
 var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
 //var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
 
+>>>>>>> 18187d5edb66968b27b8c11e7110353a3adf98f5
 MongoClient.connect(mongoURL, function(err, db) {
     if(!err) {
         console.log("Connected to Mongo Local");
@@ -295,21 +301,27 @@ var rooms = {
         // If client ball is missing check if the ball isStripe        
         for (var i=0; i < missingBalls.length; i++){
           if (missingBalls[i].isStripe == false){
-            solidCount++;            
+              console.log("ATENCION!!! La bola es: "+missingBalls[i].isStripe);
+            solidCount++; 
+            console.log("Cantidad solidas: "+solidCount+", anoto player: "+player.number);
           } else {
             stripeCount++;
+            console.log("Cantidad Stripes: "+stripeCount);
           }          
+            console.log("Cantidad solidas: "+solidCount);
+            console.log("Cantidad Stripes: "+stripeCount);
+            console.log("Anotó player: "+player.number);
         }
 
         // Stripe count or solid count is 0 assign isStripe to player 
-        if (solidCount == 0){
+        if (solidCount > 0){
           // Emit isStripe = true to the player
-          io.to(room).emit('solidstripe', player.number, 'stripe');
+          io.to(room).emit('solidstripe', player.number, 'solid');
           io.to(room).emit('dontChangePlayer', player.number);
         }
-        if (stripeCount == 0){
+        if (stripeCount > 0){
           // Emit isStripe = false to the player
-          io.to(room).emit('solidstripe', player.number, 'solid');
+          io.to(room).emit('solidstripe', player.number, 'stripe');
           io.to(room).emit('dontChangePlayer', player.number);
         }
         
