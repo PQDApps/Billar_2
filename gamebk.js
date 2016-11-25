@@ -580,10 +580,22 @@ Pool.Game.prototype = {
         }
     },
     
+    moveArrow: function(stripe, solid) {
+        if (stripe == true){
+            this.activePlayerArrow.x = 90;
+            this.activePlayerArrow.y = 105;
+        }
+        if (solid == true) {
+            this.activePlayerArrow.x = 420;
+            this.activePlayerArrow.y = 105;
+        }
+    },
+
     changePlayer: function(i) {
         // Set the other player to isActive true
         if (Player.number != i){
             Player.isActive = true;
+            this.moveArrow(Player.isStripe, Player.isSolid);
             if (cueballInPocket){   
                 cueballInPocket = false;             
                 this.resetCueBall();
