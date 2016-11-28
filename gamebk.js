@@ -1047,7 +1047,7 @@ Pool.Game.prototype = {
     },
     
     //hitPocket: function (ball, pocket) {
-    hitPocket: function (ball, pocket, Player) {
+    hitPocket: function (ball, pocket) {
         // Keep track of the balls that hit the pocket in pocketBalls array
         // Once all balls are stopped
         pocketBalls.push(ball.sprite.isStripe);
@@ -1111,12 +1111,17 @@ Pool.Game.prototype = {
                 //if(Player.isActive == true){
                     //var responsible8 = Player.number;
                    // Player.blackBall = true;
-                    if(Player.isStripe === true && stripeCount == 1){
+                    if(Player.isStripe === true && stripeCount == 7){
                         alert("You won!!!");
                     }else
-                    if(Player.isStripe === false && solidCount == 1){
+                    if(Player.isStripe === false && solidCount == 7){
                         alert("You won");
-                    }else{
+                    }else if(Player.isStripe === true && stripeCount < 7){
+                        alert("You put the black ball off time, your opponent won");
+                    }else if(Player.isStripe === false && solidCount < 7){
+                        alert("You put the black ball off time, your opponent won");
+                    }
+                    else{
                         alert("Your opponent won");
                     }
                 
