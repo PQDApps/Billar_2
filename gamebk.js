@@ -10,6 +10,8 @@ function getParameterByName(name) {
 //extracting variables from the URL by using the getParameterByName function
 var roomName = getParameterByName('roomName');
 var roomNumber = getParameterByName('roomNumber');
+var solidCount = 0;
+var stripeCount = 0;
 //TODO: Intentar usar la idea de objetos dentro de objetos
 function inspeccionar(obj){
 	  var msg = '';
@@ -89,6 +91,7 @@ var Player = {
     socketId: null,
     room: roomName,
     playerScore: 0,
+    blackBall: false,
 }
 
 var activePlayer = 1;
@@ -1044,7 +1047,7 @@ Pool.Game.prototype = {
     },
     
     //hitPocket: function (ball, pocket) {
-    hitPocket: function (ball, pocket) {
+    hitPocket: function (ball, pocket, Player) {
         // Keep track of the balls that hit the pocket in pocketBalls array
         // Once all balls are stopped
         pocketBalls.push(ball.sprite.isStripe);
@@ -1058,6 +1061,7 @@ Pool.Game.prototype = {
             alert('Vas bien!');
         });*/
         //  Cue ball reset
+        
         if (ball.sprite === this.cueball){
             //TODO
             //alert(inspeccionar(ball));
@@ -1096,20 +1100,44 @@ Pool.Game.prototype = {
             //alert(ball.isStripe);
             //if(ball.isStripe === 8){
             //if(ball.sprite === this.black){
+            //alert("La bola es stripe?: "+ball.sprite.isStripe);
+            //alert("La bola es Solid?: "+ball.sprite.isSolid);
+            if(ball.sprite.isStripe === true){
+                stripeCount++;
+            }else if(ball.sprite.isStripe === false){
+                solidCount++;
+            }
             if(ball.sprite.isStripe === 8 || ball.sprite.isStripe === Pool.black){
-                if(Player.isActive == true){
-                    var responsible8 = Player.number;
-                    alert("You put ball 8 inside a pocket");
-                }else{
+                //if(Player.isActive == true){
+                    //var responsible8 = Player.number;
+                   // Player.blackBall = true;
+                    if(Player.isStripe === true && stripeCount == 1){
+                        alert("You won!!!");
+                    }else
+                    if(Player.isStripe === false && solidCount == 1){
+                        alert("You won");
+                    }else{
+                        alert("Your opponent won");
+                    }
+                
+                
+                /*}else{
+                    Player.blackBall = true;
                     alert("Your opponent put the ball 8 inside a pocket");
                 }
-                //alert("Player "+responsible8+" put the ball 8 inside a pocket");
-                //this.time.events.add(3000, this.gameOver, this);
+                alert("Player "+responsible8+" put the ball 8 inside a pocket");
+                this.time.events.add(3000, this.gameOver, this);*/
                 socket.emit('gameOver');
             }
             ball.sprite.destroy();
         }
-        //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING       2');
+      /* if(Player.isStripe == true && stripeCount == 7 && blackBall == true){
+           alert("You won the game!")
+           socket.emit('gameOver');
+       }else if(Player.isStripe == false && solidCount == 7 && blackBall == true){
+           alert("You won the game!")
+           socket.emit('gameOver');
+       }*/ //console.log('WARNIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIING       2');
     },
     
     waitCueball: function() {
