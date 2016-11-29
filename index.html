@@ -51,8 +51,8 @@
           </div>
           <h4>Or by Email</h4>
           <form id="login" method="post">
-            <input type="email" class="form-control" placeholder="Email" required>
-            <input type="password" class="form-control" placeholder="Password" required>
+            <input type="email" name="userName" class="form-control" placeholder="Email" required>
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
             <div class="form-group">
               <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
             </div>
@@ -86,7 +86,7 @@
             <Strong></Strong>
               </div>
             <div class="text-left">
-              <span class="text-sm text-semibold">have a accoount?<a data-dismiss="modal" data-toggle="modal" href="#loginModal" >Login</a></span>
+              <span class="text-sm text-semibold">have an accoount?<a data-dismiss="modal" data-toggle="modal" href="#loginModal" >Login</a></span>
             </div>
           </form><!-- <form> -->
 
@@ -126,8 +126,8 @@
           </div>
           <h4>Or by Email</h4>
           <form id="login" method="post">
-            <input name="userName" type="email" class="form-control" placeholder="Email" required>
-            <input name="password" type="password" class="form-control" placeholder="Password" required>
+            <input name="userName" type="email" class="form-control" id="inputEmail" placeholder="Email" required>
+            <input name="password" type="password" class="form-control" id="inputPassword" placeholder="Password" required>
             <div class="form-group">
               <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
             </div>
@@ -253,7 +253,7 @@
                 var data = $('#login').serialize();
                 $.post('/api/login', data, function(resp){
                     console.log(resp);
-                    if (resp.Status == "Success"){
+                    if (resp.Status === "Success"){
                         document.cookie = "username="+resp.Username;
                         window.location.href = '/rooms.html';
                     } 

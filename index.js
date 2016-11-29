@@ -39,8 +39,8 @@ var numberOfClients = 0; // Keep track of clients connected to socket
 ////////////////////////////
 // Mongo Database Testing //
 ////////////////////////////
-//var mongoURL = "mongodb://localhost:27017/local";
-var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
+var mongoURL = "mongodb://localhost:27017/local";
+//var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
 //var mongoURL = "mongodb://ec2-52-25-163-107.us-west-2.compute.amazonaws.com:27017/local";
 
 MongoClient.connect(mongoURL, function(err, db) {
@@ -506,9 +506,10 @@ router.post('/login', function(req, res){
         if (err) {
           console.log("Mongo error: " + err);
         }
-        console.log(usersItem);        
-        if (usersItem) { //If user is found       
-          if (usersItem.password == pass) { // compare the password and the hash in mongo           
+        console.log(usersItem);
+        if (usersItem) { //If user is found
+            console.log("Sigo viendo...");
+          if (usersItem.password == pass) { // compare the password and the hash in mongo  
               res.status(200).send({Status: 'Success', Username: user});
             } else {
                res.send({Status: 'Password is incorrect'});
@@ -584,7 +585,7 @@ router.post('/createroom', function(req,res){
     var ID = i.toString(16);
   //var cuartosInSide = new rooms(roomName, username, "", "",i);
     var cuartosInSide = new rooms(roomName, username, "", "",ID,i);
-  console.log(cuartosInSide);
+  console.log("Cuartos del arreglo: "+cuartosInSide);
   cuartos.push(cuartosInSide);
   console.log("Enviando datos");
   //res.status(200).send({Status: 'Successfully Created Room', Room: roomName});
@@ -593,6 +594,28 @@ router.post('/createroom', function(req,res){
 
 })
 
+function inspeccionar(obj){
+	  var msg = '';
+	  for (var property in obj)
+	  {
+	    if (typeof obj[property] == 'function')
+	    {
+	      var inicio = obj[property].toString().indexOf('function');
+	      var fin = obj[property].toString().indexOf(')')+1;
+	      var propertyValue=obj[property].toString().substring(inicio,fin);
+	      msg +=(typeof obj[property])+' '+property+' : '+propertyValue+' ;\n';
+	    }
+	    else if (typeof obj[property] == 'unknown')
+	    {
+	      msg += 'unknown '+property+' : unknown ;\n';
+	    }
+	    else
+	    {
+	      msg +=(typeof obj[property])+' '+property+' : '+obj[property]+' ;\n';
+	    }
+	  }
+	  return msg;
+	}
 //This returns to the client an array that contains the rooms
 router.get('/throwRooms',function(req, res){
     console.log("Client has accesed API throwRooms");
@@ -601,8 +624,20 @@ router.get('/throwRooms',function(req, res){
     //Not needed since it's already in rooms.html
     //if(cuartos[i].playerOne = ''){
     //var uniq = [ ...new Set(cuartos) ];
-    var uniq = removeDuplicates(cuartos, "room.roomName");
-    res.status(200).send(uniq);
+    //for(var count = 0; count<=cuartos.length; count++){
+        
+    //}
+    console.log(inspeccionar(cuartos));
+    var flags = {};
+    var newCuartos = cuartos.filter(function(entry) {
+    if (flags[entry.roomName]) {
+        return false;
+    }
+    flags[entry.roomName] = true;
+    return true;
+});
+    //var uniq = removeDuplicates(cuartos, "roomName");
+    res.status(200).send(cuartos);
     //}
 });
 
