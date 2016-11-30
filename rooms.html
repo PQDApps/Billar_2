@@ -2,48 +2,189 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <meta charset="utf-8">
+  <title>Classic Pool</title>
 
-    <title>Project</title>
+  <!--SEO Meta Tags-->
+  <meta name="description" content="The Classic Pool Returns" />
+  <meta name="keywords" content="multipurpose, technology, business, corporate, hosting, web, startup, app showcase, mobile, blog, portfolio, landing, shortcodes, html5, css3, jquery, js, gallery, slider, touch, creative" />
+  <meta name="author" content="8Guild" />
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!--Mobile Specific Meta Tag-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <!-- Custom CSS -->
-    <link href="css/stylish-portfolio.css" rel="stylesheet">
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #messages li:nth-child(even) { background: #BEBEBE; }
-      #chatBox { width: 800px; margin: 0 auto; top: 400px; overflow-y: auto; height: 200px;}
-    </style>
-    <!-- Custom Fonts 
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
-    -->
-    <script src="/lib/cdnJQuery.js"></script>
-    
+  <!--Favicon-->
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+  <!-- All Theme Styles including Bootstrap, FontAwesome, etc. compiled from styles.scss-->
+  <link href="css/styles.min.css" rel="stylesheet" media="screen">
 
+  <!--Modernizr / Detectizr-->
+  <script src="js/vendor/modernizr.custom.js"></script>
+  <script src="js/vendor/detectizr.min.js"></script>
 </head>
 
-<body>
+<!-- Body -->
+<!-- "is-preloader preloading" is a helper classes if preloader is enabled. -->
+<!-- Adding/Removing class ".parallax" is enabling/disabling background parallax effect on elements with background images and attributes data-stellar-background-ratio applied to them. Make sure you also added/removed link to stellar.js script before </body>. -->
+<body class="is-preloader preloading parallax">
+    
+
+  <!-- Preloader -->
+  <!--
+      Data API:
+      data-spinner - Options: 'spinner1', 'spinner2', 'spinner3', 'spinner4', 'spinner5', 'spinner6', 'spinner7'
+      data-screenbg - Screen background color. Hex, RGB or RGBA colors
+   -->
+  <div id="preloader" data-spinner="spinner1" data-screenbg="#fff"></div>
+
+   
+
+    
+
+  <!-- Page Wrapper -->
+  <div class="page-wrapper">
+
+    <!-- Social Bar -->
+    <!-- Change modifier class to ".bar-fixed-left" to position social bar on the left side of the page. -->
+    <div class="social-bar bar-fixed-right">
+      <a href="#" class="sb-skype">
+        <i class="fa fa-skype"></i>
+      </a>
+      <a href="#" class="sb-facebook">
+        <i class="fa fa-facebook"></i>
+      </a>
+        <a href="#" class="sb-twitter">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </div><!-- .social-bar -->
+
+    <!-- Pricings -->
+    <section class="fw-section border-bottom padding-top-3x padding-bottom-2x">
+      <div class="container">
+        <h2 class="block-title text-center">
+         Roooms Looby
+          <small>lets go ready to rumbleeeeeeeee</small>
+        </h2>
+        <div class="row padding-top">
+          <!-- Plan -->
+          <div class="col-sm-6">
+            <div class="pricing-plan">
+              <div class="pricing-header">
+                <div class="pricing-icon">
+                  <!--<img src="img/features/03.png" alt="Pricing">-->
+                </div>
+                <h2 class="form-signin-heading">Create Room</h2>
+                 <form id="setroom" class="form-signin">
+        
+        <label for="inputRoom" class="sr-only">Room Name</label>
+        <input name="roomName" type="text" id="inputRoom" class="form-control" placeholder="Room Name" required autofocus>
+        <button id='but' class="btn btn-default btn-icon-right waves-effect waves-light" type="submit">Create the Room</button>
+      </form>
+         
+              </div>
+            </div>
+          </div>
+          <!-- Plan -->
+          <div class="col-sm-6">
+            <div class="pricing-plan">
+              <div class="pricing-header">
+                <div class="pricing-icon">
+                  <!---<img src="img/features/01.png" alt="Pricing">-->
+                </div>
+                <h2 >Available Rooms</h2>
+                
+             <ul id="messages">
+            
+              </ul>
+            </div>
+          </div>
+        
+        </div><!-- .row -->
+      </div><!-- .container -->
+    </section><!-- .fw-section.border-bottom -->
+
+
+
+
+    <!-- Scroll To Top Button -->
+    <a href="#" class="scroll-to-top-btn">
+      <i class="icon-arrow-up"></i>
+    </a><!-- .scroll-to-top-btn -->
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="top-footer">
+        <div class="container">
+          <div class="tools">
+            <div class="cell">
+              <i><img src="img/footer/icons/help.png" alt="Email"></i>
+              <span><a href="mailto:info@email.com">info@email.com</a></span>
+            </div>
+            <div class="cell">
+              <i><img src="img/footer/icons/phone.png" alt="Phone"></i>
+              <span><a href="#">+10 (8) 555 333</a></span>
+            </div>
+            <div class="cell">
+              <i><img src="img/footer/icons/chat.png" alt="Chat"></i>
+              <span><a href="#">Live Chat</a></span>
+            </div>
+          </div>
+          <div class="subscribe">
+            <div class="subscribe-form">
+              <i><img src="img/footer/icons/envelope.png" alt="Subscribe"></i>
+              <form action="//8guild.us3.list-manage.com/subscribe/post?u=168a366a98d3248fbc35c0b67&amp;id=011a3332a0" method="post" target="_blank" novalidate autocomplete="off">
+                <label for="subscr_email" class="sr-only">Subscribe to latest news</label>
+                <input type="email" class="form-control" id="subscr_email" placeholder="Your Email">
+                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                <div style="position: absolute; left: -5000px;">
+                  <input type="text" name="b_168a366a98d3248fbc35c0b67_011a3332a0" tabindex="-1" value="">
+                </div>
+                <button type="submit"><i class="icon-mail"></i></button>
+              </form>
+            </div>
+          </div>
+        </div><!-- .container -->
+      </div><!-- .top-footer -->
+
+      <div class="bottom-footer">
+        <div class="container">
+         
+          <div class="copyright">
+            <div class="column">
+              <p>&copy; Classic Pool 2016. Made by <a href="http://8guild.com/" target="_blank">8Guild</a> with <i class="fa fa-heart text-danger"></i> love.</p>
+            </div><!-- .column -->
+            <div class="column">
+              <div class="cards">
+                <img src="img/cards.png" alt="Credit Cards">
+              </div>
+            </div><!-- .column -->
+          </div><!-- .copyright -->
+        </div><!-- .container -->
+      </div><!-- .bottom-footer -->
+    </footer><!-- .footer -->
+
+  </div><!-- .page-wrapper -->
+
+  <!-- JavaScript (jQuery) libraries, plugins and custom scripts -->
+  <script src="js/vendor/jquery-2.1.4.min.js"></script>
+  <script src="js/vendor/preloader.min.js"></script>
+  <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/vendor/waves.min.js"></script>
+  <script src="js/vendor/placeholder.js"></script>
+  <script src="js/vendor/smoothscroll.js"></script>
+  <script src="js/vendor/waypoints.min.js"></script>
+  <script src="js/vendor/isotope.pkgd.min.js"></script>
+  <script src="js/vendor/velocity.min.js"></script>
+  <script src="js/vendor/magnific-popup.min.js"></script>
+  <script src="js/vendor/owl.carousel.min.js"></script>
+  <script src="js/vendor/jquery.stellar.min.js"></script>
+  <script src="js/vendor/scrollreveal.min.js"></script>
+  <script src="js/scripts.js"></script>
+
     <script type="text/javascript">
-        var username = document.cookie;
+     var username = document.cookie;
         username = username.replace("username=", "");
         $(document).ready(function(){
             //Calling the API thowRooms, wich will give the rooms contained in memory
@@ -62,7 +203,7 @@
                     console.log("Value of singleRoom: "+singleRoom);
                     aTag.setAttribute('href','/gamebk.html?roomName=' + singleRoom.room +'&roomNumber='+singleRoom.i);
                    // aTag.setAttribute('href','/gamebk.html?roomName=' + singleRoom.room);
-                    aTag.innerHTML = "Room Created Successfully: " + singleRoom.room + "--------" + "Click here to join.";
+                    aTag.innerHTML = "<h3>" + singleRoom.room + "</h3> Click here to join.";
                     listItem.appendChild(aTag);
                     mydiv.appendChild(listItem);
                     }
@@ -89,23 +230,9 @@
             window.location = 'gamebk.html';
             console.log("redirecting");
         }
+       
     </script>
-    <div style="width:330px;margin:0 auto">
-      <form id="setroom" class="form-signin">
-        <h2 class="form-signin-heading">Create Room</h2>
-        <label for="inputRoom" class="sr-only">Room Name</label>
-        <input name="roomName" type="text" id="inputRoom" class="form-control" placeholder="Room Name" required autofocus>
-        <button id='but' class="btn-wisteria" type="submit">Create the Room</button>
-      </form>
-    </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <div style="width:500px;margin:0 auto">
-        <h2>Enter Room</h2>
-        <ul id="messages"></ul>
-    </div>
-    <br>
-</body>
+
+</body><!-- <body> -->
+
 </html>
