@@ -592,6 +592,7 @@ router.post('/createroom', function(req,res){
         if(cuartos[co-1].room == roomName){
                 socket.emit('roomExists',function(){
                     console.log("User named an already existent room");
+                    i--;
                    return res.status(409).send({Status: 'Room already exists'});
                 });
         }else{
