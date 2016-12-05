@@ -585,14 +585,14 @@ router.post('/createroom', function(req,res){
     var ID = i.toString(16);
   //var cuartosInSide = new rooms(roomName, username, "", "",i);
     var cuartosInSide = new rooms(roomName, username, "", "",ID,i);
- 
+    console.log("Valor i1: "+ i);
     //Iterating until we know there are not repeated rooms
     if(cuartos.length>0){
     for(var co=1;co<=(cuartos.length);co++){
         if(cuartos[co-1].room == roomName){
+            i--;
                 socket.emit('roomExists',function(){
                     console.log("User named an already existent room");
-                    i--;
                    return res.status(409).send({Status: 'Room already exists'});
                 });
         }else{
@@ -607,6 +607,7 @@ router.post('/createroom', function(req,res){
   //res.status(200).send({Status: 'Successfully Created Room', Room: roomName});
   res.status(200).send({Status: 'Successfully Created Room', Room: roomName, cuartos: cuartosInSide});
   console.log("EJEM "+cuartos[i]);
+    console.log("Valor i2: "+ i);
    console.log("Cuartos del arreglo: "+cuartos[i].room);
 })
 
