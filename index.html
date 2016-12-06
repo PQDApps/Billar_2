@@ -53,14 +53,14 @@
   data-share="true"
   data-width="450"
   data-show-faces="true">
-</div>
+</div>      <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>
           </div>
           <h4>Or by Email</h4>
           <form id="login" method="post">
             <input type="email" name="userName" class="form-control" placeholder="Email" required>
             <input type="password" name="password" class="form-control" placeholder="Password" required>
               
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+<fb:login-button scope="public_profile,email" onclick="statusChangeCallback();">
 </fb:login-button>
             <div class="form-group">
               <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
@@ -79,9 +79,10 @@
         <div class="modal-content text-center">
           <h4>Sign up with</h4>
           <div class="space-bottom-2x">
-            <a href="#" name="userName"  class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
-            <a href="#" name="password" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
+            <a href="#" class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
+            <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
             <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>-->
+               <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>
           </div>
           <h4>Or by Email</h4>
 
@@ -132,6 +133,7 @@
             <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
           
             <a href="#" class="btn facebook-login waves-effect waves-light">Facebook<i class="fa fa-facebook"></i></a>
+              
           </div>
           <h4>Or by Email</h4>
           <form id="login" method="post">
@@ -257,13 +259,9 @@
     <script type="text/javascript">
         $(document).ready(function(){
             
-  function getFacebookData(){
-      FB.api('/me', function(response){
-          
-      })
-  }
+
          // This is called with the results from from FB.getLoginStatus().
-  function statusChangeCallback(response, callback) {
+  function statusChangeCallback(response) {
     console.log('statusChangeCallback');
     console.log(response);
     // The response object is returned with a status field that lets the
@@ -271,9 +269,12 @@
     // Full docs on the response object can be found in the documentation
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
-      getFacebookData();
+        //alert("Mister "+inspeccionar(response));
+      window.location.href='/rooms.html';
+      testAPI();
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
+        alert("Not authorized");
       document.getElementById('status').innerHTML = 'Please log ' +
         'into this app.';
     } else {
@@ -282,23 +283,15 @@
       document.getElementById('status').innerHTML = 'Please log ' +
         'into Facebook.';
     }
-      callback(false);
   }
 
   // This function is called when someone finishes with the Login
   // Button.  See the onlogin handler attached to it in the sample
   // code below.
   function checkLoginState() {
-    //FB.getLoginStatus(function(response) {
+    FB.getLoginStatus(function(response) {
       //statusChangeCallback(response);
-        if(response.status === 'connected'){
-            alert("Redirecting to the rooms menu...");
-            window.location.href = '/rooms.html';
-        }
-        else if (response.status === 'not_authorized'){
-            alert("Sorry, your account is not compatible with this application");
-        }
-    //});
+    });
   }
 
   window.fbAsyncInit = function() {
@@ -319,19 +312,11 @@
   // 2. Logged into Facebook, but not your app ('not_authorized')
   // 3. Not logged into Facebook and can't tell if they are logged into
   //    your app or not.
-  //s
+  //
   // These three cases are handled in the callback function.
 
   FB.getLoginStatus(function(response) {
     statusChangeCallback(response);
-       /*if(response.status === 'connected'){
-            if(confirm("Facebook session found, go to the rooms menu?")){
-            window.location.href = '/rooms.html';
-            }
-        }
-        else if (response.status === 'not_authorized'){
-            alert("Sorry, your account is not compatible with this application");
-        }*/
   });
 
   };
@@ -356,10 +341,35 @@
     });
   }
             
+            function inspeccionar(obj){
+	  var msg = '';
+	  for (var property in obj)
+	  {
+	    if (typeof obj[property] == 'function')
+	    {
+	      var inicio = obj[property].toString().indexOf('function');
+	      var fin = obj[property].toString().indexOf(')')+1;
+	      var propertyValue=obj[property].toString().substring(inicio,fin);
+	      msg +=(typeof obj[property])+' '+property+' : '+propertyValue+' ;\n';
+	    }
+	    else if (typeof obj[property] == 'unknown')
+	    {
+	      msg += 'unknown '+property+' : unknown ;\n';
+	    }
+	    else
+	    {
+	      msg +=(typeof obj[property])+' '+property+' : '+obj[property]+' ;\n';
+	    }
+	  }
+	  return msg;
+	}
             
             
             
-            
+    $('#facebookLogin').click(function(){
+        //window.location.href = '/rooms';
+        statusChangeCallback(response);
+    });
             
             $('#login').submit(function(event){
                 event.preventDefault();
@@ -416,9 +426,9 @@
                 });                
             });
         
-        socket.on('userAlreadyExists', function(){
+       /* socket.on('userAlreadyExists', function(){
              alert("User already exists! choose another!");
-        });
+        });*/
 
        
           });
