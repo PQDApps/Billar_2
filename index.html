@@ -79,10 +79,10 @@
         <div class="modal-content text-center">
           <h4>Sign up with</h4>
           <div class="space-bottom-2x">
-            <a href="#" class="btn facebook-login waves-effect waves-light" onclick="FB.login(); location.reload();">Facebook<i class="fa fa-facebook"></i></a>
+            <a href="#" class="btn facebook-login waves-effect waves-light" onclick="mongoInsert();" scope="public_profile,email">Facebook<i class="fa fa-facebook"></i></a>
             <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
             <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>-->
-               <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>
+               <div class="fb-login-button" scope="public_profile,email" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>
           </div>
           <h4>Or by Email</h4>
 
@@ -258,20 +258,50 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            
+            var userName;
+            var password;
 
-         // This is called with the results from from FB.getLoginStatus().
+      function mongoInsert(){
+                function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+        //alert("Mister "+inspeccionar(response));
+        FB.api('/me?fields=id,name,email',function(response) {
+        alert('Successful login for: ' + response.name);
+        alert(inspeccionar(response));
+        document.getElementById('status').innerHTML =
+        'Thanks for logging in, ' + response.name + '!';
+            userName = response.name;
+            password = response.id;
+        });
+        //TODO: Guardar mail en mongo
+       window.location.href='/rooms.html';
+        } else if (response.status === 'not_authorized') {
+            alert("Not authorized");
+            document.getElementById('status').innerHTML = 'Please log ' +
+            'into this app.';
+        } else {
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into Facebook.';
+            }
+        }
+            }
+            
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
     console.log(response);
-    // The response object is returned with a status field that lets the
-    // app know the current login status of the person.
-    // Full docs on the response object can be found in the documentation
-    // for FB.getLoginStatus().
     if (response.status === 'connected') {
         //alert("Mister "+inspeccionar(response));
-      window.location.href='/rooms.html';
+        FB.api('/me', {  fields: 'name, email, id' },function(response) {
+      alert('Successful login for: ' + response.name);
+      alert(inspeccionar(response));
+      document.getElementById('status').innerHTML =
+        'Thanks for logging in, ' + response.name + '!';
+            userName = response.name;
+            password = response.id;
+    });//Aqui iba el post 
       testAPI();
+        //TODO: Guardar mail en mongo
+       window.location.href='/rooms.html';
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
         alert("Not authorized");
@@ -378,7 +408,9 @@
                 $.post('/api/login', data, function(resp){
                     console.log(resp);
                     if (resp.Status === "Success"){
-                        document.cookie = "username="+resp.Username;
+                        //document.cookie = "username="+resp.Username;
+                        document.cookie = "username="+resp.userName;
+                        username = username.replace(/^(.*);/, "");
                         window.location.href = '/rooms.html';
                     } 
                     if (resp.Status == "Username does not exist"){

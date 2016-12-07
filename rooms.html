@@ -62,7 +62,7 @@
 
     <!-- Pricings -->
     <section class="fw-section border-bottom padding-top-3x padding-bottom-2x">
-      <div class="container">
+      <div class="container"  id="greetings">
         <h2 class="block-title text-center">
          Roooms Looby
           <small>lets go ready to rumbleeeeeeeee</small>
@@ -184,9 +184,28 @@
   <script src="js/scripts.js"></script>
 
     <script type="text/javascript">
+        //This function separates the information within the cookie
+        function readCookie(name) {
+            name += '=';
+            for (var ca = document.cookie.split(/;\s*/), i = ca.length - 1; i >= 0; i--)
+                if (!ca[i].indexOf(name))
+                return ca[i].replace(name, '');
+        }
+        
+        
      var username = document.cookie;
-        username = username.replace("username=", "");
+         /*username = username.replace(/^(.*);/, "");
+         username = username.replace("username=", "");
+        if(document.cookie.name == ''){
+       
+        }else{
+            var name = document.cookie;
+            username = name;
+        }*/
+        username = readCookie("username");
         $(document).ready(function(){
+            //A greeting for the player, displaying his E-mail address
+            $("#greetings").append("<h1>Welcome back, </h1>"+username);
             //Calling the API thowRooms, wich will give the rooms contained in memory
             $.get('/api/throwRooms', function(resp){
                 console.log("user entered API throwRooms");
@@ -206,13 +225,14 @@
                     aTag.innerHTML = "<h3>" + singleRoom.room + "</h3> Click here to join.";
                     listItem.appendChild(aTag);
                     mydiv.appendChild(listItem);
+                    //TODO: Hola username
                     }
                 });
                 console.log("forEach reached its end");
                 //aTag.setAttribute('href','/gamebk.html?roomName=' + resp.Room);  URL without roomNumber
             });
             $('#setroom').submit(function(event){
-                event.preventDefault();//Evita que se recargue la pagina?
+                event.preventDefault();
                 var data = $('#setroom').serialize() + "&username=" + username;
                 /*if(data.nameRoom == singleRoom.room){
                     w

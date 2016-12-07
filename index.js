@@ -508,7 +508,6 @@ router.post('/login', function(req, res){
         }
         console.log(usersItem);
         if (usersItem) { //If user is found
-            console.log("Sigo viendo...");
           if (usersItem.password == pass) { // compare the password and the hash in mongo  
               res.status(200).send({Status: 'Success', Username: user});
             } else {
@@ -528,7 +527,7 @@ router.post('/login', function(req, res){
 
 //Sign up API, userName and password
 router.post('/signupnow', function(req,res){
-  console.log(req);
+  console.log("Inside signupnow API: "+req);
   //res.json({message: req.body});
   var user = req.body.userName;
   var pass = req.body.password;
