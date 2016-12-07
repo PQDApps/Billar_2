@@ -27,11 +27,14 @@
 <div id="game"></div>
 
 <script type="text/javascript">
-    var username = document.cookie;
-    username = username.replace(/^(.*);/, "");
-    username = username.replace("username=", "");
-    var roomName = location.search;
-    roomName = roomName.replace("?roomName=", "");
+    function readCookie(name) {
+            name += '=';
+            for (var ca = document.cookie.split(/;\s*/), i = ca.length - 1; i >= 0; i--)
+                if (!ca[i].indexOf(name))
+                return ca[i].replace(name, '');
+        }
+        var username = document.cookie;
+        username = readCookie("username");
 </script>
 <script type="text/javascript" src="gamebk.js"></script>
 <script type="text/javascript">
