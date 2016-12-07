@@ -410,7 +410,8 @@
                     if (resp.Status === "Success"){
                         //document.cookie = "username="+resp.Username;
                         document.cookie = "username="+resp.userName;
-                        username = username.replace(/^(.*);/, "");
+                        //userName = userName.replace(/^(.*);/, "");
+                        userName = resp.userName;
                         window.location.href = '/rooms.html';
                     } 
                     if (resp.Status == "Username does not exist"){
