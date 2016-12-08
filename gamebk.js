@@ -980,7 +980,8 @@ Pool.Game.prototype = {
                 this.time.events.add(50, this.doEffect, this);
             } else if(body.sprite.key == "tableTwo.fw"){
                 this.time.events.add(50, this.doEffectTable, this);
-            }else if(body.sprite.isStripe == 8){
+            } 
+            if(body.sprite.isStripe == 8){
                 console.log("You hit ball 8!!!!!");
             }
             var result = "You last hit: " + body.sprite.key;
@@ -1055,7 +1056,7 @@ Pool.Game.prototype = {
         // Once all balls are stopped
         pocketBalls.push(ball.sprite.isStripe);
         if(pocketBalls.length == 1){
-            if(Player.isActive == true){
+            if(Player.isCurrent == true){
                 Player.playerScore += 30;
             }
         }
@@ -1110,8 +1111,12 @@ Pool.Game.prototype = {
             }else if(ball.sprite.isStripe === false){
                 solidCount++;
             }
+            
             if(ball.sprite.isStripe === 8 || ball.sprite.isStripe === Pool.black){
                 //if(Player.isActive == true){
+                if(Player.isCurrent == true){
+                    
+                
                     //var responsible8 = Player.number;
                    // Player.blackBall = true;
                     if(Player.isStripe === true && stripeCount == 7){
@@ -1128,7 +1133,13 @@ Pool.Game.prototype = {
                         alert("Your opponent won");
                     }
                 
-                
+                }else if(Player.isStripe === false && stripeCount == 7){
+                        alert("Your opponent won");
+                    }else if(Player.isStripe === true && solidCount == 7){
+                        alert("Your opponent won");
+                    }else{
+                        alert("Your opponent won put the black ball off time, you won!!!");
+                    }
                 /*}else{
                     Player.blackBall = true;
                     alert("Your opponent put the ball 8 inside a pocket");
