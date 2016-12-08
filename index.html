@@ -47,21 +47,21 @@
           <div class="space-bottom-2x">
             <a href="#" class="btn facebook-login waves-effect waves-light" onclick="FB.login()">Facebook<i class="fa fa-facebook"></i></a>
             <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
-            <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>-->
+            <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>
               <div
   class="fb-like"
   data-share="true"
   data-width="450"
   data-show-faces="true">
-</div>      <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>
+</div>      <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>-->
           </div>
           <h4>Or by Email</h4>
           <form id="login" method="post">
             <input type="email" name="userName" class="form-control" placeholder="Email" required>
             <input type="password" name="password" class="form-control" placeholder="Password" required>
-              
+              <!--
 <fb:login-button scope="public_profile,email" onclick="statusChangeCallback();">
-</fb:login-button>
+</fb:login-button>-->
             <div class="form-group">
               <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
             </div>
@@ -307,7 +307,7 @@
                         //alert(inspeccionar(resp));
                         //document.cookie = "username="+resp.userName;
                         //userName = userName.replace(/^(.*);/, "");
-                        //window.location.href = '/rooms.html';
+                        window.location.href = '/rooms.html';
                     } 
                     if (resp.Status == "Username does not exist"){
                         //window.location.href = '/signuplogin.html';
@@ -365,7 +365,7 @@
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '930411897058965',
-    cookie     : false,  // enable cookies to allow the server to access 
+    cookie     : true,  // enable cookies to allow the server to access 
                         // the session
     xfbml      : true,  // parse social plugins on this page
     version    : 'v2.8' // use graph api version 2.8
