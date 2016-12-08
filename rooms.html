@@ -205,7 +205,11 @@
         username = readCookie("username");
         $(document).ready(function(){
             //A greeting for the player, displaying his E-mail address
-            $("#greetings").append("<h1>Welcome back, </h1>"+username);
+            if(username!=undefined){
+                $("#greetings").append("<h1>Welcome back, </h1>"+username);
+            }else{
+                $("#greetings").append("<h1>Welcome back, </h1>");
+            }
             //Calling the API thowRooms, wich will give the rooms contained in memory
             $.get('/api/throwRooms', function(resp){
                 console.log("user entered API throwRooms");

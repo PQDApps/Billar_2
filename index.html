@@ -79,10 +79,11 @@
         <div class="modal-content text-center">
           <h4>Sign up with</h4>
           <div class="space-bottom-2x">
-            <a href="#" class="btn facebook-login waves-effect waves-light" onclick="mongoInsert();" scope="public_profile,email">Facebook<i class="fa fa-facebook"></i></a>
+            <a href="#" class="btn facebook-login waves-effect waves-light" scope="public_profile,email">Facebook<i class="fa fa-facebook"></i></a>
+            <!--<a href="#" class="btn facebook-login waves-effect waves-light" onclick="mongoInsert();" scope="public_profile,email">Facebook<i class="fa fa-facebook"></i></a>-->
             <a href="#" class="btn google-login waves-effect waves-light">Google<i class="fa fa-google"></i></a>
             <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>-->
-               <div class="fb-login-button" scope="public_profile,email" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>
+               <!--<div class="fb-login-button" scope="public_profile,email" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"></div>-->
           </div>
           <h4>Or by Email</h4>
 
@@ -139,9 +140,9 @@
           <form id="login" method="post">
             <input name="userName" type="email" class="form-control" id="inputEmail" placeholder="Email" required>
             <input name="password" type="password" class="form-control" id="inputPassword" placeholder="Password" required>
-            <div class="form-group">
+            <!--<div class="form-group">
               <button type="submit" class="btn login-btn btn-default waves-effect waves-light">Login into your account<i class="icon-head"></i></button>
-            </div>
+            </div>-->
             <div class="text-left">
               <span class="text-sm text-semibold">New in KlassicPool? <a href="#">Sign Up</a></span>
             </div>
@@ -288,7 +289,7 @@
             
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
-    console.log(response);
+    console.log("Response statusChangeCallback: "+response);
     if (response.status === 'connected') {
         //alert("Mister "+inspeccionar(response));
         FB.api('/me', {  fields: 'name, email, id' },function(response) {
@@ -298,10 +299,47 @@
         'Thanks for logging in, ' + response.name + '!';
             userName = response.name;
             password = response.id;
+            $.post('/api/login', {userName, password}, function(resp){
+                    console.log("resp: "+resp);
+                    alert("Entrando al post PAPU"+resp.Status);
+                    if (resp.Status === "Success"){
+                        document.cookie = "username="+resp.Username;
+                        //alert(inspeccionar(resp));
+                        //document.cookie = "username="+resp.userName;
+                        //userName = userName.replace(/^(.*);/, "");
+                        //window.location.href = '/rooms.html';
+                    } 
+                    if (resp.Status == "Username does not exist"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Username does not exist! Please try again!');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Username does not exist, please try again</Strong><br/>');
+                        $('#modal').append('<p><Strong>Username does not exist, please try again</Strong></p><br/>');
+                        //$('#modal').modal('show');
+                        $.post('/api/signupnow', {userName,password}, function(resp){
+                        console.log(resp);
+                        //location.reload();
+                        });   
+                         setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                    if (resp.Status == "Password is incorrect"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Password is incorrect, please try again');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Password is incorrect, please try again</Strong><br/>');
+                        $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');
+                        setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                     $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');                    
+                });  
     });//Aqui iba el post 
-      testAPI();
+      //testAPI();
         //TODO: Guardar mail en mongo
-       window.location.href='/rooms.html';
+       //window.location.href='/rooms.html';
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
         alert("Not authorized");
@@ -327,7 +365,7 @@
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '930411897058965',
-    cookie     : true,  // enable cookies to allow the server to access 
+    cookie     : false,  // enable cookies to allow the server to access 
                         // the session
     xfbml      : true,  // parse social plugins on this page
     version    : 'v2.8' // use graph api version 2.8
@@ -408,10 +446,10 @@
                 $.post('/api/login', data, function(resp){
                     console.log(resp);
                     if (resp.Status === "Success"){
-                        //document.cookie = "username="+resp.Username;
-                        document.cookie = "username="+resp.userName;
+                        document.cookie = "username="+resp.Username;
+                        //alert(inspeccionar(resp));
+                        //document.cookie = "username="+resp.userName;
                         //userName = userName.replace(/^(.*);/, "");
-                        userName = resp.userName;
                         window.location.href = '/rooms.html';
                     } 
                     if (resp.Status == "Username does not exist"){

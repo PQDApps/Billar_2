@@ -650,7 +650,7 @@ Pool.Game.prototype = {
     
     // playernumber, 'solid' or 'stripe', true or false
     setSolidStripe: function (playernumber, type, set) {
-        alert("type: "+type);
+        //alert("type: "+type);
         if (Player.number == playernumber){
             /*alert("type: "+type);
             alert("Player.number: "+Player.number);
@@ -662,7 +662,7 @@ Pool.Game.prototype = {
                 //alert("Player es solid? "+Player.isSolid);
                 //alert("Player es stripe? "+Player.isStripe);
             } else if (type == 'stripe'){
-                alert("Asignando valor STRIPE");
+                //alert("Asignando valor STRIPE");
                 Player.isSolid = false;
                 Player.isStripe = true; 
             }                       
@@ -980,9 +980,12 @@ Pool.Game.prototype = {
                 this.time.events.add(50, this.doEffect, this);
             } else if(body.sprite.key == "tableTwo.fw"){
                 this.time.events.add(50, this.doEffectTable, this);
+            }else if(body.sprite.isStripe == 8){
+                console.log("You hit ball 8!!!!!");
             }
             var result = "You last hit: " + body.sprite.key;
             console.log(result);
+            
         }
     },
 
