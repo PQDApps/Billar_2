@@ -1310,8 +1310,8 @@ Pool.Game.prototype = {
                 
                 // The point where the white guide ball is drawn                              
                 var pointContact = new Phaser.Point(closestball.x + Math.cos(bAngle) * hypo, closestball.y - Math.sin(bAngle) * hypo);      
-                // Te point where the shot angle line ends
-                var angleContact = new Phaser.Point(pointContact.x + Math.cos(bAngle) * hypo, pointContact.y - Math.sin(bAngle) * hypo);
+                // The point where the shot angle line ends
+                var angleContact = new Phaser.Point(pointContact.x + Math.cos(bAngle) * 140, pointContact.y - Math.sin(bAngle) * 140);
                 
                 
                 var ninetyDegrees = 1.5708;
@@ -1507,11 +1507,9 @@ Pool.Game.prototype = {
             if (!this.cue.visible)
             {
                 // Shows cues and lines once speed is slow enough                
-                if (!Player.isActive){
-                    this.line.visible = false;
+                if (!Player.isActive){                    
                     this.cue.visible = false;
-                } else {
-                    this.line.visible = true;
+                } else {                    
                     this.cue.visible = true;    
                 }                
                 this.fill.visible = true;                
@@ -1550,7 +1548,7 @@ Pool.Game.prototype = {
             if (this.speed < 6)
             {
                 //this.game.debug.geom(this.aimLine);
-                this.game.debug.geom(this.shootLine);
+                //this.game.debug.geom(this.shootLine);
                 this.game.debug.geom(this.reflection);
                 this.game.debug.geom(this.hypotenuse);
                 this.game.debug.geom(this.opposite);
