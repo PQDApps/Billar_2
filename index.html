@@ -267,8 +267,8 @@
         if (response.status === 'connected') {
         //alert("Mister "+inspeccionar(response));
         FB.api('/me?fields=id,name,email',function(response) {
-        alert('Successful login for: ' + response.name);
-        alert(inspeccionar(response));
+        //alert('Successful login for: ' + response.name);
+        //alert(inspeccionar(response));
         document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
             userName = response.name;
@@ -293,15 +293,15 @@
     if (response.status === 'connected') {
         //alert("Mister "+inspeccionar(response));
         FB.api('/me', {  fields: 'name, email, id' },function(response) {
-      alert('Successful login for: ' + response.name);
-      alert(inspeccionar(response));
+     // alert('Successful login for: ' + response.name);
+      //alert(inspeccionar(response));
       document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
             userName = response.name;
             password = response.id;
             $.post('/api/login', {userName, password}, function(resp){
                     console.log("resp: "+resp);
-                    alert("Entrando al post PAPU"+resp.Status);
+                    //alert("Entrando al post PAPU"+resp.Status);
                     if (resp.Status === "Success"){
                         document.cookie = "username="+resp.Username;
                         //alert(inspeccionar(resp));
