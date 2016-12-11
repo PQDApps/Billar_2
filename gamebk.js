@@ -312,7 +312,10 @@ Pool.Game.prototype = {
         this.effectPointer = this.add.sprite(740, 116, 'effectPointer'); // The effect pointer circle
         //this.effectPointer.inputEnabled = true;
         //this.effectPointer.events.onInputDown.add(this.movePlus, this);
-
+        this.effectBall.inputEnabled = true;
+        //this.effectBall.events.onInputDown.add(this.effectBallDown, this);
+        //this.effectBall.input.onDown.add(this.placeCueBall, this);
+        //this.effectBall.events.onInputDown.add(this.effectBallDown, {sprite: effectBall});
         this.effectPlus = this.add.sprite(750, 124, 'effectPlus'); // The plus sign inside the pointer circle
         this.effectPlus.inputEnabled = true;
         this.effectPlus.input.enableDrag();
@@ -415,6 +418,8 @@ Pool.Game.prototype = {
         this.cueball.body.onBeginContact.add(this.hitBall, this);
         this.cueball.inputEnabled = true;
         this.cueball.events.onInputDown.add(this.moveCueBall, this);
+        this.effectBall.events.onInputDown.add(this.effectBallDown, this);
+        this.effectPlus.events.onInputDown.add(this.effectBallDown, this);
         //this.cueball.input.enableDrag();
 
         //this.cueball.body.createBodyCallback(this.balls, this.hitBall, this);
@@ -756,15 +761,19 @@ Pool.Game.prototype = {
             this.cue.visible = false;
             this.resetCueBall();
         }
-
+        //this.cue.visible = false;
     },
-
+    
     updateScore: function (score) {
         console.log(score);
         this.score = score;
         this.scoreText.text = "SCORE: " + this.score;
     },
-
+    //This function makes the cue invisible when user manipulates the effectBall
+    effectBallDown: function (sprite, pointer) {
+        this.cue.visible = false;
+        //alert(this.cue.visible);
+    },
     // Takes shot for player that was not active
     shotTaken: function (px, py, effect, angle, speed) {
         this.effect = effect;
@@ -911,6 +920,7 @@ Pool.Game.prototype = {
             var y = this.input.activePointer.y;
 
             if (this.pressedDown == true){
+                this.cue.visible = false;
                 var relativeSpeed = 0;
                 if (this.aimLine.length > 50 && this.aimLine.length < 125) 
                 {
@@ -985,8 +995,7 @@ Pool.Game.prototype = {
                 console.log("You hit ball 8!!!!!");
             }
             var result = "You last hit: " + body.sprite.key;
-            console.log(result);
-            
+            console.log(result);      
         }
     },
 
@@ -1353,6 +1362,7 @@ Pool.Game.prototype = {
             this.cue.x = this.input.activePointer.x;
             this.cue.y = this.input.activePointer.y;
             var relativeSpeed = 0;
+            //this.cue.visible = false;
             if (this.aimLine.length > 50 && this.aimLine.length < 125) 
             {
                 relativeSpeed = 10;
