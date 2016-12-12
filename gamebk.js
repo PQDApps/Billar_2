@@ -12,6 +12,7 @@ var roomName = getParameterByName('roomName');
 var roomNumber = getParameterByName('roomNumber');
 var solidCount = 0;
 var stripeCount = 0;
+var cueAllower = true;
 //TODO: Intentar usar la idea de objetos dentro de objetos
 function inspeccionar(obj){
 	  var msg = '';
@@ -419,7 +420,9 @@ Pool.Game.prototype = {
         this.cueball.inputEnabled = true;
         this.cueball.events.onInputDown.add(this.moveCueBall, this);
         this.effectBall.events.onInputDown.add(this.effectBallDown, this);
+        this.effectBall.events.onInputUp.add(this.effectBallUp, this);
         this.effectPlus.events.onInputDown.add(this.effectBallDown, this);
+        this.effectPlus.events.onInputUp.add(this.effectBallUp, this);
         //this.cueball.input.enableDrag();
 
         //this.cueball.body.createBodyCallback(this.balls, this.hitBall, this);
@@ -772,7 +775,16 @@ Pool.Game.prototype = {
     //This function makes the cue invisible when user manipulates the effectBall
     effectBallDown: function (sprite, pointer) {
         this.cue.visible = false;
+        cueAllower = false;
         //alert(this.cue.visible);
+        console.log("Dissappearing CUE");
+    },
+     //This function makes the cue visible when user stops manipulating the effectBall
+    effectBallUp: function (sprite, pointer) {
+        this.cue.visible = true;
+        cueAllower = true;
+        //alert(this.cue.visible);
+        console.log("Reappearing CUE");
     },
     // Takes shot for player that was not active
     shotTaken: function (px, py, effect, angle, speed) {
@@ -918,7 +930,11 @@ Pool.Game.prototype = {
             
             var x = this.input.activePointer.x;
             var y = this.input.activePointer.y;
-
+            if(cueAllower == true){                    
+                    this.cue.visible = true;    
+                }else{
+                    this.cue.visible = false;
+                }  
             if (this.pressedDown == true){
                 this.cue.visible = false;
                 var relativeSpeed = 0;
@@ -1519,13 +1535,15 @@ Pool.Game.prototype = {
                 // Shows cues and lines once speed is slow enough                
                 if (!Player.isActive){                    
                     this.cue.visible = false;
-                } else {                    
+                } else if(cueAllower == true){                    
                     this.cue.visible = true;    
+                }else{
+                    this.cue.visible = false;
                 }                
                 this.fill.visible = true;                
             }
         }
-        else if (this.speed < 3.0)
+        else if (this.speed < 2.0)
         {
             this.cueball.body.setZeroVelocity();
         }
