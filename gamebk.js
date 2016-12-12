@@ -418,13 +418,16 @@ Pool.Game.prototype = {
         this.cueball = this.makeCueBall(250, 302, Pool.WHITE);
         this.cueball.body.onBeginContact.add(this.hitBall, this);
         this.cueball.inputEnabled = true;
+        this.rightRect.inputEnabled = true;
         this.cueball.events.onInputDown.add(this.moveCueBall, this);
         this.effectBall.events.onInputDown.add(this.effectBallDown, this);
         this.effectBall.events.onInputUp.add(this.effectBallUp, this);
         this.effectPlus.events.onInputDown.add(this.effectBallDown, this);
         this.effectPlus.events.onInputUp.add(this.effectBallUp, this);
+        this.rightRect.events.onInputOver.add(this.effectBallDown, this);
+        this.rightRect.events.onInputOut.add(this.effectBallUp, this);
         //this.cueball.input.enableDrag();
-
+       // this.rightRect.input.pointerOver();
         //this.cueball.body.createBodyCallback(this.balls, this.hitBall, this);
         //this.cueball.body.collides([this.ballCollisionGroup, this.cueballCollisionGroup]);
         //this.cueball.body.collides(this.ballCollisionGroup, this.hitBall, this);
@@ -781,10 +784,12 @@ Pool.Game.prototype = {
     },
      //This function makes the cue visible when user stops manipulating the effectBall
     effectBallUp: function (sprite, pointer) {
+        if(Player.isActive){
         this.cue.visible = true;
         cueAllower = true;
         //alert(this.cue.visible);
         console.log("Reappearing CUE");
+        }
     },
     // Takes shot for player that was not active
     shotTaken: function (px, py, effect, angle, speed) {
