@@ -614,6 +614,9 @@ Pool.Game.prototype = {
                 cueballInPocket = false;             
                 this.resetCueBall();
             }
+            document.body.style.cursor = 'default';
+        }else{
+            document.body.style.cursor = 'none';
         }
         cueballInPocket = false; 
     },
@@ -777,16 +780,26 @@ Pool.Game.prototype = {
     },
     //This function makes the cue invisible when user manipulates the effectBall
     effectBallDown: function (sprite, pointer) {
+         if(Player.isActive){
         this.cue.visible = false;
         cueAllower = false;
+        this.line.visible = false;
+        this.fill.visible = false;
         //alert(this.cue.visible);
+        this.aimLine.visible = false;
+        this.fillRect.visible = false;
+        
         console.log("Dissappearing CUE");
+        //alert(inspeccionar(this.aimLine));
+        }
     },
      //This function makes the cue visible when user stops manipulating the effectBall
     effectBallUp: function (sprite, pointer) {
         if(Player.isActive){
         this.cue.visible = true;
         cueAllower = true;
+        this.line.visible = false;
+        this.fill.visible = false;
         //alert(this.cue.visible);
         console.log("Reappearing CUE");
         }
@@ -939,6 +952,8 @@ Pool.Game.prototype = {
                     this.cue.visible = true;    
                 }else{
                     this.cue.visible = false;
+                    this.line.visible = false;
+                    this.fill.visible = false;
                 }  
             if (this.pressedDown == true){
                 this.cue.visible = false;
@@ -1001,6 +1016,8 @@ Pool.Game.prototype = {
                 this.effectPlus.y = this.effectBall.y- 24 ;                
             }
             this.pressedDown = false; // Mouse no longer pressed
+        }else{
+            document.body.style.cursor = 'none';
         }
     },
 
@@ -1355,24 +1372,34 @@ Pool.Game.prototype = {
                 //this.reflection.fromAngle(closestball.x, closestball.y, outgoing, 50);
                 
                 // Draw the line, circle, and line showing predicted trajectory
+                //White line will show just if it is Player's turn
+                if(Player.isActive){
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(pointContact.x, pointContact.y);
                 this.bitmap.context.moveTo(pointContact.x, pointContact.y);
                 this.bitmap.context.lineTo(angleContact.x, angleContact.y);
-                
-                // TODO: DO math here to know what the x and y of the circle should be                        
                 this.bitmap.context.stroke();
                 
                 
                 this.bitmap2.context.beginPath();
                 this.bitmap2.context.arc(pointContact.x, pointContact.y, 10, 0, Math.PI*2, true);
                 this.bitmap2.context.stroke();
+                
+                }else{
+                    this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+                    this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
+                }
+                // TODO: DO math here to know what the x and y of the circle should be                        
+                
             } else {
+                //White line will show just if it is Player's turn
+                if(Player.isActive){
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(rayX, rayY);
                 this.bitmap.context.stroke();
+                }
             }
         }
 
