@@ -926,8 +926,8 @@ Pool.Game.prototype = {
 
             // Set the effect of the shot depending on the plus sign location
             if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
-                this.effect = "stop";
-            } else if(upDown > 18 && leftRight < 5 && leftRight > -5){
+                this.effect = "stop";//uncomment so effects will turn on
+            } else /*if(upDown > 18 && leftRight < 5 && leftRight > -5){
                 this.effect = "back";
             } else if (upDown < -16 && leftRight < 5 && leftRight > -5){
                 this.effect = "front";
@@ -936,7 +936,7 @@ Pool.Game.prototype = {
                 this.effect = "right";
             } else if(leftRight < -12 && upDown < 5 && upDown > -5  ){
                 this.effect = "left";
-            } else {
+            } else*/ {
                 this.effect = "none";
             }
             console.log(this.effect);
