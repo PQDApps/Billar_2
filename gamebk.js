@@ -756,9 +756,10 @@ Pool.Game.prototype = {
         
         var x = this.input.activePointer.x;
         var y = this.input.activePointer.y;
-        
-        if (x > x1 && x < x2 && y > y1 && y < y2) {
-            this.pressedDown = true;
+        if(Player.isActive){
+            if (x > x1 && x < x2 && y > y1 && y < y2) {
+                this.pressedDown = true;
+            }
         }
     },
 
