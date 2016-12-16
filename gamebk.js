@@ -797,7 +797,7 @@ Pool.Game.prototype = {
     },
      //This function makes the cue visible when user stops manipulating the effectBall
     effectBallUp: function (sprite, pointer) {
-        if(Player.isActive){
+        if(Player.isActive && this.firstPlacement == false){
         this.cue.visible = true;
         cueAllower = true;
         this.line.visible = false;
