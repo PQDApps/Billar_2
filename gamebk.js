@@ -920,6 +920,7 @@ Pool.Game.prototype = {
         if (Player.isActive) // Allow shot if active, okay, and shot's been taken
         {
             Player.isActive = false;
+            this.turnText.visible = false;
             Player.isCurrent = true;            
             this.okay = 1; // Make it so the player can't shoot until we know he made a shot
             //socket.emit('apControl', Player, "shot");                    
@@ -1508,6 +1509,9 @@ Pool.Game.prototype = {
                 socket.emit('compareState', roomName, Player, currentBalls, sendCueBall);    
             }                                
         }
+        if(Player.isActive){
+                this.turnText.visible = true;
+        };
         
         if (this.resetting)
         {
