@@ -659,6 +659,7 @@ Pool.Game.prototype = {
             }
             this.cue.visible = false;
             Player.isActive = false;
+            cueAllower = false;
         }
     },
     
@@ -801,7 +802,7 @@ Pool.Game.prototype = {
         this.line.visible = false;
         this.fill.visible = false;
         //alert(this.cue.visible);
-        console.log("Reappearing CUE");
+        //console.log("Reappearing CUE");
         }
     },
     // Takes shot for player that was not active
@@ -1243,6 +1244,7 @@ Pool.Game.prototype = {
         } else if (!Player.isActive){
             
         }
+        this.cue.visible = false;
     },
     
     placeBallForOtherPlayer: function (x, y) {
@@ -1425,7 +1427,9 @@ Pool.Game.prototype = {
                 relativeSpeed = 65;    
             }
             this.powerRect.height = this.aimLine.length + relativeSpeed;
-            this.powerLevel.updateCrop();
+            if(Player.isActive){
+                this.powerLevel.updateCrop();
+            }
         }
         //this.cue.x = this.input.activePointer.x;
         //this.cue.y = this.input.activePointer.y;
