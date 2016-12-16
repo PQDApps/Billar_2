@@ -615,6 +615,7 @@ Pool.Game.prototype = {
                 this.resetCueBall();
             }
             document.body.style.cursor = 'default';
+            this.cue.visible = true;
         }else{
             document.body.style.cursor = 'none';
         }
@@ -625,6 +626,7 @@ Pool.Game.prototype = {
         // Set the other player to isActive true
         if (Player.number == i){
             Player.isActive = true;
+            this.cue.visible = true;
         }
     },
     
