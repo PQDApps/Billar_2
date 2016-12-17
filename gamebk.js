@@ -423,7 +423,9 @@ Pool.Game.prototype = {
         this.effectBall.events.onInputOver.add(this.effectBallDown, this);
         this.effectBall.events.onInputOut.add(this.effectBallUp, this);
         this.effectPlus.events.onInputOver.add(this.effectBallDown, this);
-        this.effectPlus.events.onInputOut.add(this.effectBallUp, this);
+        this.effectPlus.events.onInputUp.add(this.effectBallUp, this);
+        this.powerMeter.events.onInputOver.add(this.effectBallUp, this);
+        this.powerMeter.events.onInputOut.add(this.effectBallUp, this);
         this.rightRect.events.onInputOver.add(this.effectBallDown, this);
         this.rightRect.events.onInputOut.add(this.effectBallUp, this);
         //this.cueball.input.enableDrag();
@@ -1383,7 +1385,7 @@ Pool.Game.prototype = {
                 
                 // Draw the line, circle, and line showing predicted trajectory
                 //White line will show just if it is Player's turn
-                if(Player.isActive){
+                if(Player.isActive && cueAllower == true){
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(pointContact.x, pointContact.y);
