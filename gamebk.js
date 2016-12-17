@@ -420,10 +420,10 @@ Pool.Game.prototype = {
         this.cueball.inputEnabled = true;
         this.rightRect.inputEnabled = true;
         this.cueball.events.onInputDown.add(this.moveCueBall, this);
-        this.effectBall.events.onInputDown.add(this.effectBallDown, this);
-        this.effectBall.events.onInputUp.add(this.effectBallUp, this);
-        this.effectPlus.events.onInputDown.add(this.effectBallDown, this);
-        this.effectPlus.events.onInputUp.add(this.effectBallUp, this);
+        this.effectBall.events.onInputOver.add(this.effectBallDown, this);
+        this.effectBall.events.onInputOut.add(this.effectBallUp, this);
+        this.effectPlus.events.onInputOver.add(this.effectBallDown, this);
+        this.effectPlus.events.onInputOut.add(this.effectBallUp, this);
         this.rightRect.events.onInputOver.add(this.effectBallDown, this);
         this.rightRect.events.onInputOut.add(this.effectBallUp, this);
         //this.cueball.input.enableDrag();
@@ -792,7 +792,8 @@ Pool.Game.prototype = {
         //alert(this.cue.visible);
         this.aimLine.visible = false;
         this.fillRect.visible = false;
-        
+        this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+        this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
         console.log("Dissappearing CUE");
         //alert(inspeccionar(this.aimLine));
         }
@@ -960,6 +961,8 @@ Pool.Game.prototype = {
                     this.cue.visible = false;
                     this.line.visible = false;
                     this.fill.visible = false;
+                    this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+                    this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
                 }  
             if (this.pressedDown == true){
                 this.cue.visible = false;
@@ -1401,7 +1404,7 @@ Pool.Game.prototype = {
                 
             } else {
                 //White line will show just if it is Player's turn
-                if(Player.isActive){
+                if(Player.isActive && cueAllower){
                 this.bitmap.context.beginPath();
                 this.bitmap.context.moveTo(this.cueball.x, this.cueball.y);
                 this.bitmap.context.lineTo(rayX, rayY);
@@ -1583,6 +1586,8 @@ Pool.Game.prototype = {
                     this.cue.visible = true;    
                 }else{
                     this.cue.visible = false;
+                    this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
+                    this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
                 }                
                 this.fill.visible = true;                
             }
