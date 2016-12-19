@@ -818,6 +818,7 @@ Pool.Game.prototype = {
         this.effectSpeed = speed;
         this.firstCollision = 0;
         console.log(px + " " + py);
+        console.log("My effect" + this.effect);
         this.cueball.body.applyImpulse([ px, py ], this.cueball.x, this.cueball.y);
     },
 
@@ -932,22 +933,24 @@ Pool.Game.prototype = {
             var upDown = this.effectPlus.y - this.effectBall.y - 24; // The vertical position of the plus
             var leftRight = this.effectPlus.x - this.effectBall.x - 25; // The horizontal position of the plus
 
+            this.effect = "none";
             // Set the effect of the shot depending on the plus sign location
-          /*  if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
+            if(upDown > 10 && upDown <= 18 && leftRight < 5 && leftRight > -5){
                 this.effect = "stop";//uncomment so effects will turn on
-            } else /*if(upDown > 18 && leftRight < 5 && leftRight > -5){
+            }
+            if(upDown > 18 && leftRight < 5 && leftRight > -5){
                 this.effect = "back";
-            } else if (upDown < -16 && leftRight < 5 && leftRight > -5){
+            }
+            if (upDown < -16 && leftRight < 5 && leftRight > -5){
                 this.effect = "front";
             }
-            else if(leftRight > 12 && upDown < 5 && upDown > -5 ){
+            if(leftRight > 12 && upDown < 5 && upDown > -5 ){
                 this.effect = "right";
-            } else if(leftRight < -12 && upDown < 5 && upDown > -5  ){
+            }
+            if(leftRight < -12 && upDown < 5 && upDown > -5  ){
                 this.effect = "left";
-            } else {
-                this.effect = "none";
-            }*/
-            this.effect = "none";
+            }
+            
             console.log(this.effect);
             
             var x1 = 80 - 60;
