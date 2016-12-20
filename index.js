@@ -153,10 +153,10 @@ io.on('connection', function(socket){
               console.log("This user is already in this room");
               canSet = false;
                 if (roomItem.playerOne == playerClient.user){
-                var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id); 
+                var player = new Player('Player_1', playerClient.user, 1, false, false, false, socket.id); 
                 socket.emit('assignNumber', player);
               } else {
-                var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
+                var player = new Player('Player_2', playerClient.user, 2, false, false, false, socket.id); 
                 socket.emit('assignNumber', player);
                 
               }
@@ -172,7 +172,7 @@ io.on('connection', function(socket){
                   }*/
                   //console.log(result);
                   // Create user and emit user back to player
-                  var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id);
+                  var player = new Player('Player_1', playerClient.user, 1, false, false, false, socket.id);
                   console.log("(pa modificar su atributo playerOne) Cuartos: "+roomItem.playerOne);
                   //cuartos[i].cuartosInSide.playerOne = playerClient.user;
                   roomItem.playerOne = playerClient.user;
@@ -188,7 +188,7 @@ io.on('connection', function(socket){
                   }*/
 
                   //console.log(result);
-                  var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
+                  var player = new Player('Player_2', playerClient.user, 2, false, false, false, socket.id); 
                    console.log("(pa modificar su atributo playerOne) Cuartos: "+roomItem.playerOne);
                   //cuartos[i].cuartosInSide.playerOne = playerClient.user;
                   roomItem.playerTwo = playerClient.user;
@@ -387,9 +387,9 @@ var rooms = {
   });
   
   // Socket chat message
-  socket.on('chat message', function(msg, room, username) {
-    var message = username + " " + msg;
-    io.to(room).emit('chat message', message);
+  socket.on('chat message', function(msg, room, username, playerClass) {
+    //var message = username + " " + msg;
+    io.to(room).emit('chat message', msg, username, playerClass);
     //io.emit('chat message', msg);
   });
 

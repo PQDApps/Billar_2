@@ -14,11 +14,13 @@
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 1px; }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 1px 1px; }
-      #messages li:nth-child(odd) { background: #0cf }
-      #messages li:nth-child(even) { background: #00BEBE; }
+      #messages li:nth-child(odd) { background: #2ded40 }
+      #messages li:nth-child(even) { background: #0bc41e }
       #chatBox { width: 400px; overflow: auto; height: 600px; float: left}
       #game {float: center; display: inline-block}
       #wrapper {height: 100%; width: 100%}
+      .Player_1 {color: purple}
+      .Player_2 {color: blue}
     </style>
 </head>
 <body>
@@ -54,13 +56,24 @@
 </div>
   <script>
     $('form').submit(function(){
-        socket.emit('chat message', $('#m').val(), roomName, username);
+        socket.emit('chat message', $('#m').val(), roomName, username, Player.name);
         $('#m').val('');
         return false;
       });
-      socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg));
+      socket.on('chat message', function(msg, username, playerClass){
+          //var userNameColor = username;
+            var mydiv = document.getElementById("messages");
+            var listItem = document.createElement('li');
+            var aTag = document.createElement('p');
+            aTag.setAttribute('class', playerClass);
+            aTag.innerHTML = "<p><b>"+username+":</b></p>"+"<p>"+msg+"</p>";
+            listItem.appendChild(aTag);
+            mydiv.appendChild(listItem);
       });
+           /* socket.on('chat message', function(msg, username){
+        $('#messages').append($('<li>').text(msg));
+        $('#messages').after(username);
+      });*/
   </script>
 </body>
 </html>
