@@ -1258,6 +1258,7 @@ Pool.Game.prototype = {
             
         }
         this.cue.visible = false;
+        cueAllower = false;
     },
     
     placeBallForOtherPlayer: function (x, y) {
@@ -1265,6 +1266,7 @@ Pool.Game.prototype = {
             this.placeCueBall(x,y);
             //this.cue.visible = false;
         }
+        cueAllower= true;
     },
     
     placeCueBall: function (x, y) {
@@ -1405,6 +1407,7 @@ Pool.Game.prototype = {
                 }else{
                     this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
                     this.bitmap2.context.clearRect(0, 0, this.game.width, this.game.height);
+                    this.cue.visible = false;
                 }
                 // TODO: DO math here to know what the x and y of the circle should be                        
                 
