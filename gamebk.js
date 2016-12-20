@@ -1522,7 +1522,10 @@ Pool.Game.prototype = {
         }
         if(Player.isActive){
                 this.turnText.visible = true;
-        };
+                document.body.style.cursor = 'default';
+        }else{
+            document.body.style.cursor = 'none';
+        }
         
         if (this.resetting)
         {
