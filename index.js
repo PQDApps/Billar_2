@@ -39,8 +39,8 @@ var numberOfClients = 0; // Keep track of clients connected to socket
 ////////////////////////////
 // Mongo Database Testing //
 ////////////////////////////
-var mongoURL = "mongodb://localhost:27017/local";
-//var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
+//var mongoURL = "mongodb://localhost:27017/local";
+var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
 //var mongoURL = "mongodb://ec2-52-25-163-107.us-west-2.compute.amazonaws.com:27017/local";
 
 MongoClient.connect(mongoURL, function(err, db) {
@@ -212,21 +212,21 @@ io.on('connection', function(socket){
     })
       
   
-  /*socket.on('gameOver', function(){
+  socket.on('gameOver', function(){
      socket.emit('gameOver'); 
-  });*/
+  });/*
 socket.on('gameOver', room,function(){
     //socket.emit('gameOver');
      io.to(room).emit("gameover");
- });
+ });*/
 
- /* socket.on('genericAlert',function(){
+  socket.on('genericAlert',function(){
         socket.emit('genericAlert');
-    });*/
+    });/*
  socket.on('genericAlert', room,function(){
        //socket.emit('genericAlert');
      io.to(room).emit('genericAlert');
-   });
+   });*/
 
 /*
 var rooms = {
