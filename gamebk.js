@@ -1158,7 +1158,8 @@ Pool.Game.prototype = {
             if (this.balls.total === 0)
             {
                 //this.time.events.add(3000, this.gameOver, this);
-                socket.emit('gameOver');
+                //socket.emit('gameOver');
+                socket.emit('gameOver', roomNumber);
             }
             //socket.emit('gameOver');
             //alert(inspeccionar(ball));
