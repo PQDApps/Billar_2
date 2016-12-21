@@ -336,7 +336,7 @@ Pool.Game.prototype = {
         this.powerLevel.crop(this.powerRect);
 
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
-        this.startButton = this.add.button(8, 60, 'startBtn', function(){this.hitPocket; document.body.style.cursor = 'none';}, this, 2, 0, 1);
+        this.startButton = this.add.button(8, 60, 'startBtn', this.hitPocket, this, 2, 0, 1);
         //this.startButton.onInputOver.add(this.hideCursor, this);
         this.practiceButton = this.add.button(8, 100, 'practiceBtn', this.practiceActivate, this, 2, 0, 1);
         this.standupButton = this.add.button(8, 160, 'standupBtn', this.hitPocket, this, 2, 0, 1);
@@ -631,10 +631,6 @@ Pool.Game.prototype = {
         }
         cueballInPocket = false; 
     },
-    
-   /* hideCursor: function(){
-        document.getElementById('game').style.cursor = 'none';
-    }*/
     
     dontChangePlayer: function(i) {
         // Set the other player to isActive true
