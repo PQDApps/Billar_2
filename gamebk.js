@@ -617,7 +617,12 @@ Pool.Game.prototype = {
                 this.resetCueBall();
             }
             document.body.style.cursor = 'default';
-            this.cue.visible = true;
+            if(this.resseting){
+                this.cue.visible = false;
+                cueAllower = false;
+            }else{
+                this.cue.visible = true;
+            }
         }else{
             document.body.style.cursor = 'none';
         }
@@ -1536,6 +1541,8 @@ Pool.Game.prototype = {
             this.placeball.y = this.math.clamp(this.input.y, this.placeRect.top, this.placeRect.bottom);
            /* this.placeballShadow.x = this.placeball.x + 10;
             this.placeballShadow.y = this.placeball.y + 10;*/
+            cueAllower = false;
+            this.cue.visible = false;
         }
         else if (this.firstPlacement){
             this.placeball.x = this.math.clamp(this.input.x, this.cueballPlaceRect.left, this.cueballPlaceRect.right);
