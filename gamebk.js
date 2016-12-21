@@ -100,7 +100,7 @@ var madeShot = false;
 var missedShot = false;
 var cueballInPocket = false;
 var pocketBalls = [];
-var roja;
+//var roja;
 var GameBalls = [];
 
 var socket = io();
@@ -141,7 +141,7 @@ Pool.Preloader.prototype = {
         this.load.spritesheet('startBtn','startBtnSheet.png', 67, 28);
         this.load.spritesheet('practiceBtn','practiceBtnSheet.png', 67, 28);
         this.load.spritesheet('standupBtn','standupBtnSheet.png', 67, 28);
-        this.load.spritesheet('roja', 'balls/bg.png',24,24);
+       // this.load.spritesheet('roja', 'balls/bg.png',24,24);
         //this.load.atlasJSONHash( 'game', 'balls/bg.png', 'bals/controller.json' );
 
 
@@ -152,9 +152,9 @@ Pool.Preloader.prototype = {
     create: function () {
 
         this.state.start('Pool.MainMenu');
-        roja = game.add.sprite(0,0, 'roja');
+        //roja = game.add.sprite(0,0, 'roja');
         
-        roja.animations.add('right', [0,1,2]);
+        //roja.animations.add('right', [0,1,2]);
         
     }
 
@@ -336,12 +336,13 @@ Pool.Game.prototype = {
         this.powerLevel.crop(this.powerRect);
 
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
-        this.startButton = this.add.button(8, 60, 'startBtn', this.hitPocket, this, 2, 0, 1);
+        this.startButton = this.add.button(8, 60, 'startBtn', function(){this.hitPocket; document.body.style.cursor = 'none';}, this, 2, 0, 1);
+        //this.startButton.onInputOver.add(this.hideCursor, this);
         this.practiceButton = this.add.button(8, 100, 'practiceBtn', this.practiceActivate, this, 2, 0, 1);
         this.standupButton = this.add.button(8, 160, 'standupBtn', this.hitPocket, this, 2, 0, 1);
         //this.startButton.onInputOver(over, this.startButton);
 
-
+        
         //  The pockets
         this.pockets = this.add.sprite();
 
@@ -616,7 +617,8 @@ Pool.Game.prototype = {
                 cueballInPocket = false;             
                 this.resetCueBall();
             }
-            document.body.style.cursor = 'default';
+            //document.body.style.cursor = 'default';
+            //document.getElementById('game').style.cursor = 'default';
             if(this.resseting){
                 this.cue.visible = false;
                 cueAllower = false;
@@ -624,10 +626,15 @@ Pool.Game.prototype = {
                 this.cue.visible = true;
             }
         }else{
-            document.body.style.cursor = 'none';
+            //document.body.style.cursor = 'none';
+            document.getElementById('game').style.cursor = 'none';
         }
         cueballInPocket = false; 
     },
+    
+   /* hideCursor: function(){
+        document.getElementById('game').style.cursor = 'none';
+    }*/
     
     dontChangePlayer: function(i) {
         // Set the other player to isActive true
@@ -1233,7 +1240,7 @@ Pool.Game.prototype = {
         //Rather than a solution, a temporal solution. It places the Cue on the table so the player can't hit it while waiting
         this.cueball.body.x = 250;
         this.cueball.body.y = 302;
-        roja.animations.play('right',10, true);
+        //roja.animations.play('right',10, true);
     },
     
     resetCueBall: function (first) {
@@ -1530,9 +1537,11 @@ Pool.Game.prototype = {
         }
         if(Player.isActive){
                 this.turnText.visible = true;
-                document.body.style.cursor = 'default';
+                //document.body.style.cursor = 'default';
+           // document.getElementById('game').style.cursor = 'default';
         }else{
-            document.body.style.cursor = 'none';
+            //document.body.style.cursor = 'none';
+            document.getElementById('game').style.cursor = 'none';
         }
         
         if (this.resetting)
