@@ -337,12 +337,11 @@ Pool.Game.prototype = {
 
         this.leftRect = this.add.sprite(0, 0, 'leftRectangle'); // The left blue rectagle that holds the buttons
         this.startButton = this.add.button(8, 60, 'startBtn', this.hitPocket, this, 2, 0, 1);
-        //this.startButton.onInputOver.add(this.hideCursor, this);
         this.practiceButton = this.add.button(8, 100, 'practiceBtn', this.practiceActivate, this, 2, 0, 1);
         this.standupButton = this.add.button(8, 160, 'standupBtn', this.hitPocket, this, 2, 0, 1);
         //this.startButton.onInputOver(over, this.startButton);
 
-        
+
         //  The pockets
         this.pockets = this.add.sprite();
 
