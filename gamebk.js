@@ -1046,9 +1046,11 @@ Pool.Game.prototype = {
     hitBall: function(body, bodyB, shapeA, shapeB, equation){
         if(body){
             if(body.sprite.key == "balls"){
-                this.time.events.add(50, this.doEffect, this);
+                //this.time.events.add(50, this.doEffect, this);
+                this.doEffect();
             } else if(body.sprite.key == "tableTwo.fw"){
-                this.time.events.add(50, this.doEffectTable, this);
+                //this.time.events.add(50, this.doEffectTable, this);
+                this.doEffectTable();
             } 
             if(body.sprite.isStripe == 8){
                 console.log("You hit ball 8!!!!!");
