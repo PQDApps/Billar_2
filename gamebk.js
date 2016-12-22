@@ -1085,29 +1085,34 @@ Pool.Game.prototype = {
             console.log("Effect Type: " + e);
             if (e == "stop") {
                 this.cueball.body.setZeroVelocity();
+                console.log(this.cueball.x, this.cueball.y);
             } else if (e == "back") {
                 var newAngle = this.angle + 3.14;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
                 var py = (Math.sin(newAngle) * this.effectSpeed);
                 console.log("Do Effect: " +newAngle+ " " + px +","+py);
+                console.log(this.cueball.x, this.cueball.y);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "front") {
                 var newAngle = this.angle + 3.14;
                 var px = (Math.cos(newAngle) * -this.effectSpeed);
                 var py = (Math.sin(newAngle) * -this.effectSpeed);
                 console.log("Do Effect: " +newAngle+ " " + px +","+py);
+                console.log(this.cueball.x, this.cueball.y);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "left") {
                 var newAngle = this.angle - 1.5708;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
                 var py = (Math.sin(newAngle) * this.effectSpeed);
                 console.log("Do Effect: " +newAngle+ " " + px +","+py);
+                console.log(this.cueball.x, this.cueball.y);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             } else if (e == "right") {
                 var newAngle = this.angle + 1.5708;
                 var px = (Math.cos(newAngle) * this.effectSpeed);
                 var py = (Math.sin(newAngle) * this.effectSpeed);
                 console.log("Do Effect: " +newAngle+ " " + px +","+py);
+                console.log(this.cueball.x, this.cueball.y);
                 this.cueball.body.applyImpulse([px, py], this.cueball.x, this.cueball.y);
             }
         }
