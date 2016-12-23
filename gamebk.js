@@ -626,7 +626,7 @@ Pool.Game.prototype = {
             }
         }else{
             //document.body.style.cursor = 'none';
-            document.getElementById('game').style.cursor = 'none';
+            //document.getElementById('game').style.cursor = 'none';
         }
         cueballInPocket = false; 
     },
@@ -1038,7 +1038,7 @@ Pool.Game.prototype = {
             }
             this.pressedDown = false; // Mouse no longer pressed
         }else{
-            document.body.style.cursor = 'none';
+            //document.body.style.cursor = 'none';
         }
     },
 
@@ -1540,7 +1540,7 @@ Pool.Game.prototype = {
         if(Player.isActive){
                 this.turnText.visible = true;
                 //document.body.style.cursor = 'default';
-           // document.getElementById('game').style.cursor = 'default';
+            document.getElementById('game').style.cursor = 'default';
         }else{
             //document.body.style.cursor = 'none';
             document.getElementById('game').style.cursor = 'none';
