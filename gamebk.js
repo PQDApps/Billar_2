@@ -167,6 +167,7 @@ Pool.MainMenu.prototype = {
     create: function () {
 
         this.stage.backgroundColor = 0xF8FAF8;
+        this.stage.disableVisibilityChange = true;
 
         var logo = this.add.image(this.world.centerX, 140, 'logo');
         logo.anchor.x = 0.5;
