@@ -902,6 +902,7 @@ Pool.Game.prototype = {
         ball.body.setMaterial(this.ballMaterial);
         ball.body.damping = 0.70;
         ball.body.angularDamping = 0.75;
+        ball.body.inpocket = false;
         ball.body.createBodyCallback(this.pockets, this.hitPocket, this);
         return ball;
     },

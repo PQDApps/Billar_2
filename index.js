@@ -201,7 +201,7 @@ var rooms = {
     serverGame[0].cueball = cueball;
 
     // Same amount of balls or cueball is in pocket, switch player
-    if (serverBalls.length == balls.length || cueball.body.inpocket){
+    if (serverBalls.length == balls.length || cueball.inpocket){
       // Still the same number of balls, change activeplayer
       io.to(room).emit('changePlayer', player.number, serverGame[0].cueball); 
       console.log(Player.name + " " + "didn't make a shot");
