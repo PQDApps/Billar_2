@@ -40,7 +40,7 @@ var numberOfClients = 0; // Keep track of clients connected to socket
 // Mongo Database Testing //
 ////////////////////////////
 var mongoURL = "mongodb://localhost:27017/local";
-//var mongoURL = "mongodb://user:user@ds025792.mlab.com:25792/survey_info";
+//var mongoURL = "mongodb://default:default@ds025792.mlab.com:25792/survey_info";
 //var mongoURL = "mongodb://ec2-52-25-163-107.us-west-2.compute.amazonaws.com:27017/local";
 
 MongoClient.connect(mongoURL, function(err, db) {
@@ -198,12 +198,14 @@ var rooms = {
     });
     console.log(serverGame);
     var serverBalls = serverGame[0].balls;
-    
-    // Same amount of balls, switch player
-    if (serverBalls.length == balls.length){
+    serverGame[0].cueball = cueball;
+
+    // Same amount of balls or cueball is in pocket, switch player
+    if (serverBalls.length == balls.length || cueball.body.inpocket){
       // Still the same number of balls, change activeplayer
-      io.to(room).emit('changePlayer', player.number); 
+      io.to(room).emit('changePlayer', player.number, serverGame[0].cueball); 
       console.log(Player.name + " " + "didn't make a shot");
+      console.log(Player.name + " put cueball in pocket: " + cueball.inpocket);
     }
     
     // Different amount of balls
@@ -264,7 +266,7 @@ var rooms = {
         if (solidCount > 0 && stripeCount > 0){
           io.to(room).emit('solidstripe', player.number, 'solid');
           // Two balls fell so change player
-          io.to(room).emit('changePlayer', player.number);
+          io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);
         }       
       }
       
@@ -295,7 +297,7 @@ var rooms = {
         
         if (findDifferentBall.length > 0){
           // Change players
-          io.to(room).emit('changePlayer', player.number);
+          io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);
         } else {
           // Dont change player
           io.to(room).emit('dontChangePlayer', player.number); 
@@ -303,7 +305,6 @@ var rooms = {
       }
     }
     serverGame[0].balls = balls;
-    serverGame[0].cueball = cueball;
     io.to(room).emit('placeballs', serverGame[0].balls, serverGame[0].cueball);
   });
   

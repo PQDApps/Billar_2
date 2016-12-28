@@ -549,7 +549,7 @@ Pool.Game.prototype = {
     
     getCueBall: function() {
         var currentCueBall = this.cueball.body;
-        var serverCueBall = {x: currentCueBall.x, y: currentCueBall.y};
+        var serverCueBall = {x: currentCueBall.x, y: currentCueBall.y, inpocket: currentCueBall.inpocket};
         return serverCueBall;
     },
     
@@ -608,13 +608,17 @@ Pool.Game.prototype = {
         }
     },
 
-    changePlayer: function(i) {
+    changePlayer: function(i, serverCueBall) {
         // Set the other player to isActive true
         if (Player.number != i){
             Player.isActive = true;
             this.moveArrow(Player.isStripe, Player.isSolid);
             //document.body.style.cursor = 'default';
             //document.getElementById('game').style.cursor = 'default';
+            if(serverCueBall.inpocket){
+                console.log("Place balls, resetcueball reached");
+                this.resetCueBall();          
+            }
             if(this.resseting){
                 this.cue.visible = false;
                 cueAllower = false;
@@ -906,10 +910,6 @@ Pool.Game.prototype = {
         console.log(serverBalls);
         console.log(this.balls.children);
         console.log("Cueball in pocket: " + cueballInPocket);
-        if(cueballInPocket){
-            console.log("Place balls, resetcueball reached");
-            this.resetCueBall();          
-        }
         this.cueball.body.setZeroVelocity();
         this.cueball.body.x = serverCueBall.x;
         this.cueball.body.y = serverCueBall.y;
@@ -1123,7 +1123,7 @@ Pool.Game.prototype = {
     
     cueballServer: function() {
         console.log("Cueball server received");      
-        //this.resetCueBall();                   
+                          
     },
     
     //hitPocket: function (ball, pocket) {
@@ -1243,13 +1243,13 @@ Pool.Game.prototype = {
         this.cueball.visible = false;
         this.cueball.body.x = 16;
         this.cueball.body.y = 16;
+        this.cueball.body.inpocket = true;
         //roja.animations.play('right',10, true);
     },
     
     resetCueBall: function (first) {
         
         this.cueball.body.setZeroVelocity();
-        cueballInPocket = false; 
         
         //  Move it to a 'safe' area
         this.cueball.body.x = 16; 
@@ -1330,6 +1330,8 @@ Pool.Game.prototype = {
 
         this.resetting = false;
         this.firstPlacement = false;
+
+        this.cueball.body.inpocket = false; // Cueball no longer in pocket
 
         this.input.onDown.remove(this.placeCueBall, this); // Remove on click, place ball
         //this.input.onUp.add(this.takeShot, this);   
