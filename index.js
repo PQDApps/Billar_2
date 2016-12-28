@@ -56,76 +56,8 @@ MongoClient.connect(mongoURL, function(err, db) {
 
 
 io.on('connection', function(socket){
-  // Socket connection successful
-  /*
-  console.log('a user connected '+ socket.id);
-  //numberOfClients++; //Increment when user connects
-  
-  socket.on('assignNumber', function(roomName, playerClient){
-    numberOfClients = numberOfClients++;
-    MongoClient.connect(mongoURL, function(err, db) {
-      if(!err){
-
-      //  createRooms();
-        rooms.findOne({"room" : roomName}, function findRoom (err, roomItem) {
-          if (err) {
-            console.log("Mongo error: " + err);
-            //res.status(409).send({Message: "Room name already exists."});
-          }
-          if (roomItem) {
-            console.log("Adding user to room");
-            var playerNumber = "";
-            var canSet = true;
-
-            // Check if the user is already in this room
-            if (roomItem.playerOne == playerClient.user || roomItem.playerTwo == playerClient.user) {
-              console.log("This user is already in this room");
-              canSet = false;
-              if (roomItem.playerOne == playerClient.user){
-                var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id); 
-                socket.emit('assignNumber', player);
-              } else {
-                var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
-                socket.emit('assignNumber', player);
-              }
-            }
-            // If user is not part of the room yet assign the user to a room
-            if (canSet == true) {
-              // TODO: Make this if statement just one rooms.update by using a variable in $set
-              if (roomItem.playerOne == null) { // No users in room, set player one
-                rooms.update({"room":roomName}, {$set: {"playerOne": playerClient.user}}, function createRoom (err, result){
-                  if (err) {
-                    //TODO: do something with error
-                  }
-                  console.log(result);
-                  // Create user and emit user back to player
-                  var player = new Player('Player 1', playerClient.user, 1, false, false, false, socket.id);
-                  socket.emit('assignNumber', player);
-                });
-              } else if (roomItem.playerTwo == null) { // One user in room, set player two
-                rooms.update({"room":roomName}, {$set: {"playerTwo": playerClient.user}}, function createRoom (err, result){
-                  if (err) {
-                    //TODO: do something with error
-                  }
-                  console.log(result);
-                  var player = new Player('Player 2', playerClient.user, 2, false, false, false, socket.id); 
-                  socket.emit('assignNumber', player);
-                });
-              } else {
-                console.log("Room is full");
-              }
-            }
-          }
-        })
-      }
-    })
-  });*/
-
-  console.log('a user connected '+ socket.id);
-  //numberOfClients++; //Increment when user connects
-  
+    console.log('a user connected '+ socket.id);
     
-  //socket.on('assignNumber', function(roomName, playerClient, cuartos){
     socket.on('assignNumber', function(roomName, playerClient, roomNumber){
     numberOfClients = numberOfClients++;
     console.log("Ya entró al assignNumber");

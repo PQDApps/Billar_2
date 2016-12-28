@@ -613,10 +613,6 @@ Pool.Game.prototype = {
         if (Player.number != i){
             Player.isActive = true;
             this.moveArrow(Player.isStripe, Player.isSolid);
-            if (cueballInPocket){   
-                cueballInPocket = false;             
-                this.resetCueBall();
-            }
             //document.body.style.cursor = 'default';
             //document.getElementById('game').style.cursor = 'default';
             if(this.resseting){
@@ -628,8 +624,7 @@ Pool.Game.prototype = {
         }else{
             //document.body.style.cursor = 'none';
             //document.getElementById('game').style.cursor = 'none';
-        }
-        cueballInPocket = false; 
+        }         
     },
     
     dontChangePlayer: function(i) {
@@ -910,6 +905,11 @@ Pool.Game.prototype = {
     placeBalls: function (serverBalls, serverCueBall) {
         console.log(serverBalls);
         console.log(this.balls.children);
+        console.log("Cueball in pocket: " + cueballInPocket);
+        if(cueballInPocket){
+            console.log("Place balls, resetcueball reached");
+            this.resetCueBall();          
+        }
         this.cueball.body.setZeroVelocity();
         this.cueball.body.x = serverCueBall.x;
         this.cueball.body.y = serverCueBall.y;
@@ -1123,7 +1123,7 @@ Pool.Game.prototype = {
     
     cueballServer: function() {
         console.log("Cueball server received");      
-        this.resetCueBall();                   
+        //this.resetCueBall();                   
     },
     
     //hitPocket: function (ball, pocket) {
@@ -1150,18 +1150,17 @@ Pool.Game.prototype = {
             this.waitCueball();
         }else{             
             this.makePocketBall(150, 495, ball.sprite.color);
-            //ball.sprite.destroy();
             if(Player.isStripe == true && ball.isStripe == true && Player.isActive == true){
-            //this.score += 30;
+                //this.score += 30;
                 Player.playerScore += 30;
-            /*console.log("V has come to: "+Player);
-            console.log("Numero de player: "+Player.name);
-            console.log("Numero de player: "+Player.name);
-            //socket.emit('newscore', this.score, roomName);*/
-            //alert("V has come to: "+inspeccionar(Player));
-            /*alert("Numero de player: "+player.name);
-            alert("Es Stripe (rayada)?: "+player.isStripe);
-            alert("es solido?: "+player.isSolid);*/
+                /*console.log("V has come to: "+Player);
+                console.log("Numero de player: "+Player.name);
+                console.log("Numero de player: "+Player.name);
+                //socket.emit('newscore', this.score, roomName);*/
+                //alert("V has come to: "+inspeccionar(Player));
+                /*alert("Numero de player: "+player.name);
+                alert("Es Stripe (rayada)?: "+player.isStripe);
+                alert("es solido?: "+player.isSolid);*/
             }else{
                 Player.playerScore -=30;
             }
@@ -1241,8 +1240,9 @@ Pool.Game.prototype = {
 
         //  Move it to a 'safe' area
         //Rather than a solution, a temporal solution. It places the Cue on the table so the player can't hit it while waiting
-        this.cueball.body.x = 250;
-        this.cueball.body.y = 302;
+        this.cueball.visible = false;
+        this.cueball.body.x = 16;
+        this.cueball.body.y = 16;
         //roja.animations.play('right',10, true);
     },
     
