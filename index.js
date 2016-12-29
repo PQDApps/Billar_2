@@ -185,7 +185,7 @@ var rooms = {
   socket.on('ready', function(room, player, balls, cueball){
     if (player.number == 2) {
       console.log(balls);
-      games.push({room: room, balls: balls, cueball: cueball});
+      games.push({room: room, balls: balls, cueball: cueball, ready: 0});
       io.to(room).emit('ready');  
     }
   });
@@ -199,113 +199,163 @@ var rooms = {
     console.log(serverGame);
     var serverBalls = serverGame[0].balls;
     serverGame[0].cueball = cueball;
+    serverGame[0].ready++;
 
-    // Same amount of balls or cueball is in pocket, switch player
-    if (serverBalls.length == balls.length || cueball.inpocket){
-      // Still the same number of balls, change activeplayer
-      io.to(room).emit('changePlayer', player.number, serverGame[0].cueball); 
-      console.log(Player.name + " " + "didn't make a shot");
-      console.log(Player.name + " put cueball in pocket: " + cueball.inpocket);
+    // Don't emit, save as a variable    
+    var changePlayer = false;
+
+    // Check to see if nothing happened and change player
+    function changeImmediately(){
+      // Same amount of balls or cueball is in pocket, switch player
+      if (serverBalls.length == balls.length || cueball.inpocket){
+        // Still the same number of balls, change activeplayer
+        console.log(Player.name + " " + "didn't make a shot");
+        console.log(Player.name + " put cueball in pocket: " + cueball.inpocket);
+        changePlayer = true;
+        return true;
+      }
+      return false;
     }
     
-    // Different amount of balls
-    if (serverBalls.length != balls.length){
-      // The number of balls in the server and client are different
-      console.log(Player.user + " " + "made a shot");
-      
-      var missingBalls = []; // Array that holds which balls are no longer on the client side
-      var stripeCount = 0;
-      var solidCount = 0;      
-      // Serverballs length is 15 so you need to set the isStripe flag on both users
-      if (serverBalls.length == 15){        
-        for (var i = 0; i < serverBalls.length; i++){
-          var missingBallColor = null; // Hold the color of the server ball
-          var check = balls.filter(function (obj) {
-            missingBallColor = serverBalls[i].color
-            return obj.color === serverBalls[i].color;
-          });
-          
-          // If client ball is missing check if the ball isStripe
-          if (check.length == 0){
-            var findBall = serverBalls.filter(function (obj) {           
-              return obj.color === missingBallColor;
-            });
-            missingBalls.push(findBall[0]);
-          }
-          console.log(check);
-        }
-        
-        // If client ball is missing check if the ball isStripe        
-        for (var i=0; i < missingBalls.length; i++){
-          if (missingBalls[i].isStripe == false){
-              console.log("ATENCION!!! La bola es: "+missingBalls[i].isStripe);
-            solidCount++; 
-            console.log("Cantidad solidas: "+solidCount+", anoto player: "+player.number);
-          } else {
-            stripeCount++;
-            console.log("Cantidad Stripes: "+stripeCount);
-          }          
-            console.log("Cantidad solidas: "+solidCount);
-            console.log("Cantidad Stripes: "+stripeCount);
-            console.log("Anotó player: "+player.number);
-        }
-
-        // Stripe count or solid count is 0 assign isStripe to player 
-        if (solidCount > 0){
-          // Emit isStripe = true to the player
-          io.to(room).emit('solidstripe', player.number, 'solid');
-          io.to(room).emit('dontChangePlayer', player.number);
-        }
-        if (stripeCount > 0){
-          // Emit isStripe = false to the player
-          io.to(room).emit('solidstripe', player.number, 'stripe');
-          io.to(room).emit('dontChangePlayer', player.number);
-        }
-        
-        // If both solids and stripes made it into the pockets
-        if (solidCount > 0 && stripeCount > 0){
-          io.to(room).emit('solidstripe', player.number, 'solid');
-          // Two balls fell so change player
-          io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);
-        }       
-      }
-      
-      // Serverballs length is less than 15, compare the arrays      
-      if (serverBalls.length < 15){
-        for (var i = 0; i < serverBalls.length; i++){
-          var missingBallColor = null; // Hold the color of the server ball
-          var check = balls.filter(function (obj) {
-            missingBallColor = serverBalls[i].color
-            return obj.color === serverBalls[i].color;
-          });
-          
-          // If client ball is missing check if the ball isStripe
-          if (check.length == 0){
-            var findBall = serverBalls.filter(function (obj) {           
-              return obj.color === missingBallColor;
-            });
-            missingBalls.push(findBall[0]);
-          }
-          console.log(check);
-        }
-        
-        var playertype = !player.isStripe;
-        // See if there's a ball in the pocket that the isn't the players type, stripe/solid
-        var findDifferentBall = missingBalls.filter(function (obj) {           
-          return obj.isStripe === playertype;
+    var missingBalls = []; // Array that holds which balls are no longer on the client side
+    var stripeCount = 0; // Counting which balls were put in pocket so
+    var solidCount = 0;  // we can set the correct ball type or change player
+     
+    // Serverballs length is 15 so you need to set the isStripe flag on both users
+    function setBallType(){        
+      for (var i = 0; i < serverBalls.length; i++){
+        var missingBallColor = null; // Hold the color of the server ball
+        var check = balls.filter(function (obj) {
+          missingBallColor = serverBalls[i].color
+          return obj.color === serverBalls[i].color;
         });
         
-        if (findDifferentBall.length > 0){
-          // Change players
-          io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);
+        // If client ball is missing check if the ball isStripe
+        if (check.length == 0){
+          var findBall = serverBalls.filter(function (obj) {           
+            return obj.color === missingBallColor;
+          });
+          missingBalls.push(findBall[0]);
+        }
+        console.log(check);
+      }
+      
+      // If client ball is missing check if the ball isStripe        
+      for (var i=0; i < missingBalls.length; i++){
+        if (missingBalls[i].isStripe == false){
+          console.log("ATENCION!!! La bola es: "+missingBalls[i].isStripe);
+          solidCount++; 
+          console.log("Cantidad solidas: "+solidCount+", anoto player: "+player.number);
         } else {
-          // Dont change player
-          io.to(room).emit('dontChangePlayer', player.number); 
-        }                                      
+          stripeCount++;
+          console.log("Cantidad Stripes: "+stripeCount);
+        }          
+          console.log("Cantidad solidas: "+solidCount);
+          console.log("Cantidad Stripes: "+stripeCount);
+          console.log("Anotó player: "+player.number);
+      }
+
+      // Stripe count or solid count is 0 assign isStripe to player 
+      if (solidCount > 0 & stripeCount == 0){
+        // Emit isStripe = true to the player
+        io.to(room).emit('solidstripe', player.number, 'solid');
+        changePlayer = false;
+      }
+      if (stripeCount > 0 & solidCount == 0){
+        // Emit isStripe = false to the player
+        io.to(room).emit('solidstripe', player.number, 'stripe');
+        changePlayer = false;        
+      }
+      
+      // If both solids and stripes made it into the pockets
+      if (solidCount > 0 && stripeCount > 0){
+        io.to(room).emit('solidstripe', player.number, 'solid');
+        // Two balls fell so change player
+        changePlayer = true;
+        io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);
+      }       
+    }
+    
+    // Serverballs length is less than 15, compare the arrays      
+    function compare(){
+      for (var i = 0; i < serverBalls.length; i++){
+        var missingBallColor = null; // Hold the color of the server ball
+        var check = balls.filter(function (obj) {
+          missingBallColor = serverBalls[i].color
+          return obj.color === serverBalls[i].color;
+        });
+        
+        // If client ball is missing check if the ball isStripe
+        if (check.length == 0){
+          var findBall = serverBalls.filter(function (obj) {           
+            return obj.color === missingBallColor;
+          });
+          missingBalls.push(findBall[0]);
+        }
+        console.log(check);
+      }
+      
+      var playertype = !player.isStripe;
+      // See if there's a ball in the pocket that the isn't the players type, stripe/solid
+      var findDifferentBall = missingBalls.filter(function (obj) {           
+        return obj.isStripe === playertype;
+      });
+      
+      if (findDifferentBall.length > 0){
+        // Change players
+        changePlayer = true;        
+      } else {
+        // Dont change player
+        changePlayer = false; 
+      }                                      
+    }
+
+    serverGame[0].balls = balls;
+
+    function getEmitObject(){
+      var emitObject = {
+        serverBalls: serverGame[0].balls,
+        serverCueBall: serverGame[0].cueball,
+        changePlayer: changePlayer,        
+      }
+      return emitObject;
+    }
+
+    function emit(){
+      if(changePlayer){
+        io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);  
+      } else {
+        io.to(room).emit('dontChangePlayer', player.number);
+      }  
+      io.to(room).emit('placeballs', getEmitObject());
+    }
+
+    /**
+     * Here we execute the functions we want to, depending on the different
+     * comparisons we make.
+     */
+    var change = changeImmediately();
+    if(change){
+      /**
+       * Emit something so player is changed, and balls are placed at
+       * correct x and y values. Nothing has really changed
+       * yet, only the position of the cueball and balls. 
+       * */
+      //emit();
+      //return; // Stop execution, no need to go further
+    } else {
+       // The number of balls in the server and client are different
+      console.log(Player.user + " " + "made a shot");
+      if (serverBalls.length == 15){
+        setBallType();
+        //emit();
+      } else {
+        // Compare stuff here
+        compare();
+        //emit();
       }
     }
-    serverGame[0].balls = balls;
-    io.to(room).emit('placeballs', serverGame[0].balls, serverGame[0].cueball);
+    emit();
   });
   
   // When cueball falls in the hole

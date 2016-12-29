@@ -907,17 +907,17 @@ Pool.Game.prototype = {
         return ball;
     },
 
-    placeBalls: function (serverBalls, serverCueBall) {
-        console.log(serverBalls);
+    placeBalls: function (emitObject) {
+        console.log(emitObject.serverBalls);
         console.log(this.balls.children);
         console.log("Cueball in pocket: " + cueballInPocket);
         this.cueball.body.setZeroVelocity();
-        this.cueball.body.x = serverCueBall.x;
-        this.cueball.body.y = serverCueBall.y;
-        for (var i = 0; i < serverBalls.length; i++) {
+        this.cueball.body.x = emitObject.serverCueBall.x;
+        this.cueball.body.y = emitObject.serverCueBall.y;
+        for (var i = 0; i < emitObject.serverBalls.length; i++) {
             this.balls.children[i].body.setZeroVelocity();
-            this.balls.children[i].body.x = serverBalls[i].x;
-            this.balls.children[i].body.y = serverBalls[i].y;            
+            this.balls.children[i].body.x = emitObject.serverBalls[i].x;
+            this.balls.children[i].body.y = emitObject.serverBalls[i].y;            
         }
     },
 
