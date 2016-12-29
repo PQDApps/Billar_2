@@ -132,7 +132,6 @@ io.on('connection', function(socket){
             }
      
      if(roomItem.playerTwo != ""){
-                    socket.broadcast.emit('gameStarted');
                     socket.emit('gameStarted');
                 }
                 
