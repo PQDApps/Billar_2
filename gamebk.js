@@ -914,10 +914,27 @@ Pool.Game.prototype = {
         this.cueball.body.setZeroVelocity();
         this.cueball.body.x = emitObject.serverCueBall.x;
         this.cueball.body.y = emitObject.serverCueBall.y;
-        for (var i = 0; i < emitObject.serverBalls.length; i++) {
-            this.balls.children[i].body.setZeroVelocity();
-            this.balls.children[i].body.x = emitObject.serverBalls[i].x;
-            this.balls.children[i].body.y = emitObject.serverBalls[i].y;            
+
+        // Check if balls are the same
+        var sballs = emitObject.serverBalls;
+        // TODO: Temporary solution, since array length might be the same but might contains different balls
+        if(sballs.length == this.balls.children.length){
+            for (var i = 0; i < sballs.length; i++) {
+                this.balls.children[i].body.setZeroVelocity();
+                this.balls.children[i].body.x = sballs[i].x;
+                this.balls.children[i].body.y = sballs[i].y;            
+            }
+        } else {            
+            console.log("WHOA! # of Balls is not the same");
+            // Compare the balls and rectify it so that both clients are the same
+            /*
+            // Do a find here to compare two arrays
+            for (var i = 0; i < sballs.length; i++) {
+                var findDifferentBall = sballs.filter(function (obj) {           
+                    return obj.color === this.balls.children[i].color;
+                });
+            }
+            */
         }
         socket.emit('finally', roomName, emitObject, Player);
     },
