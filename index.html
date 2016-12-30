@@ -269,6 +269,7 @@
             var password;
             
       function onSignIn(googleUser) {
+            alert("done!");
             var profile = googleUser.getBasicProfile();
            /* console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
             console.log('Name: ' + profile.getName());
@@ -276,7 +277,7 @@
             console.log('Email: ' + profile.getEmail());*/
             userName = profile.getName();
             password = profile.getEmail();
-            
+            alert("done!");
             $.post('/api/login', {userName, password}, function(resp){
                     console.log("resp: "+resp);
                     //alert("Entrando al post PAPU"+resp.Status);
