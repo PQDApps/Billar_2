@@ -919,7 +919,7 @@ Pool.Game.prototype = {
             this.balls.children[i].body.x = emitObject.serverBalls[i].x;
             this.balls.children[i].body.y = emitObject.serverBalls[i].y;            
         }
-        socket.emit('finally', roomName, emitObject.player, emitObject.changePlayer);
+        socket.emit('finally', roomName, emitObject, Player);
     },
 
     takeShot: function () {       

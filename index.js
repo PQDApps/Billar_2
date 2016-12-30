@@ -184,7 +184,7 @@ var rooms = {
   socket.on('ready', function(room, player, balls, cueball){
     if (player.number == 2) {
       console.log(balls);
-      games.push({room: room, balls: balls, cueball: cueball, ready: 0});
+      games.push({room: room, balls: balls, cueball: cueball, ready: [false, false]});
       io.to(room).emit('ready');  
     }
   });
@@ -315,7 +315,11 @@ var rooms = {
         serverBalls: serverGame[0].balls,
         serverCueBall: serverGame[0].cueball,
         player: player,
-        changePlayer: changePlayer        
+        changePlayer: changePlayer,
+        ready: [
+          false,
+          false
+        ]        
       }
       return emitObject;
     }
@@ -358,18 +362,21 @@ var rooms = {
   });
   
   // Called from 'placeBalls', once both players respond we change(or not) players
-  socket.on('finally', function(room, player, changePlayer){
+  socket.on('finally', function(room, emitObject, player){
     var serverGame = games.filter(function (obj) {
       return obj.room === room;
     });    
-    serverGame[0].cueball = cueball;
-    var ready = serverGame[0].ready++;
-    if(ready >= 2){
+    serverGame[0].ready[player.number-1] = true;
+    var ready = serverGame[0].ready;
+    console.log("Ready: " + ready);
+    if(ready[0] & ready[1]){
       // Emit change player stuff here
-      if(changePlayer){
-        io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);  
+      console.log("Ready to emit");
+      console.log("Change Player: " + emitObject.changePlayer);
+      if(emitObject.changePlayer){
+        io.to(room).emit('changePlayer', emitObject.player.number, serverGame[0].cueball);  
       } else {
-        io.to(room).emit('dontChangePlayer', player.number);
+        io.to(room).emit('dontChangePlayer', emitObject.player.number);
       }  
     }
   });
