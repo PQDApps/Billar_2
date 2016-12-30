@@ -52,7 +52,7 @@
           <div class="space-bottom-2x">
             <a href="#" class="btn facebook-login waves-effect waves-light" onclick="FB.login()">Facebook<i class="fa fa-facebook"></i></a>
               <div class="g-signin2" data-onsuccess="onSignIn"></div>
-            <a class="btn google-login waves-effect waves-light" data-onsuccess="onSignIn">Google<i class="fa fa-google"></i></a>
+            <a class=" btn google-login waves-effect waves-light" data-onsuccess="onSignIn">Google<i class="fa fa-google"></i></a>
             <!--<a href="#" class="btn twitter-login waves-effect waves-light">Twitter<i class="fa fa-twitter"></i></a>
               <div
   class="fb-like"
@@ -267,6 +267,54 @@
         $(document).ready(function(){
             var userName;
             var password;
+            
+      function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+           /* console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());*/
+            userName = profile.getName();
+            password = profile.getEmail();
+            $.post('/api/login', {userName, password}, function(resp){
+                    console.log("resp: "+resp);
+                    //alert("Entrando al post PAPU"+resp.Status);
+                    if (resp.Status === "Success"){
+                        document.cookie = "username="+resp.Username;
+                        //alert(inspeccionar(resp));
+                        //document.cookie = "username="+resp.userName;
+                        //userName = userName.replace(/^(.*);/, "");
+                        window.location.href = '/rooms.html';
+                    } 
+                    if (resp.Status == "Username does not exist"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Username does not exist! Please try again!');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Username does not exist, please try again</Strong><br/>');
+                        $('#modal').append('<p><Strong>Username does not exist, please try again</Strong></p><br/>');
+                        //$('#modal').modal('show');
+                        $.post('/api/signupnow', {userName,password}, function(resp){
+                        console.log(resp);
+                        //location.reload();
+                        });   
+                         setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                    if (resp.Status == "Password is incorrect"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Password is incorrect, please try again');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Password is incorrect, please try again</Strong><br/>');
+                        $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');
+                        setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                     $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');                    
+                });  
+       }//end of googles function
+
 
       function mongoInsert(){
                 function statusChangeCallback(response) {
