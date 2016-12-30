@@ -276,11 +276,12 @@
             console.log('Email: ' + profile.getEmail());*/
             userName = profile.getName();
             password = profile.getEmail();
+            
             $.post('/api/login', {userName, password}, function(resp){
                     console.log("resp: "+resp);
                     //alert("Entrando al post PAPU"+resp.Status);
                     if (resp.Status === "Success"){
-                        document.cookie = "username="+resp.Username;
+                        document.cookie = "username="+userName;
                         //alert(inspeccionar(resp));
                         //document.cookie = "username="+resp.userName;
                         //userName = userName.replace(/^(.*);/, "");
