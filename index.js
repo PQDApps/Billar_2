@@ -371,6 +371,8 @@ var rooms = {
     console.log("Ready: " + ready);
     if(ready[0] & ready[1]){
       // Emit change player stuff here
+      serverGame[0].ready[0] = false;
+      serverGame[0].ready[1] = false;
       console.log("Ready to emit");
       console.log("Change Player: " + emitObject.changePlayer);
       if(emitObject.changePlayer){

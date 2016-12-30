@@ -352,13 +352,13 @@ Pool.Game.prototype = {
 
         this.pockets.body.clearShapes();
 
-        this.pockets.body.addCircle(14, 118, 164); // Top left pocket 14
-        this.pockets.body.addCircle(10, 400, 152); // Top center pocket 10
-        this.pockets.body.addCircle(11, 682, 164); // Top right pocket. Modified from 14 to 11 so the player won't place it on the pocket
+        this.pockets.body.addCircle(24, 118, 164); // Top left pocket 14
+        this.pockets.body.addCircle(24, 400, 152); // Top center pocket 10
+        this.pockets.body.addCircle(24, 682, 164); // Top right pocket. Modified from 14 to 11 so the player won't place it on the pocket
 
-        this.pockets.body.addCircle(14, 118, 436); // Bottom left pocket
-        this.pockets.body.addCircle(10, 400, 448); // Bottom center pocket
-        this.pockets.body.addCircle(11, 682, 436); // Bottom right pocket. Modified from 14 to 11 so the player won't place it on the pocket
+        this.pockets.body.addCircle(24, 118, 436); // Bottom left pocket
+        this.pockets.body.addCircle(24, 400, 448); // Bottom center pocket
+        this.pockets.body.addCircle(24, 682, 436); // Bottom right pocket. Modified from 14 to 11 so the player won't place it on the pocket
 
         //  Ball shadows
         //this.shadows = this.add.group();
