@@ -198,7 +198,6 @@ var rooms = {
     console.log(serverGame);
     var serverBalls = serverGame[0].balls;
     serverGame[0].cueball = cueball;
-    serverGame[0].ready++;
 
     // Don't emit, save as a variable    
     var changePlayer = false;
@@ -315,16 +314,17 @@ var rooms = {
       var emitObject = {
         serverBalls: serverGame[0].balls,
         serverCueBall: serverGame[0].cueball,
-        changePlayer: changePlayer,        
+        player: player,
+        changePlayer: changePlayer        
       }
       return emitObject;
     }
 
     function emit(){
       if(changePlayer){
-        io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);  
+        //io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);  
       } else {
-        io.to(room).emit('dontChangePlayer', player.number);
+        //io.to(room).emit('dontChangePlayer', player.number);
       }  
       io.to(room).emit('placeballs', getEmitObject());
     }
@@ -357,6 +357,23 @@ var rooms = {
     emit();
   });
   
+  // Called from 'placeBalls', once both players respond we change(or not) players
+  socket.on('finally', function(room, player, changePlayer){
+    var serverGame = games.filter(function (obj) {
+      return obj.room === room;
+    });    
+    serverGame[0].cueball = cueball;
+    var ready = serverGame[0].ready++;
+    if(ready >= 2){
+      // Emit change player stuff here
+      if(changePlayer){
+        io.to(room).emit('changePlayer', player.number, serverGame[0].cueball);  
+      } else {
+        io.to(room).emit('dontChangePlayer', player.number);
+      }  
+    }
+  });
+
   // When cueball falls in the hole
   socket.on('cueball', function(room, player){
     if (player.isCurrent){
