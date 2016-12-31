@@ -34,7 +34,54 @@
 <!-- Adding/Removing class ".parallax" is enabling/disabling background parallax effect on elements with background images and attributes data-stellar-background-ratio applied to them. Make sure you also added/removed link to stellar.js script before </body>. -->
 <body class="is-preloader preloading parallax">
     
-
+    <script>function onSignIn(googleUser) {
+            alert("done!");
+            var profile = googleUser.getBasicProfile();
+           /* console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());*/
+            userName = profile.getName();
+            password = profile.getEmail();
+            alert("done!");
+            $.post('/api/login', {userName, password}, function(resp){
+                    console.log("resp: "+resp);
+                    //alert("Entrando al post PAPU"+resp.Status);
+                    if (resp.Status === "Success"){
+                        document.cookie = "username="+userName;
+                        //alert(inspeccionar(resp));
+                        //document.cookie = "username="+resp.userName;
+                        //userName = userName.replace(/^(.*);/, "");
+                        window.location.href = '/rooms.html';
+                    } 
+                    if (resp.Status == "Username does not exist"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Username does not exist! Please try again!');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Username does not exist, please try again</Strong><br/>');
+                        $('#modal').append('<p><Strong>Username does not exist, please try again</Strong></p><br/>');
+                        //$('#modal').modal('show');
+                        $.post('/api/signupnow', {userName,password}, function(resp){
+                        console.log(resp);
+                        //location.reload();
+                        });   
+                         setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                    if (resp.Status == "Password is incorrect"){
+                        //window.location.href = '/signuplogin.html';
+                        //alert('Password is incorrect, please try again');
+                        $('#alerts').empty();
+                        $('#alerts').append('<Strong>Password is incorrect, please try again</Strong><br/>');
+                        $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');
+                        setTimeout(function removeAlerts(){
+                                $('#alerts').empty();
+                            }, 5000);
+                    }
+                     $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');                    
+                });  
+       }</script>
   <!-- Preloader -->
   <!--
       Data API:
@@ -268,54 +315,7 @@
             var userName;
             var password;
             
-      function onSignIn(googleUser) {
-            alert("done!");
-            var profile = googleUser.getBasicProfile();
-           /* console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail());*/
-            userName = profile.getName();
-            password = profile.getEmail();
-            alert("done!");
-            $.post('/api/login', {userName, password}, function(resp){
-                    console.log("resp: "+resp);
-                    //alert("Entrando al post PAPU"+resp.Status);
-                    if (resp.Status === "Success"){
-                        document.cookie = "username="+userName;
-                        //alert(inspeccionar(resp));
-                        //document.cookie = "username="+resp.userName;
-                        //userName = userName.replace(/^(.*);/, "");
-                        window.location.href = '/rooms.html';
-                    } 
-                    if (resp.Status == "Username does not exist"){
-                        //window.location.href = '/signuplogin.html';
-                        //alert('Username does not exist! Please try again!');
-                        $('#alerts').empty();
-                        $('#alerts').append('<Strong>Username does not exist, please try again</Strong><br/>');
-                        $('#modal').append('<p><Strong>Username does not exist, please try again</Strong></p><br/>');
-                        //$('#modal').modal('show');
-                        $.post('/api/signupnow', {userName,password}, function(resp){
-                        console.log(resp);
-                        //location.reload();
-                        });   
-                         setTimeout(function removeAlerts(){
-                                $('#alerts').empty();
-                            }, 5000);
-                    }
-                    if (resp.Status == "Password is incorrect"){
-                        //window.location.href = '/signuplogin.html';
-                        //alert('Password is incorrect, please try again');
-                        $('#alerts').empty();
-                        $('#alerts').append('<Strong>Password is incorrect, please try again</Strong><br/>');
-                        $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');
-                        setTimeout(function removeAlerts(){
-                                $('#alerts').empty();
-                            }, 5000);
-                    }
-                     $('.modal-content').append('<Strong>Username or password is incorrect, please try again</Strong><br/>');                    
-                });  
-       }//end of googles function
+      //end of googles function
 
 
       function mongoInsert(){
