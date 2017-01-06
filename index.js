@@ -175,22 +175,27 @@ var rooms = {
       playerOne: "",
       playerTwo: "" 
     }*/
-
-
-
-
-
+  
+  
   // Both players are in the room and ready to play 
-  socket.on('ready', function(room, player, balls, cueball){
+  socket.on('ready', function(room, player, balls, cueball, pocketballs){
     if (player.number == 2) {
       console.log(balls);
-      games.push({room: room, balls: balls, cueball: cueball, ready: [false, false]});
+      games.push({room: room, balls: balls, cueball: cueball, pocketballs: pocketballs, ready: [false, false]});
       io.to(room).emit('ready');  
     }
   });
+
+  socket.on('sync', function(room){
+    var serverGame = games.filter(function (obj) {
+      return obj.room === room;
+    });
+    console.log(serverGame);
+    socket.emit('resync', serverGame);
+  });
   
   // Compare the state of the server and client games
-  socket.on('compareState', function(room, player, balls, cueball){
+  socket.on('compareState', function(room, player, balls, cueball, pocketballs){
     //io.to(room).emit('placeballs', balls);
     var serverGame = games.filter(function (obj) {
       return obj.room === room;
@@ -198,6 +203,8 @@ var rooms = {
     console.log(serverGame);
     var serverBalls = serverGame[0].balls;
     serverGame[0].cueball = cueball;
+    serverGame[0].pocketballs = pocketballs;
+    console.log(pocketballs);
 
     // Don't emit, save as a variable    
     var changePlayer = false;
@@ -313,6 +320,7 @@ var rooms = {
     function getEmitObject(){
       var emitObject = {
         serverBalls: serverGame[0].balls,
+        serverPocketBalls: serverGame[0].pocketballs,
         serverCueBall: serverGame[0].cueball,
         player: player,
         changePlayer: changePlayer,

@@ -106,6 +106,26 @@ var GameBalls = [];
 var socket = io();
 socket.emit('joinroom', roomName);
 
+var unsynced = false;
+var isActive = false;
+window.onfocus = function () { 
+  isActive = true;
+  if(unsynced){
+      console.log("LETS SYNC");
+      socket.emit('sync', roomName);
+  } 
+}; 
+
+window.onblur = function () { 
+  isActive = false; 
+}; 
+
+// test
+setInterval(function () { 
+  console.log(window.isActive ? 'active' : 'inactive');
+  console.log('isActive: ' + isActive); 
+}, 1000);
+
 var playerNumber = 0;
 var textnode = document.createTextNode("HELLO");
 
@@ -264,6 +284,7 @@ Pool.Game.prototype = {
         socket.on('dontChangePlayer', this.dontChangePlayer.bind(this));
         socket.on('cueball', this.cueballServer.bind(this));
         socket.on('placeballs', this.placeBalls.bind(this));
+        socket.on('resync', this.resync.bind(this));
         socket.on('gameStarted', function(){
             alert("Game started!");
         });
@@ -563,6 +584,7 @@ Pool.Game.prototype = {
         Player.socketId = i.socketId;
         this.playerNumberText.text = i.name;
         var gameballs = [];
+        var pocketballs = this.getPocketBalls();
         for (var i = 0; i < this.balls.length; i++)
         {
             var ball = this.balls.children[i];
@@ -574,7 +596,7 @@ Pool.Game.prototype = {
         }
         //TODO: Add cueball to ready
         var sendCueBall = this.getCueBall();
-        socket.emit('ready', roomName, Player, gameballs, sendCueBall);
+        socket.emit('ready', roomName, Player, gameballs, sendCueBall, pocketballs);
     },
 
     getGameBalls: function() {
@@ -582,6 +604,17 @@ Pool.Game.prototype = {
         for (var i = 0; i < this.balls.length; i++)
         {
             var ball = this.balls.children[i];
+            var serverBall = {color: ball.color, isStripe: ball.body.sprite.isStripe, x: ball.x, y: ball.y};
+            gameballs.push(serverBall);
+        }
+        return gameballs;    
+    },
+
+    getPocketBalls: function() {
+        var gameballs = [];
+        for (var i = 0; i < this.pocketBalls.length; i++)
+        {
+            var ball = this.pocketBalls.children[i];
             var serverBall = {color: ball.color, isStripe: ball.body.sprite.isStripe, x: ball.x, y: ball.y};
             gameballs.push(serverBall);
         }
@@ -907,6 +940,11 @@ Pool.Game.prototype = {
         return ball;
     },
 
+    resync: function(serverGame){
+        //unsynced = false;
+        console.log("received sync request");
+    },
+
     placeBalls: function (emitObject) {
         console.log(emitObject.serverBalls);
         console.log(this.balls.children);
@@ -926,15 +964,29 @@ Pool.Game.prototype = {
             }
         } else {            
             console.log("WHOA! # of Balls is not the same");
+            unsynced = true;
+            console.log("Unsynced: " + unsynced);
             // Compare the balls and rectify it so that both clients are the same
+            // Let's burn it all!!!!
+            // Destroy all the balls
+            // Do a find here to compare two 
             /*
-            // Do a find here to compare two arrays
-            for (var i = 0; i < sballs.length; i++) {
-                var findDifferentBall = sballs.filter(function (obj) {           
-                    return obj.color === this.balls.children[i].color;
-                });
-            }
-            */
+            this.balls.children.forEach(function(ball) {
+                ball.destroy();
+            }, this);
+
+            sballs.forEach(function(ball) {
+                this.makeBall(ball.x, ball.y, ball.color);
+            }, this); 
+
+            this.pocketBalls.forEach(function(ball) {
+                ball.destroy();
+            }, this);
+
+            emitObject.serverPocketBalls.forEach(function(ball) {
+                this.makePocketBall(ball.x, ball.y, ball.color);
+            }, this);
+            */           
         }
         socket.emit('finally', roomName, emitObject, Player);
     },
@@ -1554,9 +1606,10 @@ Pool.Game.prototype = {
             if (Player.isCurrent == true){
                 Player.isCurrent = false;
                 var currentBalls = this.getGameBalls();
+                var currentPocketBalls = this.getPocketBalls();
                 // TODO: Add cueball to compare state
                 var sendCueBall = this.getCueBall();
-                socket.emit('compareState', roomName, Player, currentBalls, sendCueBall);    
+                socket.emit('compareState', roomName, Player, currentBalls, sendCueBall, currentPocketBalls);    
             }                                
         }
         if(Player.isActive){
