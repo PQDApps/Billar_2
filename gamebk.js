@@ -102,6 +102,7 @@ var cueballInPocket = false;
 var pocketBalls = [];
 //var roja;
 var GameBalls = [];
+var eo = {}; // holds the emitObject, not good, another hack, but I need this to work
 
 var socket = io();
 socket.emit('joinroom', roomName);
@@ -122,8 +123,7 @@ window.onblur = function () {
 
 // test
 setInterval(function () { 
-  console.log(window.isActive ? 'active' : 'inactive');
-  console.log('isActive: ' + isActive); 
+  
 }, 1000);
 
 var playerNumber = 0;
@@ -562,6 +562,12 @@ Pool.Game.prototype = {
         this.ray = new Phaser.Line(this.cueball.x, this.cueball.y, 0, 0);
         this.ray.visible = false;
         
+        this.syncTheGame = this.add.bitmapText(this.world.centerX, this.world.centerY, 'fat-and-tiny', 'CLICK TO PLAY', 64);
+        this.syncTheGame.anchor.x = 0.5;
+        this.syncTheGame.smoothed = false;
+        this.syncTheGame.tint = 0xff0000;
+        this.syncTheGame.visible = false;
+
         // Once game starts assign number, socket id and other player information to Player object
         socket.emit('assignNumber', roomName, Player, roomNumber);
         this.okay = 0;
@@ -941,8 +947,33 @@ Pool.Game.prototype = {
     },
 
     resync: function(serverGame){
-        //unsynced = false;
+        unsynced = false;
         console.log("received sync request");
+        this.input.onUp.add(this.takeShot, this);
+        var ballsLength = this.balls.children.length;
+        var pocketBallsLength = this.pocketBalls.children.length;
+        for(var i=0; i < ballsLength; i++){
+            this.balls.children[0].destroy();
+        }
+
+        serverGame[0].balls.forEach(function(ball) {
+            this.makeBall(ball.x, ball.y, ball.color);
+        }, this); 
+
+        for(var i=0; i < pocketBallsLength; i++) {
+            this.pocketBalls.children[0].destroy();
+        }
+
+        serverGame[0].pocketballs.forEach(function(ball) {
+            this.makePocketBall(ball.x, ball.y, ball.color);
+        }, this);
+        // Start playing again after sync
+        socket.emit('finally', roomName, eo, Player);
+    },
+
+    sync: function(){
+        this.syncTheGame.visible = false;
+        socket.emit('sync', roomName);
     },
 
     placeBalls: function (emitObject) {
@@ -962,10 +993,20 @@ Pool.Game.prototype = {
                 this.balls.children[i].body.x = sballs[i].x;
                 this.balls.children[i].body.y = sballs[i].y;            
             }
+            socket.emit('finally', roomName, emitObject, Player);
         } else {            
             console.log("WHOA! # of Balls is not the same");
             unsynced = true;
             console.log("Unsynced: " + unsynced);
+            eo = emitObject
+            // Show a sync button or image            
+            this.syncTheGame.visible = true;
+
+            // Disable taking shot and sync
+            this.input.onUp.remove(this.takeShot, this);
+            this.input.onDown.addOnce(this.sync, this);
+
+            
             // Compare the balls and rectify it so that both clients are the same
             // Let's burn it all!!!!
             // Destroy all the balls
@@ -987,8 +1028,7 @@ Pool.Game.prototype = {
                 this.makePocketBall(ball.x, ball.y, ball.color);
             }, this);
             */           
-        }
-        socket.emit('finally', roomName, emitObject, Player);
+        }        
     },
 
     takeShot: function () {       
